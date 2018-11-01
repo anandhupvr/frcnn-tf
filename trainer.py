@@ -35,30 +35,9 @@ with tf.Graph().as_default():
                                                     proba])
 
         
-        # proba = proba[0, 0:]
-        # sorted_inds = [i[0] for i in sorted(enumerate(-proba),
-        #                                     key=lambda x:x[1])]
         # writer = tf.summary.FileWriter("out")
         # writer.add_graph(sess.graph)
     print (proba.shape)
-    # plt.figure()
-    # plt.imshow(np_image.astype(np.uint8))
-    # plt.suptitle("Downloaded image : "+str(len(proba)), fontsize=14, fontweight='bold')
-    # plt.axis('off')
-    # plt.show()
 
 
-    # plt.suptitle("Resized, Cropped and Mean-Centered input to network",
-    #              fontsize=14, fontweight='bold')
-    # plt.axis('off')
-    # plt.show()
 
-    # for i in range(5):
-    #     index = sorted_inds[i]
-    #     # Now we print the top-5 predictions that the network gives us with
-    #     # corresponding probabilities. Pay attention that the index with
-    #     # class names is shifted by 1 -- this is because some networks
-    #     # were trained on 1000 classes and others on 1001. VGG-16 was trained
-    #     # on 1000 classes.
-    #     print(proba[index])
-    #       
