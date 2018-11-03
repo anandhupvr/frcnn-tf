@@ -141,7 +141,10 @@ def vgg_16(inputs,
            is_training=True,
            dropout_keep_prob=0.5,
            spatial_squeeze=True,
-           scope='vgg_16'):
+           scope='vgg_16',
+           _feat_stride = [16,],
+           anchor_scales = [8, 16, 32],
+           ):
   """Oxford Net VGG 16-Layers version D Example.
 
   Note: All the fully_connected layers have been transformed to conv2d layers.
@@ -182,12 +185,22 @@ def vgg_16(inputs,
         end_points[sc.name + '/conv5'] = net
       # return net, end_points
       # net = layers_lib.max_pool2d(net, [2, 2], scope='pool5')
+      # end_points = utils.convert_collection_to_dict(end_points_collection)
+      # if spatial_squeeze:
+      #   net = array_ops.squeeze(net, name='pool5/squeezed')
+      #   end_points[sc.name + '/pool5'] = net
 
       # # Use conv2d instead of fully_connected layers.
+
       # net = layers.conv2d(net, 4096, [7, 7], padding='VALID', scope='fc6')
+      # end_points = utils.convert_collection_to_dict(end_points_collection)
+      # if spatial_squeeze:
+      #   net = array_ops.squeeze(net, name='fc6/squeezed')
+      #   end_points[sc.name + '/fc6'] = net
       # net = layers_lib.dropout(
       #     net, dropout_keep_prob, is_training=is_training, scope='dropout6')
       # net = layers.conv2d(net, 4096, [1, 1], scope='fc7')
+
 
       # net = layers_lib.dropout(
       #     net, dropout_keep_prob, is_training=is_training, scope='dropout7')
