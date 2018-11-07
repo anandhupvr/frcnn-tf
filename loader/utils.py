@@ -1,6 +1,11 @@
 import os
 import glob
 import sys
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from PIL import Image
+import numpy as np
+
 
 class Bbox:
     def __init__(self, x, y, w, h, cat):
@@ -30,3 +35,16 @@ def train_test_split(data_path, *args):
             counter += 1
         else:
             file_train.write(i+"\n")
+def box_plot(box):
+    # a = (box[0][:].split(","))
+    # print (a)
+
+    fig, ax = plt.subplots(1)
+    im = np.zeros((100,100),dtype='float64')
+    ax.imshow(im)
+    for i in range(3):
+        k = 0
+        s = patches.Rectangle((box[i][k], box[i][k+1]), box[i][k+2], box[i][k+3], linewidth=1, edgecolor='r', facecolor="none")
+        ax.add_patch(s)
+    plt.show()
+
