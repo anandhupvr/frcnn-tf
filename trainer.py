@@ -49,8 +49,7 @@ with tf.Graph().as_default():
     net = tf.Variable(net)
 
     num_anchors = get_anchor.generate_anchors()
-    # utils.box_plot(num_anchors)
-    # print (num_anchors)
+    utils.box_plot(num_anchors)
     num_anchors =  num_anchors.shape[0]
     # with tf.Session() as sess:
     #     clas, reg = rpn.rpn_k(net, num_anchors)
