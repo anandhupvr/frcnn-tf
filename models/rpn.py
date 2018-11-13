@@ -1,18 +1,19 @@
 import tensorflow as tf
-from keras.models import Model
-from keras.layers import Flatten, Dense, Input, Conv2D, MaxPooling2D, Dropout
-from keras.layers import GlobalAveragePooling2D, GlobalMaxPooling2D, TimeDistributed
+import loader.utils as utils
+# from keras.models import Model
+# from keras.layers import Flatten, Dense, Input, Conv2D, MaxPooling2D, Dropout
+# from keras.layers import GlobalAveragePooling2D, GlobalMaxPooling2D, TimeDistributed
 
 
-from tensorflow.contrib import layers
-from tensorflow.contrib.framework.python.ops import arg_scope
-from tensorflow.contrib.layers.python.layers import layers as layers_lib
-from tensorflow.contrib.layers.python.layers import regularizers
-from tensorflow.contrib.layers.python.layers import utils
-from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import init_ops
-from tensorflow.python.ops import nn_ops
-from tensorflow.python.ops import variable_scope
+# from tensorflow.contrib import layers
+# from tensorflow.contrib.framework.python.ops import arg_scope
+# from tensorflow.contrib.layers.python.layers import layers as layers_lib
+# from tensorflow.contrib.layers.python.layers import regularizers
+# from tensorflow.contrib.layers.python.layers import utils
+# from tensorflow.python.ops import array_ops
+# from tensorflow.python.ops import init_ops
+# from tensorflow.python.ops import nn_ops
+# from tensorflow.python.ops import variable_scope
 
 
 # conv(3,3,512,1,1,name='rpn_conv/3x3')
@@ -42,26 +43,37 @@ def rpn_net(base_layer, num_anchors):
                                 kernel_initializer='zero',
                                 name='rpn_out_regre')
 
-                                
-    return [x_class, x_regr]
+    rpn_cls_score_reshape = utils.to_NCHW_format(bottom=x_class,
+                                                                num_dim=2,
+                                                                name='rpn_cls_score_reshape')
+    rpn_cls_prob_reshape = tf.reshape(tf.nn.softmax(tf.reshape(rpn_cls_score_reshape,
+                                                                [-1, tf.shape(rpn_cls_score_reshape)[-1]]),
+                                                    name='rpn_cls_prob_reshape'),
+                                        tf.shape(rpn_cls_score_reshape))
 
-def rpn_k(base_layers, num_anchors):
+    rpn_cls_prob = utils.to_NCHW_format(bottom=rpn_cls_prob_reshape,
+                                        num_dim=num_anchors * 2,
+                                        name='rpn_cls_prob')
 
-    x = Conv2D(512, (3, 3), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
-    # x = tf.layers.conv2d(base_layers, filters=512, kernel_size=(3, 3), padding='same', activation='relu', kernel_initializer='normal',name='rpn_conv1')
-    # x_class = tf.layers.conv2d(x, filters=num_anchors, kernel_size=(1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')
-    # x_regr = tf.layers.conv2d(x, filters=num_anchors*4, kernel_size=(1,1), activation='linear', kernel_initializer='zero', name='rpn-out-regrss')
-    x_class = Conv2D(num_anchors * 2, (1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')(x)
-    x_regr = Conv2D(num_anchors * 4, (1, 1), activation='linear', kernel_initializer='zero', name='rpn_out_regress')(x)
+    return [rpn_cls_prob, x_regr]
 
-    return [x_class, x_regr]
+# def rpn_k(base_layers, num_anchors):
 
-def rpn_slim(base_layers, num_anchors):
+#     x = Conv2D(512, (3, 3), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
+#     # x = tf.layers.conv2d(base_layers, filters=512, kernel_size=(3, 3), padding='same', activation='relu', kernel_initializer='normal',name='rpn_conv1')
+#     # x_class = tf.layers.conv2d(x, filters=num_anchors, kernel_size=(1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')
+#     # x_regr = tf.layers.conv2d(x, filters=num_anchors*4, kernel_size=(1,1), activation='linear', kernel_initializer='zero', name='rpn-out-regrss')
+#     x_class = Conv2D(num_anchors * 2, (1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')(x)
+#     x_regr = Conv2D(num_anchors * 4, (1, 1), activation='linear', kernel_initializer='zero', name='rpn_out_regress')(x)
 
-    x =  tf.nn.conv2d(base_layers, 512, 3, 1, 1, bias=True)
+#     return [x_class, x_regr]
+
+# def rpn_slim(base_layers, num_anchors):
+
+#     x =  tf.nn.conv2d(base_layers, 512, 3, 1, 1, bias=True)
     
 
-    return(x)
+#     return(x)
 
 def classifier(base_layers, input_rois, num_rois, nb_classes = 1):
 
