@@ -24,7 +24,7 @@ class load:
              image_files[0].split("images")[1].replace(
                 "jpg",
                 "txt")).strip("\n")).readlines()
-        print(len(label_file) - 1)
+        # print(len(label_file) - 1)
         class_name = label_file[0]
         for label in label_file[1:]:
             x, y, w, h = label.split(" ")
