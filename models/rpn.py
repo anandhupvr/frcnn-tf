@@ -191,7 +191,6 @@ class RPN:
         return loss
 
     def losses(self, fg_inds, bg_inds, rpn_bbox, rpn_cls, box):
-        import pdb; pdb.set_trace()
         elosion = 0.00001
         true_obj_loss = -tf.reduce_sum(tf.multiply(tf.log(rpn_cls+elosion), fg_inds))
         false_obj_loss = -tf.reduce_sum(tf.multiply(tf.log(rpn_cls+elosion), bg_inds))
@@ -208,9 +207,9 @@ class RPN:
 
     def setup(self, net, rpn_cls, rpn_bbox, img, data):
 
-        img_info = img[1], img[2]
         height = tf.to_int32(tf.ceil(int(img[1]) / np.float32(self.feat_stride[0])))
         width = tf.to_int32(tf.ceil(int(img[2]) / np.float32(self.feat_stride[0])))
+        img_info = height, width
 
         anchors, length = tf.py_func(generate_anchors_pre,
                                     [width, height, self.feat_stride],

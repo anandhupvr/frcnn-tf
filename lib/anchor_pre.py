@@ -6,7 +6,6 @@ def generate_anchors_pre(height, width, feat_stride, anchor_scales=(8, 16, 32), 
     """ A wrapper function to generate anchors given different scales
       Also return the number of anchors in variable 'length'
     """ 
-    import pdb; pdb.set_trace()
     anchors = get_anchor.generate_anchors(ratios=np.array(anchor_ratios), scales=np.array(anchor_scales))
     A = anchors.shape[0]
     shift_x = np.arange(0, width) * feat_stride
