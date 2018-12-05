@@ -27,9 +27,9 @@ train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
 init_op = tf.global_variables_initializer()
 
 with tf.Session() as sess:
-    for i in range(5):
-        sess.run(init_op)
-        sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box})
-        ls_val = sess.run(loss, feed_dict={x:img, gt_boxes:gt_box})
-        print ('loss : {}'.format(ls_val))
+    sess.run(init_op)
+ 
+    sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box})
+    ls_val = sess.run(loss, feed_dict={x:img, gt_boxes:gt_box})
+    print ('loss : {}'.format(ls_val))
 
