@@ -205,7 +205,7 @@ class RPN:
         return total_loss
 
 
-    def setup(self, sess, net, rpn_cls, rpn_bbox, img, data):
+    def setup(self, net, rpn_cls, rpn_bbox, img, data):
 
         img_info = img[1], img[2]
         height = tf.to_int32(tf.ceil(int(img[1]) / np.float32(self.feat_stride[0])))
