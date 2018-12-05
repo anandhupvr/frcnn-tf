@@ -213,7 +213,7 @@ class RPN:
 
         anchors, length, img_info = tf.py_func(generate_anchors_pre,
                                     [rpn_cls, self.feat_stride],
-                                    [tf.float32, tf.int32], name="generate_anchors")
+                                    [tf.float32, tf.int32, tf.float32], name="generate_anchors")
         # im_info = [tf.to_int32(int(img[1])), tf.to_int32(int(img[2]))]
         anchors.set_shape([None, 4])
         length.set_shape([])
