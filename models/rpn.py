@@ -205,7 +205,7 @@ class RPN:
         return total_loss
 
 
-    def setup(self, net, rpn_cls, rpn_bbox, img, data):
+    def setup(self, net, rpn_cls, rpn_bbox, img):
         # height = tf.to_int32(tf.ceil(int(img[1]) / np.float32(self.feat_stride[0])))
         # width = tf.to_int32(tf.ceil(int(img[2]) / np.float32(self.feat_stride[0])))
         # height, width = rpn_cls.shape[1:3]
