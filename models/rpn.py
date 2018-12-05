@@ -210,7 +210,7 @@ class RPN:
         # width = tf.to_int32(tf.ceil(int(img[2]) / np.float32(self.feat_stride[0])))
         # height, width = rpn_cls.shape[1:3]
         # img_info = height, width
-
+        img_ = img[0], img[1]
         anchors, length, img_info = tf.py_func(generate_anchors_pre,
                                     [rpn_cls, self.feat_stride],
                                     [tf.float32, tf.int32, tf.float32], name="generate_anchors")
@@ -224,7 +224,7 @@ class RPN:
         img_info = img_info
         
         rois, rpn_scores = tf.py_func(proposal_layer,
-                                        [rpn_cls, rpn_bbox, img_info, self._anchors, self._anchor_length],
+                                        [rpn_cls, rpn_bbox, img_info, img_, self._anchors, self._anchor_length],
                                         [tf.float32, tf.float32])
         
         

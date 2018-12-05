@@ -3,7 +3,7 @@ import numpy.random as npr
 from loader.utils import bbox_overlaps
 from lib.bbox_transform import bbox_transform
 
-def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anchors, num_anchors=9):
+def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img_, _feat_stride, all_anchors, num_anchors=9):
     """Same as the anchor target layer in original Fast/er RCNN """
     rpn_clobber_positives = False
     rpn_negative_overlap = 0.3
@@ -12,7 +12,7 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anch
     rpn_batchsize = 256
     rpn_positive_weight = -1
     A = num_anchors
-    import pdb; pdb.set_trace()
+    
     total_anchors = all_anchors.shape[0]
     K = total_anchors / num_anchors
     # im_info = im_info[0]
@@ -22,13 +22,13 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anch
 
     # map of shape (..., H, W)
     height, width = rpn_cls_score.shape[1:3]
-
+    import pdb; pdb.set_trace()
     # only keep anchors inside the image
     inds_inside = np.where(
         (all_anchors[:, 0] >= -_allowed_border) &
         (all_anchors[:, 1] >= -_allowed_border) &
-        (all_anchors[:, 2] < width + _allowed_border) &  # width
-        (all_anchors[:, 3] < height + _allowed_border)  # height
+        (all_anchors[:, 2] < im_[0] + _allowed_border) &  # width
+        (all_anchors[:, 3] < im_[1] + _allowed_border)  # height
     )[0]
 
     # keep only inside anchors
