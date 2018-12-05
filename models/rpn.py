@@ -227,7 +227,6 @@ class RPN:
                                         [tf.float32, tf.float32])
         
         
-
         rois.set_shape([None, 4])
         rpn_scores.set_shape([None, 1])
         num = 9
