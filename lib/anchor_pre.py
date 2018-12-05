@@ -20,4 +20,4 @@ def generate_anchors_pre(rpn_cls, feat_stride, anchor_scales=(8, 16, 32), anchor
     anchors = anchors.reshape((K * A, 4)).astype(np.float32, copy=False)
     length = np.int32(anchors.shape[0])
 
-    return anchors, length
+    return anchors, length,rpn_cls[1:3]

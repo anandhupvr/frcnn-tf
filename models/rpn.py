@@ -208,18 +208,20 @@ class RPN:
     def setup(self, net, rpn_cls, rpn_bbox, img, data):
         # height = tf.to_int32(tf.ceil(int(img[1]) / np.float32(self.feat_stride[0])))
         # width = tf.to_int32(tf.ceil(int(img[2]) / np.float32(self.feat_stride[0])))
-        height, width = rpn_cls.shape[1:3]
+        # height, width = rpn_cls.shape[1:3]
         # img_info = height, width
 
-        anchors, length = tf.py_func(generate_anchors_pre,
+        anchors, length, img_info = tf.py_func(generate_anchors_pre,
                                     [rpn_cls, self.feat_stride],
                                     [tf.float32, tf.int32], name="generate_anchors")
         # im_info = [tf.to_int32(int(img[1])), tf.to_int32(int(img[2]))]
         anchors.set_shape([None, 4])
         length.set_shape([])
+        img_info.set_shape([None, None])
         anchors = anchors
         self._anchors = anchors
         self._anchor_length = length
+        img_info = img_info
         
         rois, rpn_scores = tf.py_func(proposal_layer,
                                         [rpn_cls, rpn_bbox, img_info, self._anchors, self._anchor_length],
