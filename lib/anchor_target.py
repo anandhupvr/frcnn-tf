@@ -27,8 +27,8 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anch
     inds_inside = np.where(
         (all_anchors[:, 0] >= -_allowed_border) &
         (all_anchors[:, 1] >= -_allowed_border) &
-        (all_anchors[:, 2] < im_info[0] + _allowed_border) &  # width
-        (all_anchors[:, 3] < im_info[1] + _allowed_border)  # height
+        (all_anchors[:, 2] < width + _allowed_border) &  # width
+        (all_anchors[:, 3] < height + _allowed_border)  # height
     )[0]
 
     # keep only inside anchors
