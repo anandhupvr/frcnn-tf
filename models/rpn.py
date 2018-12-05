@@ -206,9 +206,9 @@ class RPN:
 
 
     def setup(self, net, rpn_cls, rpn_bbox, img, data):
-
-        height = tf.to_int32(tf.ceil(int(img[1]) / np.float32(self.feat_stride[0])))
-        width = tf.to_int32(tf.ceil(int(img[2]) / np.float32(self.feat_stride[0])))
+        # height = tf.to_int32(tf.ceil(int(img[1]) / np.float32(self.feat_stride[0])))
+        # width = tf.to_int32(tf.ceil(int(img[2]) / np.float32(self.feat_stride[0])))
+        height, width = rpn_cls.shape[1:3]
         img_info = height, width
 
         anchors, length = tf.py_func(generate_anchors_pre,

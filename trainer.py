@@ -22,7 +22,7 @@ x, gt_boxes = rpn_net.getPlaceholders()
 data = data_loader.data_batch()
 img, gt_box, labels = data[0][0], data[0][1], data[0][2]
 img_info = float(img.shape[1]), float(img.shape[2])
-loss = rpn_net.setup(net, rpn_cls, rpn_bbox, data[0][0].shape, data)
+loss = rpn_net.setup(net, rpn_cls, rpn_bbox, img_info, data)
 train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
 init_op = tf.global_variables_initializer()
 with tf.Session() as sess:

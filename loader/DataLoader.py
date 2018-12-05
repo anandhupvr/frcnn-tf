@@ -25,7 +25,6 @@ class load:
         boxes = []
         ptr = 0
         image_files = open("train.txt", "r").readlines()[ptr: ptr + 1]
-
         img = np.expand_dims(np.array(Image.open(image_files[0].strip()),dtype=np.uint8), axis=0).astype('float32')
 
         label_file = open(((image_files[0].strip()).split("images")[0] +
