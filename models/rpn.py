@@ -4,347 +4,275 @@ import numpy as np
 import numpy.random as npr
 from matplotlib import pyplot as plt
 from loader import get_anchor
+from models import net_vgg
+# slim = tf.contrib.slim
+from lib.anchor_pre import generate_anchors_pre
+from lib.proposal_layer import proposal_layer
+from lib.anchor_target import anchor_target_layer
 
 
 
-_feat_stride = [16,]
+
 anchor_scales = [8, 16, 32]
 
+checkpoints_dir = 'vgg_16_2016_08_28/vgg16.ckpt'
 
-def rpn_net(net, num_anchors, processed_images, data):
-    rpn1 = tf.layers.conv2d(net,
-                                filters=512,
-                                kernel_size=(3, 3),
-                                padding='same',
-                                kernel_initializer ='normal' ,
-                                name='npn_conv/3x3')
-    classe = tf.layers.conv2d(rpn1,
+
+class RPN:
+    def __init__(self):
+        self._batch_size = 1
+
+        self.x = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, None, None, 3])
+        self._gt_boxes = tf.placeholder(tf.float32, shape=[None, 4])
+        # self.im_info = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 2])
+        self.box = []
+        # self.im_info = self.x.shape[1], self.x.shape[2]
+        self.feat_stride = [16,]
+        self._anchor_targets = {}
+        # self.img = cv2.imread('/home/food/Music/frcnn-tf/dataset/images/apple/apple_10.jpg')
+    def _softmax(self, rpn_cls, name):
+        if name == 'rpn_cls_softmax':
+            shape = tf.shape(rpn_cls)
+            reshape_ = tf.reshape(rpn_cls, [-1, shape[-1]])
+            reshaped_score = tf.nn.softmax(reshape_, name=name)
+            return tf.reshape(reshaped_score, shape)
+
+    def _reshape(self, rpn_cls, num, name):
+        with tf.variable_scope(name):
+            to_caffe = tf.transpose(rpn_cls, [0, 3, 1, 2])
+            reshaped = tf.reshape(to_caffe, tf.concat(axis=0, values=[[self._batch_size], [num, -1], [tf.shape(rpn_cls)[2]]]))
+            to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
+            return to_tf
+    def _smooth_l1_loss(self, bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, sigma=1.0, dim=[1]):
+        sigma_2 = sigma ** 2
+        box_diff = bbox_pred - bbox_targets
+        in_box_diff = bbox_inside_weights * box_diff
+        abs_in_box_diff = tf.abs(in_box_diff)
+        smoothL1_sign = tf.stop_gradient(tf.to_float(tf.less(abs_in_box_diff, 1. / sigma_2)))
+        in_loss_box = tf.pow(in_box_diff, 2) * (sigma_2 / 2.) * smoothL1_sign + (abs_in_box_diff - (0.5 / sigma_2)) * (1. - smoothL1_sign)
+        out_loss_box = bbox_outside_weights * in_loss_box
+        loss_box = tf.reduce_mean(tf.reduce_sum(
+            out_loss_box,
+            axis=dim
+        ))
+        return loss_box
+    def vgg_16(self):
+        num_anchors = 9
+        
+        conv1 = tf.layers.conv2d(self.x,
+                                    filters=64,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_1")
+        conv2 = tf.layers.conv2d(conv1,
+                                    filters=64,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_2")
+        pool1 = tf.layers.max_pooling2d(conv2,
+                                            pool_size=(2, 2),
+                                            strides=(2, 2),
+                                            name="vgg/pool_1")
+        conv3 = tf.layers.conv2d(pool1,
+                                    filters=128,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_3")
+        conv4 = tf.layers.conv2d(conv3,
+                                    filters=64,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_4")
+
+        pool2 = tf.layers.max_pooling2d(conv4,
+                                            pool_size=(2, 2),
+                                            strides=(2, 2),
+                                            name="vgg/pool_2")
+
+        conv5 = tf.layers.conv2d(pool2,
+                                    filters=256,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_5")
+
+        conv6 = tf.layers.conv2d(conv5,
+                                    filters=256,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_6")
+        conv7 = tf.layers.conv2d(conv6,
+                                    filters=256,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_7")
+
+        pool3 = tf.layers.max_pooling2d(conv7,
+                                            pool_size=(2, 2),
+                                            strides=(2, 2),
+                                            name="vgg/pool_3")
+
+
+        conv8 = tf.layers.conv2d(pool3,
+                                    filters=512,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_8")
+        conv9 = tf.layers.conv2d(conv8,
+                                    filters=512,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_9")
+        conv10 = tf.layers.conv2d(conv9,
+                                    filters=512,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_10")
+
+        pool3 = tf.layers.max_pooling2d(conv10,
+                                            pool_size=(2, 2),
+                                            strides=(2, 2),
+                                            name="vgg/pool_4")
+
+        conv11 = tf.layers.conv2d(pool3,
+                                    filters=512,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_11")
+        conv12 = tf.layers.conv2d(conv11,
+                                    filters=512,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_12")
+        conv13 = tf.layers.conv2d(conv12,
+                                    filters=512,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    name = "vgg/conv_13")
+
+        rpn1 = tf.layers.conv2d(conv13,
+                                    filters=512,
+                                    kernel_size=(3, 3),
+                                    padding='same',
+                                    kernel_initializer ='normal' ,
+                                    name='npn_conv/3x3')
+        rpn_cls = tf.layers.conv2d(rpn1,
                                     filters= num_anchors * 2,
                                     kernel_size=(1, 1),
                                     activation='sigmoid',
                                     kernel_initializer='uniform',
                                     name="rpn_out_class")
-    reg = tf.layers.conv2d(rpn1,
-                                filters=num_anchors * 4,
-                                kernel_size=(1, 1),
-                                activation='linear',
-                                kernel_initializer='uniform',
-                                name='rpn_out_regre')
-
-    # rpn_cls_score_reshape = utils.to_NCHW_format(bottom=x_class,
-    #                                                             num_dim=2,
-    #                                                             name='rpn_cls_score_reshape')
-    # rpn_cls_prob_reshape = tf.reshape(tf.nn.softmax(tf.reshape(rpn_cls_score_reshape,
-    #                                                             [-1, tf.shape(rpn_cls_score_reshape)[-1]]),
-    #                                                 name='rpn_cls_prob_reshape'),
-    #                                     tf.shape(rpn_cls_score_reshape))
-
-    # rpn_cls_prob = utils.to_NCHW_format(bottom=rpn_cls_prob_reshape,
-    #                                     num_dim=num_anchors * 2,
-    #                                     name='rpn_cls_prob')
-
-    # return [rpn_cls_prob, x_regr]
-
-    anchors = get_anchor.generate_anchors()
-
-    num_anchors =  anchors.shape[0]
-    width = int(np.shape(net)[1])
-    height = int(np.shape(net)[2])
-    print (net.shape)
-    img_width = int(processed_images.shape[1])
-    img_height = int(processed_images.shape[2])
-
-    num_feature_map = width * height
-
-    # Calculate output w, h stride
-    w_stride = img_width / width
-    h_stride = img_height / height
-
-
-
-
-
-    shift_x = np.arange(0, width) * w_stride
-    shift_y = np.arange(0, height) * h_stride
-    shift_x, shift_y = np.meshgrid(shift_x, shift_y)
-
-    shifts = np.vstack((shift_x.ravel(), shift_y.ravel(), shift_x.ravel(),
-                        shift_y.ravel())).transpose()
-
-    all_anchors = (anchors.reshape( (1, 9, 4)) +
-                                    shifts.reshape( (1, num_feature_map, 4) ).transpose((1, 0, 2)) )
-
-
-    total_anchors = num_feature_map * 9
-    all_anchors = all_anchors.reshape((total_anchors, 4))
-    # utils.bbox_plot(all_anchors)
-    reg = np.reshape(reg, (-1, 4))
-    classe = np.reshape(classe, (-1, 1))
-
-    proposals = utils.bbox_transform_inv(all_anchors, reg)
-
-    proposals = utils.clip_boxes(proposals, (np.array([int(processed_images.shape[1]), int(processed_images.shape[2])], dtype='float32')))
-    keep = utils.filter_boxes(proposals, 40)
-    proposals = proposals[keep, :]
-    scores = classe[keep]
-
-
-    box = np.array([data[0][0].x, data[0][0].y, data[0][0].w, data[0][0].h], dtype='float32')
-    box = box.reshape(1, 4)
-
-    overlaps = utils.bbox_overlaps(proposals, box)
-    gt_assignment = overlaps.argmax(axis=1)
-    max_overlaps = overlaps[np.arange(len(proposals)), gt_assignment]
-    qt_argmax_overlaps = overlaps.argmax(axis=0)
-    gt_max_overlaps = overlaps[qt_argmax_overlaps,
-                                np.arange(overlaps.shape[1])]
-    qt_argmax_overlaps = np.where(overlaps == gt_max_overlaps)[0]
-
-    labels = np.empty((len(proposals), ), dtype=np.float32)
-    labels.fill(-1)
-
-    labels[qt_argmax_overlaps] = 1
-    labels[max_overlaps >= .7] = 1
-    labels[max_overlaps < .3] = 0 
-
-    fg_inds = np.where(labels == 1)[0]
-
-    num_bg = int(len(fg_inds) * 2)
-    bg_inds = np.where(labels == 0)[0]
-
-    if len(bg_inds) > num_bg:
-        disble_inds = npr.choice(bg_inds, size=(len(bg_inds) - num_bg), replace=False)
-        labels[disble_inds] = -1
-
-    batch_inds = (proposals[labels != -1])
-
-    batch_inds = (batch_inds / 9).astype(np.int)
-
-    k = [i for i in range(len(proposals))]
-    full_labels = utils.unmap(labels, len(proposals), k, fill=-1)
-
-    batch_label_targets = full_labels.reshape(-1, 1, 1, 1 * 9)[batch_inds]
-
-    bbox_targets = np.zeros((len(proposals), 4), dtype=np.float32)
-
-    pos_anchors = proposals[labels == 1]
-    bbox_targets = utils.bbox_transform(pos_anchors , box[gt_assignment, :][labels == 1])
-    a = [i for i in range(len(labels)) if labels[i]==1]
-    bbox_targets = utils.unmap(bbox_targets, len(proposals), a, fill=0)
-
-
-
-    batch_bbox_targets = bbox_targets.reshape(-1, 1, 1, 4 * 9)[batch_inds]
-
-    padded_fcmap = np.pad(net, ((0, 0), (1, 1), (1, 1), (0, 0)), mode='constant')
-
-    padded_fcmap = np.squeeze(padded_fcmap)
-    batch_tiles=[]
-    dd = [i for i in range(len(labels)) if labels[i] != -1]
-    for ind in dd:
-        x = ind % width
-        y = int(ind / width)
-        fc_3x3 = padded_fcmap[y:y+3, x:x+3,:]
-        batch_tiles.append(fc_3x3)
-    # last = np.asarray(batch_tiles), batch_label_targets.tolist(), batch_bbox_targets.tolist()
-
-
-    return np.asarray(batch_tiles), batch_label_targets.tolist(), batch_bbox_targets.tolist(), proposals
-
-# def rpn_k(base_layers, num_anchors):
-
-#     x = Conv2D(512, (3, 3), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(base_layers)
-#     # x = tf.layers.conv2d(base_layers, filters=512, kernel_size=(3, 3), padding='same', activation='relu', kernel_initializer='normal',name='rpn_conv1')
-#     # x_class = tf.layers.conv2d(x, filters=num_anchors, kernel_size=(1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')
-#     # x_regr = tf.layers.conv2d(x, filters=num_anchors*4, kernel_size=(1,1), activation='linear', kernel_initializer='zero', name='rpn-out-regrss')
-#     x_class = Conv2D(num_anchors * 2, (1, 1), activation='sigmoid', kernel_initializer='uniform', name='rpn_out_class')(x)
-#     x_regr = Conv2D(num_anchors * 4, (1, 1), activation='linear', kernel_initializer='zero', name='rpn_out_regress')(x)
-
-#     return [x_class, x_regr]
-
-# def rpn_slim(base_layers, num_anchors):
-
-#     x =  tf.nn.conv2d(base_layers, 512, 3, 1, 1, bias=True)
-    
-
-#     return(x)
-
-def classifier(base_layers, input_rois, num_rois, nb_classes = 1):
-
-    x =  tf.contrib.layers.flatten(base_layers, name="flatten")
-    x = tf.layers.dense(x, 4096, activation='relu', name='fc1')
-    x = tf.layers.dropout(x, 0.5)
-    x = tf.layers.dense(x, 4096, activation='relu', name='fc2')
-    x = tf.layers.dropout(x, 0.5)
-
-    out_class = tf.layers.dense(x, nb_classes, activation='softmax', kernel_initializer='zero', name="dense_class")
-    out_rgr = tf.layers.dense(out, 4 * (nb_classes - 1), activation='linear', kernel_initializer='zero', name='regresiion')
-
-    return [out_class, out_rgr]
-
-
-def _crop_pool_layer(bottom, rois, name):
-    with tf.variable_scope(name):
-
-        batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"))
-        # Get the normalized coordinates of bboxes
-        bottom_shape = tf.shape(bottom)
-        height = (tf.to_float(bottom_shape[1]) - 1.) * np.float32(_feat_stride)
-        width = (tf.to_float(bottom_shape[2]) - 1.) * np.float32(_feat_stride)
-        x1 = tf.slice(rois, [0, 0], [-1, 1], name="x1") / width
-        y1 = tf.slice(rois, [0, 1], [-1, 1], name="y1") / height
-        x2 = tf.slice(rois, [0, 2], [-1, 1], name="x2") / width
-        y2 = tf.slice(rois, [0, 3], [-1, 1], name="y2") / height
-        # Won't be backpropagated to rois anyway, but to save time
-        bboxes = tf.stop_gradient(tf.concat([y1, x1, y2, x2], axis=1))
-        pre_pool_size = 7 * 2
-        crops = tf.image.crop_and_resize(bottom, bboxes, tf.to_int32(batch_ids), [pre_pool_size, pre_pool_size], name="crops")
-
-    return tf.layers.max_pooling2d(crops, [2, 2], padding='SAME')
-
-def predictions(base_layers, rois):
-    
-    pool5 = _crop_pool_layer(base_layers, rois, "pool5")
-    print (pool5)
-
-
-
-def rpn_net2(net, num_anchors, processed_images, data, cat=1):
-    rpn1 = tf.layers.conv2d(net,
-                                filters=512,
-                                kernel_size=(3, 3),
-                                padding='same',
-                                kernel_initializer ='normal' ,
-                                name='npn_conv/3x3')
-    classe = tf.layers.conv2d(rpn1,
-                                    filters= num_anchors * 2,
+        rpn_bbox = tf.layers.conv2d(rpn1,
+                                    filters=num_anchors * 4,
                                     kernel_size=(1, 1),
-                                    activation='sigmoid',
+                                    activation='linear',
                                     kernel_initializer='uniform',
-                                    name="rpn_out_class")
-    reg = tf.layers.conv2d(rpn1,
-                                filters=num_anchors * 4,
-                                kernel_size=(1, 1),
-                                activation='linear',
-                                kernel_initializer='uniform',
-                                name='rpn_out_regre')
+                                    name='rpn_out_regre')
+        # rpn_shape = rpn_cls.shape
+        num = 2
+        rpn_cls_ = self._reshape(rpn_cls, num, 'rpn_cls_scores_reshape')
+        
+        rpn_cls_score = self._softmax(rpn_cls_, 'rpn_cls_softmax')
+        rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors * 2, "rpn_cls_prob")
+        # rpn_cls = tf.reshape(rpn_cls, [rpn_shape[0], rpn_shape[1]*rpn_shape[2], num_anchors, 2])
 
-    # rpn_cls_score_reshape = utils.to_NCHW_format(bottom=x_class,
-    #                                                             num_dim=2,
-    #                                                             name='rpn_cls_score_reshape')
-    # rpn_cls_prob_reshape = tf.reshape(tf.nn.softmax(tf.reshape(rpn_cls_score_reshape,
-    #                                                             [-1, tf.shape(rpn_cls_score_reshape)[-1]]),
-    #                                                 name='rpn_cls_prob_reshape'),
-    #                                     tf.shape(rpn_cls_score_reshape))
-
-    # rpn_cls_prob = utils.to_NCHW_format(bottom=rpn_cls_prob_reshape,
-    #                                     num_dim=num_anchors * 2,
-    #                                     name='rpn_cls_prob')
-
-    # return [rpn_cls_prob, x_regr]
-
-    anchors = get_anchor.generate_anchors()
-
-    num_anchors =  anchors.shape[0]
-    width = int(np.shape(net)[1])
-    height = int(np.shape(net)[2])
-    print (net.shape)
-    img_width = int(processed_images.shape[1])
-    img_height = int(processed_images.shape[2])
-
-    num_feature_map = width * height
-
-    # Calculate output w, h stride
-    w_stride = img_width / width
-    h_stride = img_height / height
+        # rpn_bbox = tf.reshape(rpn_bbox, [rpn_shape[0], rpn_shape[1]*rpn_shape[2], num_anchors, 4])
+        
+        return rpn_cls_prob, rpn_bbox, conv13
 
 
 
 
+    def smooth_l1(x):
+        l2 = 0.5 * (x**2.0)
+        l1 = tf.abs(x) - 0.5
 
-    shift_x = np.arange(0, width) * w_stride
-    shift_y = np.arange(0, height) * h_stride
-    shift_x, shift_y = np.meshgrid(shift_x, shift_y)
+        condition = tf.less(tf.abs(x), 1.0)
+        loss = tf.where(condition, l2, l1)
+        return loss
 
-    shifts = np.vstack((shift_x.ravel(), shift_y.ravel(), shift_x.ravel(),
-                        shift_y.ravel())).transpose()
+    def losses(self, fg_inds, bg_inds, rpn_bbox, rpn_cls, box):
+        elosion = 0.00001
+        true_obj_loss = -tf.reduce_sum(tf.multiply(tf.log(rpn_cls+elosion), fg_inds))
+        false_obj_loss = -tf.reduce_sum(tf.multiply(tf.log(rpn_cls+elosion), bg_inds))
+        obj_loss = tf.add(true_obj_loss, false_obj_loss)
+        cls_loss = tf.div(obj_loss, 16)
 
-    all_anchors = (anchors.reshape( (1, 9, 4)) +
-                                    shifts.reshape( (1, num_feature_map, 4) ).transpose((1, 0, 2)) )
+        bbox_loss = smooth_l1(tf.subtract(rpn_bbox, box))
+        bbox_loss = tf.reduce_sum(tf.multiply(tf.reduce_sum(bbox_loss), fg_inds))
+        bbox_loss = tf.multiply(tf.div(bbox_loss, 1197), 100)
+        total_loss = tf.add(cls_loss, bbox_loss)
 
-
-    total_anchors = num_feature_map * 9
-    all_anchors = all_anchors.reshape((total_anchors, 4))
-    # utils.bbox_plot(all_anchors)
-    reg = np.reshape(reg, (-1, 4))
-    classe = np.reshape(classe, (-1, 1))
-
-    proposals = utils.bbox_transform_inv(all_anchors, reg)
-
-    proposals = utils.clip_boxes(proposals, (np.array([int(processed_images.shape[1]), int(processed_images.shape[2])], dtype='float32')))
-    keep = utils.filter_boxes(proposals, 40)
-    proposals = proposals[keep, :]
-    scores = classe[keep]
+        return total_loss
 
 
-    box = np.array([data[0][0].x, data[0][0].y, data[0][0].w, data[0][0].h], dtype='float32')
-    box = box.reshape(1, 4)
+    def setup(self, sess, net, rpn_cls, rpn_bbox, img, data):
 
-    pre_nms_topN = 6000
-    order = scores.ravel().argsort()[::-1]
-    if pre_nms_topN > 0:
-        order = order[:pre_nms_topN]
-    proposals = proposals[order, :]
-    scores = scores[order]
+        img_info = img[1], img[2]
+        height = tf.to_int32(tf.ceil(int(img[1]) / np.float32(self.feat_stride[0])))
+        width = tf.to_int32(tf.ceil(int(img[2]) / np.float32(self.feat_stride[0])))
 
-    post_nms_topN = 300
-    keep = utils.py_cpu_nms(np.hstack((proposals, scores)), 0.7)
-    if post_nms_topN > 0:
-        keep = keep[:post_nms_topN]
-    proposals = proposals[keep, :]
-    scores = scores[keep]
+        anchors, length = tf.py_func(generate_anchors_pre,
+                                    [width, height, self.feat_stride],
+                                    [tf.float32, tf.int32], name="generate_anchors")
+        # im_info = [tf.to_int32(int(img[1])), tf.to_int32(int(img[2]))]
+        anchors.set_shape([None, 4])
+        length.set_shape([])
+        anchors = anchors
+        self._anchors = anchors
+        self._anchor_length = length
+        
+        rois, rpn_scores = tf.py_func(proposal_layer,
+                                        [rpn_cls, rpn_bbox, img_info, self._anchors, self._anchor_length],
+                                        [tf.float32, tf.float32])
+        
+        
 
-    FG_FRAC=.25
-    FG_THRESH=.5
-    BG_THRESH_HI=.5
-    BG_THRESH_LO=.1
-    BATCH = 256
-    proposals = np.vstack((proposals, box))
+        rois.set_shape([None, 4])
+        rpn_scores.set_shape([None, 1])
+        num = 9
 
-    overlaps = utils.bbox_overlaps(proposals, box)
-    gt_assignment = overlaps.argmax(axis=1)
-    max_overlaps = overlaps.max(axis=1)
+        rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = tf.py_func(anchor_target_layer,
+                                                                [rpn_cls, self._gt_boxes, img_info, self.feat_stride, self._anchors, num],
+                                                                [tf.float32, tf.float32, tf.float32, tf.float32])
+        
+        rpn_labels.set_shape([1, 1, None, None])
+        rpn_bbox_targets.set_shape([1, None, None, 9 * 4])
+        rpn_bbox_inside_weights.set_shape([1, None, None, 9 * 4])
+        rpn_bbox_outside_weights.set_shape([1, None, None, 9 * 4])
 
-    fg_inds = np.where(max_overlaps >= FG_THRESH)[0]
-    fg_rois_per_this_image = min(int(BATCH * FG_FRAC), fg_inds.size)
+        rpn_labels = tf.to_int32(rpn_labels, name="to_int32")
+        self._anchor_targets['rpn_labels'] = rpn_labels
+        self._anchor_targets['rpn_bbox_targets'] = rpn_bbox_targets
+        self._anchor_targets['rpn_bbox_inside_weights'] = rpn_bbox_inside_weights
+        self._anchor_targets['rpn_bbox_outside_weights'] = rpn_bbox_outside_weights
 
-    if fg_inds.size > 0:
-        fg_inds = npr.choice(fg_inds, size=fg_rois_per_this_image, replace=False)
-    bg_inds = np.where((max_overlaps < BG_THRESH_HI) &
-                       (max_overlaps >= BG_THRESH_LO))[0]
-    bg_rois_per_this_image = BATCH - fg_rois_per_this_image
-    bg_rois_per_this_image = min(bg_rois_per_this_image, bg_inds.size)
-    # Sample background regions without replacement
-    if bg_inds.size > 0:
-        bg_inds = npr.choice(bg_inds, size=bg_rois_per_this_image, replace=False)
-    # The indices that we're selecting (both fg and bg)
-    keep_inds = np.append(fg_inds, bg_inds)
-    # Select sampled values from various arrays:
-    # labels = labels[keep_inds]
-    rois = proposals[keep_inds]
-    gt_rois = box[gt_assignment[keep_inds]]
 
-    targets = utils.bbox_transform(rois, gt_rois)#input rois
-    rois_num=targets.shape[0]
-    batch_box=np.zeros((rois_num, 200, 4))
-    # import pdb; pdb.set_trace()
-    for i in range(rois_num):
-        batch_box[i, cat] = targets[i]
-    batch_box = np.reshape(batch_box, (rois_num, -1))
-    # get gt category
-    batch_categories = np.zeros((rois_num, 200, 1))
-    for i in range(rois_num):
-        batch_categories[i, cat] = 1
-    batch_categories = np.reshape(batch_categories, (rois_num, -1))
+        rpn_cls_score = tf.reshape(rpn_cls, [-1, 2])
+        rpn_label_los = tf.reshape(self._anchor_targets['rpn_labels'], [-1])
+        rpn_select = tf.where(tf.not_equal(rpn_label_los, -1))
+        rpn_cls_score = tf.reshape(tf.gather(rpn_cls_score, rpn_select), [-1, 2])
+        rpn_label_los = tf.reshape(tf.gather(rpn_label_los, rpn_select), [-1])
+        rpn_cross_entropy = tf.reduce_mean(
+            tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_label_los))
 
-    return rois, batch_box, batch_categories
+        # RPN , bbox loss
+        rpn_bbox_pred = rpn_bbox
+        rpn_bbox_targets_los = self._anchor_targets['rpn_bbox_targets']
+        rpn_bbox_inside_weights_los = self._anchor_targets['rpn_bbox_inside_weights']
+        rpn_bbox_outside_weights_los = self._anchor_targets['rpn_bbox_outside_weights']
+
+        rpn_loss_box = self._smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets_los, rpn_bbox_inside_weights_los,
+                            rpn_bbox_outside_weights, sigma=3.0, dim=[1, 2, 3])
+        # loss = losses(fg_inds, bg_inds, rpn_bbox, rpn_cls, box)
+
+        loss = rpn_loss_box + rpn_cross_entropy
+
+        return loss
+
+
+    def getPlaceholders(self):
+        return self.x, self._gt_boxes
+
+
+
+

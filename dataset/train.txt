@@ -1,1 +1,0 @@
-dataset/images/apple/apple_10.jpg

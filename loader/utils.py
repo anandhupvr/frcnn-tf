@@ -24,24 +24,25 @@ def train_test_split(data_path, *args):
         percentage_test = 10
     else:
         percentage_test = args[0]
-    img_count = len(os.listdir(data_path+"images/apple"))
-    file_train = open(data_path + 'train.txt', 'w+')  
-    file_test = open(data_path + 'test.txt', 'w+')
+
+    img_count = len(os.listdir(data_path))
+    file_train = open('train.txt', 'w+')  
+    file_test = open('test.txt', 'w+')
     counter = 0
     index_test = round(img_count * percentage_test / 100)
-    all_items = glob.glob(data_path+"images/apple/*.jpg")
+    all_items = glob.glob(data_path + "/*.jpg")
     for i in all_items:
         if counter < index_test:
-            file_test.write(i+"\n")
+            file_test.write(i + "\n")
             counter += 1
         else:
-            file_train.write(i+"\n")
+            file_train.write(i + "\n")
 def box_plot(box):
     # a = (box[0][:].split(","))
     # print (a)
 
     fig, ax = plt.subplots(1)
-    im = np.array(Image.open('/run/media/user1/tesla/agrima/git_repos/frcnn-tf/dataset/images/apple/apple_10.jpg'),dtype=np.uint8)
+    im = np.array(Image.open('/run/media/user1/disk2/agrima/git_repos/frcnn-tf/dataset/images/apple/apple_10.jpg'),dtype=np.uint8)
     ax.imshow(im)
     for i in range(3):
         k = 0
@@ -77,8 +78,8 @@ def bbox_transform_inv(boxes, regr):
 
     pred_ctr_x = dx * width[:, np.newaxis] + ctr_x[:, np.newaxis]
     pred_ctr_y = dy * height[:, np.newaxis] + ctr_y[:, np.newaxis]
-    pred_w = tf.exp(dw) * width[:, np.newaxis]
-    pred_h = tf.exp(dh) * height[:, np.newaxis]
+    pred_w = np.exp(dw) * width[:, np.newaxis]
+    pred_h = np.exp(dh) * height[:, np.newaxis]
 
     pred_boxes = np.zeros(regr.shape, dtype=regr.dtype)
 
@@ -87,6 +88,12 @@ def bbox_transform_inv(boxes, regr):
     pred_boxes[:, 1::4] = pred_ctr_y - 0.5 * pred_h
     pred_boxes[:, 2::4] = pred_ctr_x + 0.5 * pred_w
     pred_boxes[:, 3::4] = pred_ctr_y + 0.5 * pred_h
+
+    # pred_boxes = tf.zeros([regr.shape[0],regr.shape[1]])
+    # pred_boxes[:, 0::4].assign(pred_ctr_x - 0.5 * pred_w)
+    # pred_boxes[:, 1::4].assign(pred_ctr_y - 0.5 * pred_h)
+    # pred_boxes[:, 2::4].assign(pred_ctr_x + 0.5 * pred_w)
+    # pred_boxes[:, 3::4].assign(pred_ctr_y + 0.5 * pred_h)
 
     return pred_boxes
 def clip_boxes(boxes, im_shape):
@@ -99,40 +106,46 @@ def clip_boxes(boxes, im_shape):
     boxes[:, 2::4] = np.maximum(np.minimum(boxes[:, 2::4], im_shape[1] - 1), 0)
     boxes[:, 3::4] = np.maximum(np.minimum(boxes[:, 3::4], im_shape[0] - 1), 0)
 
+    # boxes[:, 0::4].assign(tf.maximum(tf.minimum(boxes[:, 0::4], im_shape[1] - 1), 0))
+    # boxes[:, 1::4].assign(tf.maximum(tf.minimum(boxes[:, 1::4], im_shape[0] - 1), 0))
+    # boxes[:, 2::4].assign(tf.maximum(tf.minimum(boxes[:, 2::4], im_shape[1] - 1), 0))
+    # boxes[:, 3::4].assign(tf.maximum(tf.minimum(boxes[:, 3::4], im_shape[0] - 1), 0))
+
 
     return boxes
 def filter_boxes(boxes, min_size):
     """Remove all boxes with any side smaller than min_size."""
     ws = boxes[:, 2] - boxes[:, 0] + 1
     hs = boxes[:, 3] - boxes[:, 1] + 1
-    keep = np.where((ws >= min_size) & (hs >= min_size))[0]
+    keep = tf.where((ws >= min_size) & (hs >= min_size))[0]
     return keep
 def py_cpu_nms(dets, thresh):
     """Pure Python NMS baseline."""
-    x1 = dets[:, 0]
-    y1 = dets[:, 1]
-    x2 = dets[:, 2]
-    y2 = dets[:, 3]
-    scores = dets[:, 4]
+    x1 = dets[0]
+    y1 = dets[1]
+    x2 = dets[2]
+    y2 = dets[3]
+    scores = dets[4]
 
     areas = (x2 - x1 + 1) * (y2 - y1 + 1)
-    order = scores.argsort()[::-1]
+    # order = scores.argsort()[::-1]
+    order = tf.contrib.framework.argsort(scores)[::-1]
 
     keep = []
     while order.size > 0:
         i = order[0]
         keep.append(i)
-        xx1 = np.maximum(x1[i], x1[order[1:]])
-        yy1 = np.maximum(y1[i], y1[order[1:]])
-        xx2 = np.minimum(x2[i], x2[order[1:]])
-        yy2 = np.minimum(y2[i], y2[order[1:]])
+        xx1 = tf.maximum(x1[i], x1[order[1:]])
+        yy1 = tf.maximum(y1[i], y1[order[1:]])
+        xx2 = tf.minimum(x2[i], x2[order[1:]])
+        yy2 = tf.minimum(y2[i], y2[order[1:]])
 
-        w = np.maximum(0.0, xx2 - xx1 + 1)
-        h = np.maximum(0.0, yy2 - yy1 + 1)
+        w = tf.maximum(0.0, xx2 - xx1 + 1)
+        h = tf.maximum(0.0, yy2 - yy1 + 1)
         inter = w * h
         ovr = inter / (areas[i] + areas[order[1:]] - inter)
 
-        inds = np.where(ovr <= thresh)[0]
+        inds = tf.where(ovr <= thresh)[0]
         order = order[inds + 1]
 
     return keep
@@ -211,3 +224,34 @@ def unmap(data, count, inds, fill=0):
         ret.fill(fill)
         ret[inds, :] = data
     return ret
+
+def bbox_transform_inv_tf(boxes, deltas):
+    boxes = tf.cast(boxes, deltas.dtype)
+    widths = tf.subtract(boxes[:, 2], boxes[:, 0]) + 1.0
+    heights = tf.subtract(boxes[:, 3], boxes[:, 1]) + 1.0
+    ctr_x = tf.add(boxes[:, 0], widths * 0.5)
+    ctr_y = tf.add(boxes[:, 1], heights * 0.5)
+
+    dx = deltas[:, 0]
+    dy = deltas[:, 1]
+    dw = deltas[:, 2]
+    dh = deltas[:, 3]
+
+    pred_ctr_x = tf.add(tf.multiply(dx, widths), ctr_x)
+    pred_ctr_y = tf.add(tf.multiply(dy, heights), ctr_y)
+    pred_w = tf.multiply(tf.exp(dw), widths)
+    pred_h = tf.multiply(tf.exp(dh), heights)
+
+    pred_boxes0 = tf.subtract(pred_ctr_x, pred_w * 0.5)
+    pred_boxes1 = tf.subtract(pred_ctr_y, pred_h * 0.5)
+    pred_boxes2 = tf.add(pred_ctr_x, pred_w * 0.5)
+    pred_boxes3 = tf.add(pred_ctr_y, pred_h * 0.5)
+
+    return tf.stack([pred_boxes0, pred_boxes1, pred_boxes2, pred_boxes3], axis=1)
+
+def clip_boxes_tf(boxes, im_info):
+    b0 = tf.maximum(tf.minimum(boxes[:, 0], im_info[1] - 1), 0)
+    b1 = tf.maximum(tf.minimum(boxes[:, 1], im_info[0] - 1), 0)
+    b2 = tf.maximum(tf.minimum(boxes[:, 2], im_info[1] - 1), 0)
+    b3 = tf.maximum(tf.minimum(boxes[:, 3], im_info[0] - 1), 0)
+    return tf.stack([b0, b1, b2, b3], axis=1)
