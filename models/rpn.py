@@ -236,7 +236,8 @@ class RPN:
                                                                 [rpn_cls, self._gt_boxes, img_info, self.feat_stride, self._anchors, num],
                                                                 [tf.float32, tf.float32, tf.float32, tf.float32])
         
-        rpn_labels.set_shape([1, 1, None, None])
+        # rpn_labels.set_shape([1, 1, None, None])
+        rpn_labels.set_shape([None])
         rpn_bbox_targets.set_shape([1, None, None, 9 * 4])
         rpn_bbox_inside_weights.set_shape([1, None, None, 9 * 4])
         rpn_bbox_outside_weights.set_shape([1, None, None, 9 * 4])
