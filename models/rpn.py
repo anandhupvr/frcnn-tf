@@ -191,6 +191,7 @@ class RPN:
         return loss
 
     def losses(self, fg_inds, bg_inds, rpn_bbox, rpn_cls, box):
+        import pdb; pdb.set_trace()
         elosion = 0.00001
         true_obj_loss = -tf.reduce_sum(tf.multiply(tf.log(rpn_cls+elosion), fg_inds))
         false_obj_loss = -tf.reduce_sum(tf.multiply(tf.log(rpn_cls+elosion), bg_inds))
@@ -245,7 +246,6 @@ class RPN:
         self._anchor_targets['rpn_bbox_targets'] = rpn_bbox_targets
         self._anchor_targets['rpn_bbox_inside_weights'] = rpn_bbox_inside_weights
         self._anchor_targets['rpn_bbox_outside_weights'] = rpn_bbox_outside_weights
-
 
         rpn_cls_score = tf.reshape(rpn_cls, [-1, 2])
         rpn_label_los = tf.reshape(self._anchor_targets['rpn_labels'], [-1])
