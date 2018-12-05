@@ -107,7 +107,6 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img, _feat_stride, all
     bbox_targets = _unmap(bbox_targets, total_anchors, inds_inside, fill=0)
     bbox_inside_weights = _unmap(bbox_inside_weights, total_anchors, inds_inside, fill=0)
     bbox_outside_weights = _unmap(bbox_outside_weights, total_anchors, inds_inside, fill=0)
-    import pdb; pdb.set_trace()
     # labels
     labels = labels.reshape((1, height, width, A)).transpose(0, 3, 1, 2)
     labels = labels.reshape((1, 1, A * height, width))

@@ -11,7 +11,7 @@ from models.rpn import RPN
 
 
 
-
+num_epo = 5
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
 
@@ -27,7 +27,7 @@ train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
 init_op = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init_op)
-    for i in range(2):
+    for i in range(num_epo):
         sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box})
         ls_val = sess.run(loss, feed_dict={x:img, gt_boxes:gt_box})
         print ('loss : {}'.format(ls_val))
