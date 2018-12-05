@@ -5,11 +5,9 @@ from lib.cpu_nms import py_cpu_nms
 
 def proposal_layer(rpn_cls_prob, rpn_boox, im_info, anchors, num_anchors):
 
-
     post_nms_topN = 2000
     pre_nms_topN = 12000
     nms_thresh = 0.7
-
 
     # Get the scores and bounding boxes
     scores = rpn_cls_prob[:, :, :, num_anchors:]
