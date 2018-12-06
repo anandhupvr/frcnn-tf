@@ -11,7 +11,7 @@ from models.rpn import RPN
 
 
 
-num_epo = 5000
+num_epo = 500
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
 
