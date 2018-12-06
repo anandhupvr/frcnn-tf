@@ -79,7 +79,7 @@ class RPN:
                                     padding='same',
                                     name = "vgg/conv_3")
         conv4 = tf.layers.conv2d(conv3,
-                                    filters=64,
+                                    filters=128,
                                     kernel_size=(3, 3),
                                     padding='same',
                                     name = "vgg/conv_4")
