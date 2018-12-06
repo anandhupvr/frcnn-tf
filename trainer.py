@@ -21,7 +21,7 @@ x, gt_boxes = rpn_net.getPlaceholders()
 # init_op = tf.global_variables_initializer()
 with tf.Session() as sess:
     for i in range(num_epo):
-        for _ in range(2):
+        for _ in range(3):
             data = data_loader.data_batch()
             img, gt_box, labels = data[0][0], data[0][1], data[0][2]
             img_info = float(img.shape[1]), float(img.shape[2])
