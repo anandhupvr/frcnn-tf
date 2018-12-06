@@ -23,7 +23,7 @@ class load:
             st = box.split(' ')
             return [float(i) for i in st]
 
-
+        import pdb; pdb.set_trace()
         image_files = open("train.txt", "r").readlines()[self.ptr: self.ptr + 1]
         img = np.expand_dims(np.array(Image.open(image_files[0].strip()),dtype=np.uint8), axis=0).astype('float32')
 
