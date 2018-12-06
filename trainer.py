@@ -11,17 +11,19 @@ from models.rpn import RPN
 
 
 
-num_epo = 5
+num_epo = 5000
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
 
 rpn_net = RPN()
 rpn_cls, rpn_bbox, net = rpn_net.vgg_16()
 x, gt_boxes = rpn_net.getPlaceholders()
+saver = tf.train.Saver()
+
 # init_op = tf.global_variables_initializer()
 with tf.Session() as sess:
     for i in range(num_epo):
-        for _ in range(3):
+        for _ in range(len(open("train.txt", "r").readlines())):
             data = data_loader.data_batch()
             img, gt_box, labels = data[0][0], data[0][1], data[0][2]
             img_info = float(img.shape[1]), float(img.shape[2])
@@ -31,4 +33,7 @@ with tf.Session() as sess:
             sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box})
             ls_val = sess.run(loss, feed_dict={x:img, gt_boxes:gt_box})
             print ('loss : {}'.format(ls_val))
+    if i%100 == 0:
+        save_path = saver.save(sess, dataset_path+"model_{}.ckpt".format(i))
+        print ("Model at {} epoch saved at {}".format(i, save_path))
 
