@@ -32,7 +32,7 @@ with tf.Session() as sess:
             sess.run(tf.global_variables_initializer()) 
             sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box})
             ls_val = sess.run(loss, feed_dict={x:img, gt_boxes:gt_box})
-            print ('loss : {}       --> : {}'.format(ls_val, i))
+            print ('loss : {}       --> : {}'.format(ls_val, _))
         print ('loss : {}      epoch --> : {}'.format(ls_val, i))
     if i%100 == 0:
         save_path = saver.save(sess, 'weights/'+"model_{}.ckpt".format(i))
