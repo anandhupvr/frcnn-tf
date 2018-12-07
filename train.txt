@@ -1,2 +1,3 @@
-dataset/images/meatballs/ikea_meatballs__1.jpg
-dataset/images/meatballs/ikea_meatballs__2.jpg
+dataset/images/human/ikea_meatballs__20.jpg
+dataset/images/human/ikea_meatballs__1.jpg
+dataset/images/human/ikea_meatballs__2.jpg
