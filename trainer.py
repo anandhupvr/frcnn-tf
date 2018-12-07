@@ -15,13 +15,16 @@ num_epo = 500
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
 
+config = tf.ConfigProto()
+config.gpu_options.allocator_type = 'BFC'
+
 rpn_net = RPN()
 rpn_cls, rpn_bbox, net = rpn_net.vgg_16()
 x, gt_boxes = rpn_net.getPlaceholders()
 saver = tf.train.Saver()
 
 # init_op = tf.global_variables_initializer()
-with tf.Session() as sess:
+with tf.Session(config = config) as sess:
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
             data = data_loader.data_batch()
