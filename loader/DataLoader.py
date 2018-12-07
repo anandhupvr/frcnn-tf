@@ -25,7 +25,6 @@ class load:
             return [float(i) for i in st]
 
         image_files = open("train.txt", "r").readlines()[self.ptr: self.ptr + 1]
-        import pdb; pdb.set_trace()
         # img = np.expand_dims(np.array(Image.open(image_files[0].strip()),dtype=np.uint8), axis=0).astype('float32')
         img = np.expand_dims(cv2.resize(cv2.imread(image_files[0].strip()), (224, 224)), axis=0).astype('float32')
         label_file = open(((image_files[0].strip()).split("images")[0] +
