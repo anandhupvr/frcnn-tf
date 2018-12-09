@@ -3,6 +3,7 @@ import numpy.random as npr
 from loader.utils import bbox_overlaps
 from lib.bbox_transform import bbox_transform
 
+
 def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img, _feat_stride, all_anchors, num_anchors=9):
     """Same as the anchor target layer in original Fast/er RCNN """
     rpn_clobber_positives = False
