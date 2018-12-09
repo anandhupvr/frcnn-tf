@@ -17,7 +17,7 @@ class RPN:
     def __init__(self):
         self._batch_size = 1
 
-        self.x = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, None, None, 3])
+        self.x = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 224, 224, 3])
         self._gt_boxes = tf.placeholder(tf.float32, shape=[None, 4])
         # self.im_info = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 2])
         self.box = []
@@ -64,7 +64,7 @@ class RPN:
                                     padding='same',
                                     name = "vgg/conv_3")
         conv4 = tf.layers.conv2d(conv3,
-                                    filters=64,
+                                    filters=128,
                                     kernel_size=(3, 3),
                                     padding='same',
                                     name = "vgg/conv_4")
