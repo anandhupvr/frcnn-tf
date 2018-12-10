@@ -3,7 +3,7 @@ import tensorflow as tf
 from lib.anchor_pre import generate_anchors_pre
 from lib.proposal_layer import proposal_layer
 from lib.anchor_target import anchor_target_layer
-from lib.prosal_traget_layer import proposal_target_layer
+from lib.proposal_target_layer import proposal_target_layer
 import numpy.random as npr
 
 
@@ -13,18 +13,34 @@ class arrange:
     def __init__(self):
         self._feat_stride = [16.]
 
-    def __anchor_component(self, rpn_cls):
+    def _softmax(self, rpn_cls, name):
+        if name == 'rpn_cls_softmax':
+            shape = tf.shape(rpn_cls)
+            reshape_ = tf.reshape(rpn_cls, [-1, shape[-1]])
+            reshaped_score = tf.nn.softmax(reshape_, name=name)
+            return tf.reshape(reshaped_score, shape)
+
+    def _reshape(self, rpn_cls, num, name):
+        with tf.variable_scope(name):
+            to_caffe = tf.transpose(rpn_cls, [0, 3, 1, 2])
+            reshaped = tf.reshape(to_caffe, tf.concat(axis=0, values=[[self._batch_size], [num, -1], [tf.shape(rpn_cls)[2]]]))
+            to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
+            return to_tf
+
+    def _anchor_component(self, rpn_cls):
+        import pdb; pdb.set_trace()
         anchors, length, img_info = tf.py_func(generate_anchors_pre,
-                                    [rpn_cls, self._feat_stride],
+                                    [rpn_cls, self.feat_stride],
                                     [tf.float32, tf.int32, tf.float32], name="generate_anchors")
         
-        self.anchors.set_shape([None, 4])
-        self.length.set_shape([])
-        self.img_info.set_shape([None, None])
-        self.anchors = anchors
-        self.length = length
-        self.img_info = img_info
-        self.rpn_cls = rpn_cls
+        anchors.set_shape([None, 4])
+        length.set_shape([])
+        img_info.set_shape([None, None])
+        # self.anchors = anchors
+        # self.length = length
+        # self.img_info = img_info
+        # self.rpn_cls = rpn_cls
+        return anchors, length, img_info
 
     def proposal_layer(self, rpn_cls_prob, rpn_bbox_pred):
 
@@ -34,10 +50,9 @@ class arrange:
 
         rois.set_shape([None, 4])
         rpn_scores.set_shape([None, 1])
-        self.rpn_bbox_pred = rpn_bbox_pred
         return rois, rpn_scores
 
-    def _anchor_targets(self, rpn_cls_score):
+    def anchor_targets(self, rpn_cls_score):
 
 
         num = 9
