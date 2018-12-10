@@ -56,7 +56,7 @@ class network():
     def proposal_layer(self, rpn_cls_prob, rpn_bbox_pred):
 
         rois, rpn_scores = tf.py_func(proposal_layer,
-                                        [rpn_cls_prob, rpn_bbox_pred, self.img_info, self.anchors, self.length],
+                                        [rpn_cls_prob, rpn_bbox_pred, [224, 224], self.anchors, self.length],
                                         [tf.float32, tf.float32])
         rois.set_shape([None, 4])
         rpn_scores.set_shape([None, 1])
@@ -69,7 +69,7 @@ class network():
         num = 9
 
         rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = tf.py_func(anchor_target_layer,
-                                                                [rpn_cls_score, self._gt_boxes, self.img_info, [224, 224], self.feat_stride, self.anchors, self.length],
+                                                                [rpn_cls_score, self._gt_boxes, [224, 224], self.feat_stride, self.anchors, self.length],
                                                                 [tf.float32, tf.float32, tf.float32, tf.float32])
         rpn_labels.set_shape([1, 1, None, None])
         # rpn_labels.set_shape([None])
