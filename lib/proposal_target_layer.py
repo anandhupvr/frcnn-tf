@@ -9,6 +9,7 @@ def proposal_target_layer(rpn_rois, rpn_scores, gt_boxes, _num_classes):
     Assign object detection proposals to ground-truth targets. Produces proposal
     classification labels and bounding-box regression targets.
     """
+    import pdb; pdb.set_trace()
     nn = False
     # Proposal ROIs (0, x1, y1, x2, y2) coming from RPN
     # (i.e., rpn.proposal_layer.ProposalLayer), or any other source
