@@ -13,7 +13,6 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, img, _feat_stride, all_anchors,
     rpn_batchsize = 256
     rpn_positive_weight = -1
     A = num_anchors
-    import pdb; pdb.set_trace()
 
     total_anchors = all_anchors.shape[0]
     K = total_anchors / num_anchors
