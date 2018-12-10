@@ -1,13 +1,14 @@
 import numpy as np
-from lib.bbox_transform import bbox_transform
+from lib.bbox_transform import bbox_transform, bbox_transform_inv, clip_boxes
 from lib.cpu_nms import py_cpu_nms
 
 
-def proposal_layer(rpn_cls_prob, rpn_boox, im_info, anchors, num_anchors):
+def proposal_layer(rpn_cls_prob, rpn_bbox_pred, im_info, anchors, num_anchors):
 
     post_nms_topN = 2000
     pre_nms_topN = 12000
     nms_thresh = 0.7
+    import pdb; pdb.set_trace()
 
     # Get the scores and bounding boxes
     scores = rpn_cls_prob[:, :, :, num_anchors:]

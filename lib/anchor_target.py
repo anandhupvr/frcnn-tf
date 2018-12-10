@@ -13,7 +13,7 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img, _feat_stride, all
     rpn_batchsize = 256
     rpn_positive_weight = -1
     A = num_anchors
-    
+
     total_anchors = all_anchors.shape[0]
     K = total_anchors / num_anchors
     # im_info = im_info[0]
@@ -50,7 +50,7 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img, _feat_stride, all
     gt_max_overlaps = overlaps[gt_argmax_overlaps,
                                np.arange(overlaps.shape[1])]
     gt_argmax_overlaps = np.where(overlaps == gt_max_overlaps)[0]
-
+    import pdb; pdb.set_trace()
     if not rpn_clobber_positives:
         # assign bg labels first so that positive labels can clobber them
         # first set the negatives

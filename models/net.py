@@ -22,6 +22,7 @@ class network():
         self._anchor_targets = {}
         self._proposal_targets = {}
         self._predictions = {}
+        self._losses = {}
 
     def _softmax(self, rpn_cls, name):
         if name == 'rpn_cls_softmax':
@@ -48,7 +49,7 @@ class network():
         # self.anchors = anchors
         # self.length = length
         # self.img_info = img_info
-        # self.rpn_cls = rpn_cls
+        self.rpn_cls = rpn_cls
         # return anchors, length, img_info
         return self.anchors, self.length, self.img_info
 
@@ -85,7 +86,7 @@ class network():
 
         return rpn_labels
 
-    def _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, sigma=1.0, dim=[1]):
+    def _smooth_l1_loss(self, bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, sigma=1.0, dim=[1]):
         sigma_2 = sigma ** 2
         box_diff = bbox_pred - bbox_targets
         in_box_diff = bbox_inside_weights * box_diff
@@ -146,13 +147,14 @@ class network():
             tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_label_los))
 
         # RPN , bbox loss
-        rpn_bbox_pred = self.rpn_bbox_pred
+        rpn_bbox_pred = self._predictions["rpn_bbox_pred"]
         rpn_bbox_targets_los = self._anchor_targets['rpn_bbox_targets']
         rpn_bbox_inside_weights_los = self._anchor_targets['rpn_bbox_inside_weights']
+
         rpn_bbox_outside_weights_los = self._anchor_targets['rpn_bbox_outside_weights']
 
-        rpn_loss_box = _smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets_los, rpn_bbox_inside_weights_los,
-                            rpn_bbox_outside_weights, sigma=3.0, dim=[1, 2, 3])
+        rpn_loss_box = self._smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets_los, rpn_bbox_inside_weights_los,
+                            rpn_bbox_outside_weights_los, sigma=3.0, dim=[1, 2, 3])
         # loss = losses(fg_inds, bg_inds, rpn_bbox, rpn_cls, box)
         # RCNN , class loss
         # cls_score = self.rpn_cls
@@ -160,14 +162,14 @@ class network():
 
         cross_entropy = tf.reduce_mean(
                 tf.nn.sparse_softmax_cross_entropy_with_logits(
-                    logits=tf.reshape(cls_score, [-1, class_num]), labels=label))
+                    logits=tf.reshape(cls_score, [-1, self.class_num]), labels=label))
         # RCNN , bbox loss
         bbox_pred = self._predictions["bbox_pred"]
         bbox_targets = self._proposal_targets['bbox_targets']
         bbox_inside_weights = self._proposal_targets['bbox_inside_weights']
         bbox_outside_weights = self._proposal_targets['bbox_outside_weights']
 
-        loss_box = _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
+        loss_box = self._smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
 
 
         self._losses['cross_entropy'] = cross_entropy
@@ -185,7 +187,6 @@ class network():
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
 
             # vgg net
-            
             net = self.backbone()
 
             rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape = self.build_rpn(net, initializer)

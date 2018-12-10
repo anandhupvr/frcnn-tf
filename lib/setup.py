@@ -76,6 +76,7 @@ class arrange:
         return rpn_labels
 
     def _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, sigma=1.0, dim=[1]):
+        import pdb; pdb.set_trace()
         sigma_2 = sigma ** 2
         box_diff = bbox_pred - bbox_targets
         in_box_diff = bbox_inside_weights * box_diff
@@ -142,8 +143,8 @@ class arrange:
         rpn_bbox_inside_weights_los = self._anchor_targets['rpn_bbox_inside_weights']
         rpn_bbox_outside_weights_los = self._anchor_targets['rpn_bbox_outside_weights']
 
-        rpn_loss_box = _smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets_los, rpn_bbox_inside_weights_los,
-                            rpn_bbox_outside_weights, sigma=3.0, dim=[1, 2, 3])
+        rpn_loss_box = self._smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets_los, rpn_bbox_inside_weights_los,
+                            rpn_bbox_outside_weights_los, sigma=3.0, dim=[1, 2, 3])
         # loss = losses(fg_inds, bg_inds, rpn_bbox, rpn_cls, box)
         # RCNN , class loss
         # cls_score = self.rpn_cls
@@ -158,7 +159,7 @@ class arrange:
         bbox_inside_weights = self._proposal_targets['bbox_inside_weights']
         bbox_outside_weights = self._proposal_targets['bbox_outside_weights']
 
-        loss_box = _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
+        loss_box = self._smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
 
 
         self._losses['cross_entropy'] = cross_entropy

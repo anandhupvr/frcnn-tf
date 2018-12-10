@@ -33,7 +33,6 @@ saver = tf.train.Saver()
 with tf.Session(config = config) as sess:
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
-            import pdb; pdb.set_trace()
             data = data_loader.data_batch()
             img, gt_box, labels = data[0][0], data[0][1], data[0][2]
             loss = net.losses(bbox_pred, cls_score)
