@@ -4,7 +4,7 @@ from loader.utils import bbox_overlaps
 from lib.bbox_transform import bbox_transform
 
 
-def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img, _feat_stride, all_anchors, num_anchors=9):
+def anchor_target_layer(rpn_cls_score, gt_boxes, img, _feat_stride, all_anchors, num_anchors=9):
     """Same as the anchor target layer in original Fast/er RCNN """
     rpn_clobber_positives = False
     rpn_negative_overlap = 0.3
@@ -13,6 +13,7 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img, _feat_stride, all
     rpn_batchsize = 256
     rpn_positive_weight = -1
     A = num_anchors
+    import pdb; pdb.set_trace()
 
     total_anchors = all_anchors.shape[0]
     K = total_anchors / num_anchors
@@ -50,7 +51,6 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, img, _feat_stride, all
     gt_max_overlaps = overlaps[gt_argmax_overlaps,
                                np.arange(overlaps.shape[1])]
     gt_argmax_overlaps = np.where(overlaps == gt_max_overlaps)[0]
-    import pdb; pdb.set_trace()
     if not rpn_clobber_positives:
         # assign bg labels first so that positive labels can clobber them
         # first set the negatives
