@@ -44,7 +44,7 @@ class network():
                                     [tf.float32, tf.int32, tf.float32], name="generate_anchors")
         
         self.anchors.set_shape([None, 4])
-        self.length.set_shape([])
+        self.length = 9
         self.img_info.set_shape([None, None])
         # self.anchors = anchors
         # self.length = length
