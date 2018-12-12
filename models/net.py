@@ -169,24 +169,21 @@ class network():
             # pooled = self.roi_pool(net, rois, self.im_dims)
             pooled = self._crop_pool_layer(net, rois)
 
-            cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
-
-            # self._predictions["rpn_cls_score"] = rpn_cls_score
-            # self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
-            # self._predictions["rpn_cls_prob"] = rpn_cls_prob
-            # self._predictions["rpn_bbox_pred"] = rpn_bbox_pred
-            self._predictions["cls_score"] = cls_score
-            # self._predictions["cls_prob"] = cls_prob
-            self._predictions["bbox_pred"] = bbox_prediction
-            # self._predictions["rois"] = rois
-            self._predictions["labels"] = labels
-            self._predictions["bbox_targets"] = bbox_targets
-            self._predictions["bbox_inside_weights"] = bbox_inside_weights
-            self._predictions["bbox_outside_weights"] = bbox_outside_weights
+            # cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
+            test = self.build_predictions(pooled, initializer, initializer_bbox)
 
 
-            # return rois, cls_prob, bbox_pred, cls_score
-            return cls_score, cls_prob, bbox_prediction
+            # self._predictions["cls_score"] = cls_score
+            # self._predictions["bbox_pred"] = bbox_prediction
+
+            # self._predictions["labels"] = labels
+            # self._predictions["bbox_targets"] = bbox_targets
+            # self._predictions["bbox_inside_weights"] = bbox_inside_weights
+            # self._predictions["bbox_outside_weights"] = bbox_outside_weights
+
+
+            # return cls_score, cls_prob, bbox_prediction
+            return test
 
     def backbone(self):
         num_anchors = 9
@@ -331,26 +328,26 @@ class network():
         return slim.max_pool2d(crops, [2, 2], padding='SAME')
 
 
-
-
     def build_predictions(self, pooled, initializer, initializer_bbox):
-        fc7 = tf.contrib.layers.flatten(pooled)
-        cls_score = tf.layers.conv2d(fc7,
-                                    filters=1,
-                                    kernel_size=(1, 1),
-                                    activation='sigmoid',
-                                    kernel_initializer=initializer,
-                                    name='rpn_out_classification')
-        cls_prob = tf.nn.softmax(cls_score)
 
-        bbox_prediction = tf.layers.conv2d(fc7,
-                                    filters=4,
-                                    kernel_size=(1, 1),
-                                    activation='linear',
-                                    kernel_initializer=initializer_bbox,
-                                    name='rpn_out_regression')
+        fc7 = tf.contrib.layers.flatten(pooled)
+        # cls_score = tf.layers.conv2d(fc7,
+        #                             filters=1,
+        #                             kernel_size=(1, 1),
+        #                             activation='sigmoid',
+        #                             kernel_initializer=initializer,
+        #                             name='rpn_out_classification')
+        # cls_prob = tf.nn.softmax(cls_score)
+
+        # bbox_prediction = tf.layers.conv2d(fc7,
+        #                             filters=4,
+        #                             kernel_size=(1, 1),
+        #                             activation='linear',
+        #                             kernel_initializer=initializer_bbox,
+        #                             name='rpn_out_regression')
         
-        return cls_score, cls_prob, bbox_prediction
+        # return cls_score, cls_prob, bbox_prediction
+        return fc7
 
 
     def getPlaceholders(self):
