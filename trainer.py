@@ -34,11 +34,11 @@ with tf.Session(config = config) as sess:
         for _ in range(len(open("train.txt", "r").readlines())):
             data = data_loader.data_batch()
             img, gt_box, im_info = data[0][0], data[0][1], data[0][2]
-            loss = net.losses()
-            train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
+            # loss = net.losses()
+            # train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
             sess.run(init_op) 
             # sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box, im_dims:im_info})
-            ls_val = sess.run(loss, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
+            ls_val = sess.run(bbox_pred, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
             print ('loss : {}       --> : {}'.format(ls_val, _))
         print ('loss : {}      epoch --> : {}'.format(ls_val, i))
     if i%100 == 0:
