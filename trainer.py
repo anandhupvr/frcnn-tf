@@ -33,6 +33,7 @@ with tf.Session(config = config) as sess:
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
             data = data_loader.data_batch()
+            import pdb; pdb.set_trace()
             img, gt_box, im_info = data[0][0], data[0][1], data[0][2]
             # loss = net.losses()
             # train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)

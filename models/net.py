@@ -334,6 +334,7 @@ class network():
 
 
     def build_predictions(self, pooled, initializer, initializer_bbox):
+        import pdb; pdb.set_trace()
         fc6 = tf.layers.conv2d(pooled, 4096, [7, 7], padding='VALID')
         fc7 = tf.layers.conv2d(fc6, 4096, [1, 1])
         cls_score = tf.layers.conv2d(fc7,
