@@ -334,7 +334,7 @@ class network():
 
 
     def build_predictions(self, pooled, initializer, initializer_bbox):
-        fc7 = tf.contrib.layers.flatten(pooled_features)
+        fc7 = tf.contrib.layers.flatten(pooled)
         cls_score = tf.layers.conv2d(fc7,
                                     filters=1,
                                     kernel_size=(1, 1),
