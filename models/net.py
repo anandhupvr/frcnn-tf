@@ -1,10 +1,12 @@
 import numpy as np
 import tensorflow as tf
-from lib.anchor_pre import generate_anchors_pre
-from lib.proposal_layer import proposal_layer
-from lib.anchor_target import anchor_target_layer
-from lib.proposal_target_layer import proposal_target_layer
+# from lib.anchor_pre import generate_anchors_pre
+# from lib.proposal_layer import proposal_layer
+# from lib.anchor_target import anchor_target_layer
+from lib.proposal_target_layer import proposal_target_layer_py
 import numpy.random as npr
+from lib.targets import anchor_target_layer_python
+from lib.proposal_layer import proposal_layer_py
 slim = tf.contrib.slim
 
 class network():
@@ -12,7 +14,8 @@ class network():
         self._batch_size = 1
 
         self.x = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, None, None, 3])
-        self._gt_boxes = tf.placeholder(tf.float32, shape=[None, 4])
+        self._gt_boxes = tf.placeholder(tf.float32, shape=[None, 5])
+        self.im_dims = tf.placeholder(tf.float32, shape=[2])
         # self.im_info = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 2])
         self.box = []
         self.class_num = 1
@@ -23,7 +26,6 @@ class network():
         self._proposal_targets = {}
         self._predictions = {}
         self._losses = {}
-
     def _softmax(self, rpn_cls, name):
         if name == 'rpn_cls_softmax':
             shape = tf.shape(rpn_cls)
@@ -37,54 +39,6 @@ class network():
             reshaped = tf.reshape(to_caffe, tf.concat(axis=0, values=[[self._batch_size], [num, -1], [tf.shape(rpn_cls)[2]]]))
             to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
             return to_tf
-
-    def _anchor_component(self, rpn_cls):
-        self.anchors, self.length, self.img_info = tf.py_func(generate_anchors_pre,
-                                    [rpn_cls, self.feat_stride],
-                                    [tf.float32, tf.int32, tf.float32], name="generate_anchors")
-        
-        self.anchors.set_shape([None, 4])
-        self.length = 9
-        self.img_info.set_shape([None, None])
-        # self.anchors = anchors
-        # self.length = length
-        # self.img_info = img_info
-        self.rpn_cls = rpn_cls
-        # return anchors, length, img_info
-        return self.anchors, self.length, self.img_info
-
-    def proposal_layer(self, rpn_cls_prob, rpn_bbox_pred):
-
-        rois, rpn_scores = tf.py_func(proposal_layer,
-                                        [rpn_cls_prob, rpn_bbox_pred, [224, 224], self.anchors, self.length],
-                                        [tf.float32, tf.float32])
-        rois.set_shape([None, 4])
-        rpn_scores.set_shape([None, 1])
-        self.rpn_bbox_pred = rpn_bbox_pred
-        return rois, rpn_scores
-
-    def anchor_targets(self, rpn_cls_score):
-
-
-        num = 9
-
-        rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = tf.py_func(anchor_target_layer,
-                                                                [rpn_cls_score, self._gt_boxes, [224, 224], self.feat_stride, self.anchors, self.length],
-                                                                [tf.float32, tf.float32, tf.float32, tf.float32])
-        rpn_labels.set_shape([1, 1, None, None])
-        # rpn_labels.set_shape([None])
-        rpn_bbox_targets.set_shape([1, None, None, 9 * 4])
-        rpn_bbox_inside_weights.set_shape([1, None, None, 9 * 4])
-        rpn_bbox_outside_weights.set_shape([1, None, None, 9 * 4])
-
-        rpn_labels = tf.to_int32(rpn_labels, name="to_int32")
-        self._anchor_targets['rpn_labels'] = rpn_labels
-        self._anchor_targets['rpn_bbox_targets'] = rpn_bbox_targets
-        self._anchor_targets['rpn_bbox_inside_weights'] = rpn_bbox_inside_weights
-        self._anchor_targets['rpn_bbox_outside_weights'] = rpn_bbox_outside_weights
-
-
-        return rpn_labels
 
     def _smooth_l1_loss(self, bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, sigma=1.0, dim=[1]):
         sigma_2 = sigma ** 2
@@ -100,86 +54,94 @@ class network():
         ))
         return loss_box
 
-    def _proposal_target_layer(self,rois, roi_scores):
-        rois, roi_scores, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = tf.py_func(proposal_target_layer,
-                                                                                            [rois, roi_scores, self._gt_boxes, self.class_num],
-                                                                                            [tf.float32, tf.float32, tf.float32, tf.float32, tf.float32, tf.float32])
-        rois.set_shape([1, 4])
-        roi_scores.set_shape([1])
-        labels.set_shape([1, 1])
-        bbox_targets.set_shape([1, 1 * 4])
-        bbox_inside_weights.set_shape([1, 1 * 4])
-        bbox_outside_weights.set_shape([1, 1 * 4])
 
-        self._proposal_targets['rois'] = rois
-        self._proposal_targets['labels'] = tf.to_int32(labels, name='to_int32')
-        self._proposal_targets['bbox_targets'] = bbox_targets
-        self._proposal_targets['bbox_inside_weights'] = bbox_inside_weights
-        self._proposal_targets['bbox_outside_weights'] = bbox_outside_weights
-
-
-        return rois, roi_scores
-
-    def _crop_pool_layer(self, bottom, rois):
-        batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
-        # Get the normalized coordinates of bboxes
-        bottom_shape = tf.shape(bottom)
-        height = (tf.to_float(bottom_shape[1]) - 1.) * np.float32(self.feat_stride[0])
-        width = (tf.to_float(bottom_shape[2]) - 1.) * np.float32(self.feat_stride[0])
-        x1 = tf.slice(rois, [0, 1], [-1, 1], name="x1") / width
-        y1 = tf.slice(rois, [0, 2], [-1, 1], name="y1") / height
-        x2 = tf.slice(rois, [0, 3], [-1, 1], name="x2") / width
-        y2 = tf.slice(rois, [0, 4], [-1, 1], name="y2") / height
-        # Won't be backpropagated to rois anyway, but to save time
-        bboxes = tf.stop_gradient(tf.concat([y1, x1, y2, x2], axis=1))
-        pre_pool_size = 7 * 2
-        crops = tf.image.crop_and_resize(bottom, bboxes, tf.to_int32(batch_ids), [pre_pool_size, pre_pool_size], name="crops")
-
-        return slim.max_pool2d(crops, [2, 2], padding='SAME')
-
-    def losses(self, bbox_pred, cls_score):
-        rpn_cls_score = tf.reshape(self.rpn_cls, [-1, 2])
-        rpn_label_los = tf.reshape(self._anchor_targets['rpn_labels'], [-1])
-        rpn_select = tf.where(tf.not_equal(rpn_label_los, -1))
+    def rpn_cls(self):
+        rpn_cls_score = tf.reshape(self.rpn_cls_score_reshape, [-1, 2])
+        rpn_label = tf.reshape(self.rpn_labels, [-1])
+        rpn_select = tf.where(tf.not_equal(rpn_label, -1))
         rpn_cls_score = tf.reshape(tf.gather(rpn_cls_score, rpn_select), [-1, 2])
-        rpn_label_los = tf.reshape(tf.gather(rpn_label_los, rpn_select), [-1])
+        rpn_label = tf.reshape(tf.gather(rpn_label, rpn_select), [-1])
         rpn_cross_entropy = tf.reduce_mean(
-            tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_label_los))
+                tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_label))
+        return rpn_cross_entropy
 
-        # RPN , bbox loss
-        rpn_bbox_pred = self._predictions["rpn_bbox_pred"]
-        rpn_bbox_targets_los = self._anchor_targets['rpn_bbox_targets']
-        rpn_bbox_inside_weights_los = self._anchor_targets['rpn_bbox_inside_weights']
+    def rpn_bbox(self):
+        rpn_bbox_pred = self.rpn_bbox_pred
+        rpn_bbox_targets = self.rpn_bbox_targets
+        rpn_bbox_inside_weights = self.rpn_bbox_inside_weights
+        rpn_bbox_outside_weights = self.rpn_bbox_outside_weights
 
-        rpn_bbox_outside_weights_los = self._anchor_targets['rpn_bbox_outside_weights']
+        rpn_loss_box = self._smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights,
+                            rpn_bbox_outside_weights, sigma=3.0, dim=[1, 2, 3])
 
-        rpn_loss_box = self._smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets_los, rpn_bbox_inside_weights_los,
-                            rpn_bbox_outside_weights_los, sigma=3.0, dim=[1, 2, 3])
-        # loss = losses(fg_inds, bg_inds, rpn_bbox, rpn_cls, box)
-        # RCNN , class loss
-        # cls_score = self.rpn_cls
-        label = tf.reshape(self._proposal_targets['labels'], [-1])
+        return rpn_loss_box
+
+    def rcnn_cls_loss(self):
+        cls_score = self._predictions["cls_score"]
+        label = tf.reshape(self._predictions["labels"], [-1])
+
 
         cross_entropy = tf.reduce_mean(
-                tf.nn.sparse_softmax_cross_entropy_with_logits(
-                    logits=tf.reshape(cls_score, [-1, self.class_num]), labels=label))
-        # RCNN , bbox loss
+            tf.nn.sparse_softmax_cross_entropy_with_logits(
+                logits=tf.reshape(cls_score, [-1, self.class_num]), labels=label))
+        return cross_entropy
+
+
+
+    def rcnn_bbox_los(self):
         bbox_pred = self._predictions["bbox_pred"]
-        bbox_targets = self._proposal_targets['bbox_targets']
-        bbox_inside_weights = self._proposal_targets['bbox_inside_weights']
-        bbox_outside_weights = self._proposal_targets['bbox_outside_weights']
+        bbox_targets = self._predictions["bbox_targets"]
+        bbox_inside_weights = self._predictions["bbox_inside_weights"]
+        bbox_outside_weights = self._predictions["bbox_outside_weights"]
 
         loss_box = self._smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
 
+        return loss_box
 
-        self._losses['cross_entropy'] = cross_entropy
-        self._losses['loss_box'] = loss_box
-        self._losses['rpn_cross_entropy'] = rpn_cross_entropy
-        self._losses['rpn_loss_box'] = rpn_loss_box
-        self.loss = cross_entropy + loss_box + rpn_cross_entropy + rpn_loss_box
+    def losses(self):
+        rpn_cls_loss = self.rpn_cls()
+        rpn_bbox_loss = self.rpn_bbox()
         
-        return self.loss
+        rcnn_bbox = self.rcnn_bbox_los()
+        rcnn_cls = self.rcnn_cls_loss()
+        # loss = rpn_bbox_loss + rpn_cls_loss + rcnn_bbox + rcnn_cls
+        loss = rpn_cls_loss + rpn_bbox_loss + rcnn_bbox + rcnn_cls
+ 
+        return loss
 
+
+    def anchor_target_layer(self, rpn_cls_score, _gt_boxes, im_dims, feat_stride):
+        rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = \
+        tf.py_func(anchor_target_layer_python, [rpn_cls_score, _gt_boxes, im_dims, feat_stride],
+            [tf.float32, tf.float32, tf.float32, tf.float32])
+
+        rpn_labels = tf.convert_to_tensor(tf.cast(rpn_labels, tf.int32), name='rpn_labels')
+        rpn_bbox_targets = tf.convert_to_tensor(rpn_bbox_targets, name='rpn_bbox_targets')
+        rpn_bbox_inside_weights = tf.convert_to_tensor(rpn_bbox_inside_weights, name='rpn_bbox_inside_weights')
+        rpn_bbox_outside_weights = tf.convert_to_tensor(rpn_bbox_outside_weights, name='rpn_bbox_outside_weights')
+
+        return rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights
+
+
+    def proposal_layer(self, rpn_bbox_cls_prob, rpn_bbox_pred, im_dims, feat_strides):
+        blob = tf.py_func(proposal_layer_py,
+                        [rpn_bbox_cls_prob, rpn_bbox_pred, im_dims, feat_strides],
+                        [tf.float32])
+        blob = tf.reshape(blob, [-1, 5])
+
+        return blob
+
+    def proposal_target_layer(self, rpn_rois, _gt_boxes, num_classes):
+        rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = tf.py_func( proposal_target_layer_py,
+                                                                                            [ rpn_rois, _gt_boxes, num_classes],
+                                                                                            [tf.float32, tf.int32, tf.float32, tf.float32, tf.float32])
+        rois = tf.reshape( rois, [-1, 5], name = 'rois')
+        labels = tf.convert_to_tensor( tf.cast(labels, tf.int32),name = 'labels')
+        bbox_targets = tf.convert_to_tensor( bbox_targets, name = 'bbox_targets')
+        bbox_inside_weights = tf.convert_to_tensor( bbox_inside_weights, name = 'bbox_inside_weights')
+        bbox_outside_weights = tf.convert_to_tensor( bbox_outside_weights, name = 'bbox_outside_weights')
+        
+        return rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights
 
     def build_network(self):
         with tf.variable_scope('vgg_16'):
@@ -189,25 +151,42 @@ class network():
             # vgg net
             net = self.backbone()
 
-            rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape = self.build_rpn(net, initializer)
-            anchors, length, img_info = self._anchor_component(rpn_cls_score)
+            self.rpn_cls_prob, self.rpn_bbox_pred, self.rpn_cls_score, self.rpn_cls_score_reshape = self.build_rpn(net, initializer)
+
+            self.rpn_labels, self.rpn_bbox_targets, self.rpn_bbox_inside_weights, self.rpn_bbox_outside_weights = \
+                self.anchor_target_layer( self.rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
+
+            blob = self.proposal_layer(self.rpn_cls_prob, self.rpn_bbox_pred, self.im_dims,self.feat_stride)
+
+
+            rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
+
             # build proposals
-            rois = self.build_proposals(rpn_cls_prob, rpn_bbox_pred, rpn_cls_score)
+            # rois = self.build_proposals(rpn_cls_prob, rpn_bbox_pred, rpn_cls_score)
 
-            # build predictions 
-            cls_score, cls_prob, bbox_pred = self.build_predictions(net, rois, initializer, initializer_bbox)
+            # # build predictions 
+            # cls_score, cls_prob, bbox_pred = self.build_predictions(net, rois, initializer, initializer_bbox)
+            # pooled = self.roi_pool(net, rois, self.im_dims)
+            pooled = self._crop_pool_layer(net, rois)
 
+            cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
 
-            self._predictions["rpn_cls_score"] = rpn_cls_score
-            self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
-            self._predictions["rpn_cls_prob"] = rpn_cls_prob
-            self._predictions["rpn_bbox_pred"] = rpn_bbox_pred
+            # self._predictions["rpn_cls_score"] = rpn_cls_score
+            # self._predictions["rpn_cls_score_reshape"] = rpn_cls_score_reshape
+            # self._predictions["rpn_cls_prob"] = rpn_cls_prob
+            # self._predictions["rpn_bbox_pred"] = rpn_bbox_pred
             self._predictions["cls_score"] = cls_score
-            self._predictions["cls_prob"] = cls_prob
-            self._predictions["bbox_pred"] = bbox_pred
-            self._predictions["rois"] = rois
+            # self._predictions["cls_prob"] = cls_prob
+            self._predictions["bbox_pred"] = bbox_prediction
+            # self._predictions["rois"] = rois
+            self._predictions["labels"] = labels
+            self._predictions["bbox_targets"] = bbox_targets
+            self._predictions["bbox_inside_weights"] = bbox_inside_weights
+            self._predictions["bbox_outside_weights"] = bbox_outside_weights
 
-            return rois, cls_prob, bbox_pred, cls_score
+
+            # return rois, cls_prob, bbox_pred, cls_score
+            return cls_score, cls_prob, bbox_prediction
 
     def backbone(self):
         num_anchors = 9
@@ -263,7 +242,6 @@ class network():
                                             pool_size=(2, 2),
                                             strides=(2, 2),
                                             name="vgg/pool_3")
-
 
         conv8 = tf.layers.conv2d(pool3,
                                     filters=512,
@@ -333,27 +311,37 @@ class network():
 
         return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape
 
-    def build_proposals(self, rpn_cls_prob, rpn_bbox_pred, rpn_cls_score):
-        
-        rois, roi_scores = self.proposal_layer(rpn_cls_prob, rpn_bbox_pred)
 
-        rpn_labels = self.anchor_targets(rpn_cls_score)
 
-        with tf.control_dependencies([rpn_labels]):
-            rois, _ = self._proposal_target_layer(rois, roi_scores)
+    def _crop_pool_layer(self, bottom, rois):
+        batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
+        # Get the normalized coordinates of bboxes
+        bottom_shape = tf.shape(bottom)
+        height = (tf.to_float(bottom_shape[1]) - 1.) * np.float32(self.feat_stride[0])
+        width = (tf.to_float(bottom_shape[2]) - 1.) * np.float32(self.feat_stride[0])
+        x1 = tf.slice(rois, [0, 1], [-1, 1], name="x1") / width
+        y1 = tf.slice(rois, [0, 2], [-1, 1], name="y1") / height
+        x2 = tf.slice(rois, [0, 3], [-1, 1], name="x2") / width
+        y2 = tf.slice(rois, [0, 4], [-1, 1], name="y2") / height
+        # Won't be backpropagated to rois anyway, but to save time
+        bboxes = tf.stop_gradient(tf.concat([y1, x1, y2, x2], axis=1))
+        pre_pool_size = 7 * 2
+        crops = tf.image.crop_and_resize(bottom, bboxes, tf.to_int32(batch_ids), [pre_pool_size, pre_pool_size], name="crops")
 
-        return rois
+        return slim.max_pool2d(crops, [2, 2], padding='SAME')
 
-    def build_predictions(self, net, rois, initializer, initializer_bbox):
 
-        pool5 = self._crop_pool_layer(net, rois)
-        fc6 = tf.layers.conv2d(pool5, 4096, [7, 7], padding='VALID')
+
+
+    def build_predictions(self, pooled, initializer, initializer_bbox):
+
+        fc6 = tf.layers.conv2d(pooled, 4096, [7, 7], padding='VALID')
         fc7 = tf.layers.conv2d(fc6, 4096, [1, 1])
         cls_score = tf.layers.conv2d(fc7,
                                     filters=1,
                                     kernel_size=(1, 1),
                                     activation='sigmoid',
-                                    kernel_initializer='uniform',
+                                    kernel_initializer=initializer,
                                     name='rpn_out_classification')
         cls_prob = tf.nn.softmax(cls_score)
 
@@ -361,13 +349,11 @@ class network():
                                     filters=4,
                                     kernel_size=(1, 1),
                                     activation='linear',
-                                    kernel_initializer='uniform',
+                                    kernel_initializer=initializer_bbox,
                                     name='rpn_out_regression')
         
         return cls_score, cls_prob, bbox_prediction
 
-    def getPlaceholders(self):
-        return self.x, self._gt_boxes
 
-    def get_loss(self):
-        self._losses
+    def getPlaceholders(self):
+        return self.x, self._gt_boxes, self.im_dims

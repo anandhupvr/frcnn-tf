@@ -174,7 +174,7 @@ def bbox_overlaps(boxes, query_boxes):
 
                 if ih > 0:
                     ua = float((boxes[n, 2] - boxes[n, 0] + 1) * (boxes[n, 3] - boxes[n, 1] + 1) + box_area - iw * ih)
-                    overlaps[n, k] = iw * ih / ua
+                    overlaps[n, k] = (iw * ih / ua)
 
     return overlaps
 
@@ -255,3 +255,83 @@ def clip_boxes_tf(boxes, im_info):
     b2 = tf.maximum(tf.minimum(boxes[:, 2], im_info[1] - 1), 0)
     b3 = tf.maximum(tf.minimum(boxes[:, 3], im_info[0] - 1), 0)
     return tf.stack([b0, b1, b2, b3], axis=1)
+
+def get_iou(bb1, bb2):
+    """
+    Calculate the Intersection over Union (IoU) of two bounding boxes.
+
+    Parameters
+    ----------
+    bb1 : dict
+        Keys: {'x1', 'x2', 'y1', 'y2'}
+        The (x1, y1) position is at the top left corner,
+        the (x2, y2) position is at the bottom right corner
+    bb2 : dict
+        Keys: {'x1', 'x2', 'y1', 'y2'}
+        The (x, y) position is at the top left corner,
+        the (x2, y2) position is at the bottom right corner
+
+    Returns
+    -------
+    float
+        in [0, 1]
+    """
+    assert bb1['x1'] < bb1['x2']
+    assert bb1['y1'] < bb1['y2']
+    assert bb2['x1'] < bb2['x2']
+    assert bb2['y1'] < bb2['y2']
+
+    # determine the coordinates of the intersection rectangle
+    x_left = max(bb1['x1'], bb2['x1'])
+    y_top = max(bb1['y1'], bb2['y1'])
+    x_right = min(bb1['x2'], bb2['x2'])
+    y_bottom = min(bb1['y2'], bb2['y2'])
+
+    if x_right < x_left or y_bottom < y_top:
+        return 0.0
+
+    # The intersection of two axis-aligned bounding boxes is always an
+    # axis-aligned bounding box
+    intersection_area = (x_right - x_left) * (y_bottom - y_top)
+
+    # compute the area of both AABBs
+    bb1_area = (bb1['x2'] - bb1['x1']) * (bb1['y2'] - bb1['y1'])
+    bb2_area = (bb2['x2'] - bb2['x1']) * (bb2['y2'] - bb2['y1'])
+
+    # compute the intersection over union by taking the intersection
+    # area and dividing it by the sum of prediction + ground-truth
+    # areas - the interesection area
+    iou = intersection_area / float(bb1_area + bb2_area - intersection_area)
+    assert iou >= 0.0
+    assert iou <= 1.0
+    return iou
+
+
+
+def _interval_overlap(interval_a, interval_b):
+    x1, x2 = interval_a
+    x3, x4 = interval_b
+
+    if x3 < x1:
+        if x4 < x1:
+            return 0
+        else:
+            return min(x2,x4) - x1
+    else:
+        if x2 < x3:
+             return 0
+        else:
+            return min(x2,x4) - x3     
+
+def compute_iou(box1, box2):
+    intersect_w = _interval_overlap([box1[0], box1[2]], [box2[0], box2[2]])
+    intersect_h = _interval_overlap([box1[1], box1[3]], [box2[1], box2[3]])  
+    
+    intersect = intersect_w * intersect_h
+
+    w1, h1 = box1[2]-box1[0], box1[3]-box1[1]
+    w2, h2 = box2[2]-box2[0], box2[3]-box2[0]
+    
+    union = w1*h1 + w2*h2 - intersect
+    
+    return float(intersect) / union

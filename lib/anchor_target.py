@@ -31,7 +31,6 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, img, _feat_stride, all_anchors,
         (all_anchors[:, 2] < img[1] + _allowed_border) &  # width
         (all_anchors[:, 3] < img[0] + _allowed_border)  # height
     )[0]
-
     # keep only inside anchors
     anchors = all_anchors[inds_inside, :]
 
