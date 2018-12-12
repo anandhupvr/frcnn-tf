@@ -334,9 +334,7 @@ class network():
 
 
     def build_predictions(self, pooled, initializer, initializer_bbox):
-        import pdb; pdb.set_trace()
-        fc6 = tf.layers.conv2d(pooled, 4096, [7, 7], padding='VALID')
-        fc7 = tf.layers.conv2d(fc6, 4096, [1, 1])
+        fc7 = tf.contrib.layers.flatten(pooled_features)
         cls_score = tf.layers.conv2d(fc7,
                                     filters=1,
                                     kernel_size=(1, 1),
@@ -345,7 +343,7 @@ class network():
                                     name='rpn_out_classification')
         cls_prob = tf.nn.softmax(cls_score)
 
-        bbox_prediction = tf.layers.conv2d(fc6,
+        bbox_prediction = tf.layers.conv2d(fc7,
                                     filters=4,
                                     kernel_size=(1, 1),
                                     activation='linear',
