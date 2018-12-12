@@ -161,16 +161,10 @@ class network():
 
             rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
 
-            # build proposals
-            # rois = self.build_proposals(rpn_cls_prob, rpn_bbox_pred, rpn_cls_score)
 
-            # # build predictions 
-            # cls_score, cls_prob, bbox_pred = self.build_predictions(net, rois, initializer, initializer_bbox)
-            # pooled = self.roi_pool(net, rois, self.im_dims)
-            pooled = self._crop_pool_layer(net, rois)
+            # pooled = self._crop_pool_layer(net, rois)
 
             # cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
-            test = self.build_predictions(pooled, initializer, initializer_bbox)
 
 
             # self._predictions["cls_score"] = cls_score
@@ -183,7 +177,7 @@ class network():
 
 
             # return cls_score, cls_prob, bbox_prediction
-            return test
+            return rois
 
     def backbone(self):
         num_anchors = 9
