@@ -15,7 +15,9 @@ num_epo = 500
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
 net = network()
-cls_score, cls_prob, bbox_pred = net.build_network()
+# cls_score, cls_prob, bbox_pred = net.build_network()
+test = net.build_network()
+
 x, gt_boxes, im_dims = net.getPlaceholders()
 
 # x, gt_boxes, im_dims = net.getPlaceholders()
@@ -39,7 +41,7 @@ with tf.Session(config = config) as sess:
             # train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
             sess.run(init_op) 
             # sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box, im_dims:im_info})
-            ls_val = sess.run(bbox_pred, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
+            ls_val = sess.run(test, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
             print ('loss : {}       --> : {}'.format(ls_val, _))
         print ('loss : {}      epoch --> : {}'.format(ls_val, i))
     if i%100 == 0:
