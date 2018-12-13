@@ -71,7 +71,7 @@ class network():
             cnn = vgg_16.inference(self.x)
             features = vgg_16.get_features()
 
-            rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape = self.build_rpn(feature, initializer)
+            rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape = self.build_rpn(features, initializer)
             # rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
 
             # self.rpn_labels, self.rpn_bbox_targets, self.rpn_bbox_inside_weights, self.rpn_bbox_outside_weights = \
