@@ -15,7 +15,7 @@ num_epo = 500
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
 x = tf.placeholder(dtype=tf.float32, shape=[1, None, None, 3])
-# net = network()
+net = network()
 # cls_score, cls_prob, bbox_pred = net.build_network()
 # test = net.build_network()
 im = np.expand_dims(cv2.imread('/home/christie/junk/frcnn-tf/dog.jpg'), axis=0)
