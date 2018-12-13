@@ -29,8 +29,8 @@ features = vgg_16.get_features()
 # x, gt_boxes, im_dims = net.getPlaceholders()
 
 # x, gt_boxes, im_dims = net.getPlaceholders()
-config = tf.ConfigProto()
-config.gpu_options.allocator_type = 'BFC'
+# config = tf.ConfigProto()
+# config.gpu_options.allocator_type = 'BFC'
 
 # rpn_net = RPN()
 # rpn_cls, rpn_bbox, net = rpn_net.vgg_16()
@@ -39,7 +39,7 @@ config.gpu_options.allocator_type = 'BFC'
 # saver = tf.train.Saver()
 
 init_op = tf.global_variables_initializer()
-with tf.Session(config = config) as sess:
+with tf.Session() as sess:
     sess.run(init_op)
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
