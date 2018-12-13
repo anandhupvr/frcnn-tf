@@ -22,7 +22,7 @@ im = np.expand_dims(cv2.imread('/home/christie/junk/frcnn-tf/dog.jpg'), axis=0)
 vgg_16 = vgg.ConvNetVgg16('/home/christie/junk/frcnn-tf/vgg16.npy')
 cnn = vgg_16.inference(x)
 features = vgg_16.get_features()
-test = net.build_network(features)
+# test = net.build_network(features)
 
 
 # x, gt_boxes, im_dims = net.getPlaceholders()
@@ -48,7 +48,7 @@ with tf.Session(config = config) as sess:
             import pdb; pdb.set_trace()
 
             sess.run(init_op)
-            feat = sess.run(test, feed_dict={x:im})
+            feat = sess.run(features, feed_dict={x:im})
             # sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box, im_dims:im_info})
             # ls_val = sess.run(test, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
             # print ('loss : {}       --> : {}'.format(ls_val, _))
