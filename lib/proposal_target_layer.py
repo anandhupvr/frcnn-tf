@@ -17,7 +17,7 @@ def proposal_target_layer_py(rpn_rois, gt_boxes, num_classes):
     all_rois = np.vstack((all_rois, np.hstack((zeros, gt_boxes[:,:-1])))) # append gt_boxes at the last row of all_rois 
     all_rois = all_rois.astype(np.float32)
     print ("all_rois.shape", all_rois.shape)
-
+    import pdb; pdb.set_trace()
     num_images = 1 
     rois_per_image = 128
     fg_rois_per_image = np.round( 0.25 * rois_per_image).astype(np.int32)
