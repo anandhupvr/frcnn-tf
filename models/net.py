@@ -147,7 +147,6 @@ class network():
                                     activation='linear',
                                     kernel_initializer = initializer,
                                     name='rpn_out_regre')
-        rpn_shape = rpn_cls.shape
         num = 2
         rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
         
