@@ -150,7 +150,7 @@ class network():
 
         rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors * 2, "rpn_cls_prob")
 
-        return rpn_bbox_pred, rpn_cls_score
+        return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score
   
     def _crop_pool_layer(self, bottom, rois):
         batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
