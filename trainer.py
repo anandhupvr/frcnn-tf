@@ -15,18 +15,13 @@ net = network()
 
 rpn_cls_score_reshape, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights = net.build_network()
 
-
-
-
 x, gt_boxes, im_dims = net.getPlaceholders()
-
-
 
 saver = tf.train.Saver()
 
-init_op = tf.global_variables_initializer()
+# init_op = tf.global_variables_initializer()
 with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
-    sess.run(init_op)
+    sess.run(tf.global_variables_initializer())
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
             data = data_loader.data_batch()
