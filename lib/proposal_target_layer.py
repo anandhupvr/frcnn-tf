@@ -11,17 +11,17 @@ def proposal_target_layer_py(rpn_rois, gt_boxes, num_classes):
 
     # Proposal ROIs (0, x1, y1, x2, y2) come from RPN blob
     all_rois = rpn_rois
-    print ("all_rois.shape", all_rois.shape)
+    # print ("all_rois.shape", all_rois.shape)
     # Include ground-truth boxes in the set of candidates rois
     zeros = np.zeros((gt_boxes.shape[0],1), dtype=gt_boxes.dtype)
     all_rois = np.vstack((all_rois, np.hstack((zeros, gt_boxes[:,:-1])))) # append gt_boxes at the last row of all_rois 
     all_rois = all_rois.astype(np.float32)
-    print ("all_rois.shape", all_rois.shape)
+    # print ("all_rois.shape", all_rois.shape)
     num_images = 1 
     rois_per_image = 128
     fg_rois_per_image = np.round( 0.25 * rois_per_image).astype(np.int32)
     # sample rois with classfication labels and bounding box regression targets
-    print ("fg_rois_per_image", fg_rois_per_image, "rois_per_image", rois_per_image)
+    # print ("fg_rois_per_image", fg_rois_per_image, "rois_per_image", rois_per_image)
     labels, rois, bbox_targets, bbox_inside_weights = sample_rois( all_rois, gt_boxes, fg_rois_per_image, rois_per_image, num_classes )
 
     rois = rois.reshape(-1,5)
@@ -79,8 +79,8 @@ def sample_rois(all_rois, gt_boxes, fg_rois_per_image, rois_per_image, num_class
     bbox_target_data = compute_targets(rois[:,1:5], gt_boxes[ gt_assignment[keep_inds], :4], labels)
     bbox_targets, bbox_inside_weights = get_bbox_regression_labels( bbox_target_data, num_classes) 
 
-    print ("bbox_targets.shape", bbox_targets.shape)
-    print ("bbox_inside_weights.shape", bbox_inside_weights.shape)
+    # print ("bbox_targets.shape", bbox_targets.shape)
+    # print ("bbox_inside_weights.shape", bbox_inside_weights.shape)
 
     return labels, rois, bbox_targets, bbox_inside_weights
 
