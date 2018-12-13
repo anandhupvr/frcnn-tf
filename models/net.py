@@ -171,7 +171,7 @@ class network():
             # net = self.backbone()
 
             # self.rpn_cls_prob, self.rpn_bbox_pred, self.rpn_cls_score, self.rpn_cls_score_reshape = self.build_rpn(feature, initializer)
-            rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
+            # rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
 
             # self.rpn_labels, self.rpn_bbox_targets, self.rpn_bbox_inside_weights, self.rpn_bbox_outside_weights = \
             #     self.anchor_target_layer( self.rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
