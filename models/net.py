@@ -99,7 +99,7 @@ class network():
 
             blob = self.proposal_layer(rpn_cls_prob, rpn_bbox_pred, self.im_dims,self.feat_stride)
 
-            # rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
+            rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
 
 
             # pooled = self._crop_pool_layer(net, rois)
@@ -117,7 +117,7 @@ class network():
 
 
             # return cls_score, cls_prob, bbox_prediction
-            return blob, rpn_labels
+            return rois
 
 
 
