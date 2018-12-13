@@ -143,21 +143,20 @@ class network():
         
         return rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights
 
-    def build_network(self):
+    def build_network(self, feature):
         with tf.variable_scope('vgg_16'):
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
 
             # vgg net
-            net = self.backbone()
+            # net = self.backbone()
 
-            self.rpn_cls_prob, self.rpn_bbox_pred, self.rpn_cls_score, self.rpn_cls_score_reshape = self.build_rpn(net, initializer)
+            self.rpn_cls_prob, self.rpn_bbox_pred, self.rpn_cls_score, self.rpn_cls_score_reshape = self.build_rpn(feature, initializer)
 
             # self.rpn_labels, self.rpn_bbox_targets, self.rpn_bbox_inside_weights, self.rpn_bbox_outside_weights = \
             #     self.anchor_target_layer( self.rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
 
             # blob = self.proposal_layer(self.rpn_cls_prob, self.rpn_bbox_pred, self.im_dims,self.feat_stride)
-
 
             # rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
 

@@ -9,16 +9,23 @@ from loader.DataLoader import load
 import cv2
 # from models.rpn import RPN
 from models.net import network
-
+from models import vgg
 
 num_epo = 500
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
-net = network()
+x = tf.placeholder(dtype=tf.float32, shape=[1, None, None, 3])
+# net = network()
 # cls_score, cls_prob, bbox_pred = net.build_network()
-test = net.build_network()
+# test = net.build_network()
+im = np.expand_dims(cv2.imread('/home/user1/Documents/faster_rcnn/frcnn-tf/dog.jpg'), axis=0)
+vgg_16 = vgg.ConvNetVgg16('/home/user1/Documents/faster_rcnn/frcnn-tf/vgg16.npy')
+cnn = vgg_16.inference(x)
+features = vgg_16.get_features()
+test = net.build_network(features)
 
-x, gt_boxes, im_dims = net.getPlaceholders()
+
+# x, gt_boxes, im_dims = net.getPlaceholders()
 
 # x, gt_boxes, im_dims = net.getPlaceholders()
 config = tf.ConfigProto()
@@ -34,16 +41,19 @@ init_op = tf.global_variables_initializer()
 with tf.Session(config = config) as sess:
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
-            data = data_loader.data_batch()
-            img, gt_box, im_info = data[0][0], data[0][1], data[0][2]
+            # data = data_loader.data_batch()
+            # img, gt_box, im_info = data[0][0], data[0][1], data[0][2]
             # loss = net.losses()
             # train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
-            sess.run(init_op) 
+            import pdb; pdb.set_trace()
+
+            sess.run(init_op)
+            feat = sess.run(test, feed_dict={x:im})
             # sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box, im_dims:im_info})
-            ls_val = sess.run(test, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
+            # ls_val = sess.run(test, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
             # print ('loss : {}       --> : {}'.format(ls_val, _))
-        print ('loss : {}      epoch --> : {}'.format(ls_val, i))
-    if i%100 == 0:
-        save_path = saver.save(sess, 'weights/'+"model_{}.ckpt".format(i))
-        print ("Model at {} epoch saved at {}".format(i, save_path))
+    #     print ('loss : {}      epoch --> : {}'.format(ls_val, i))
+    # if i%100 == 0:
+    #     save_path = saver.save(sess, 'weights/'+"model_{}.ckpt".format(i))
+    #     print ("Model at {} epoch saved at {}".format(i, save_path))
 
