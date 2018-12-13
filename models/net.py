@@ -102,9 +102,9 @@ class network():
             rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
 
 
-            # pooled = self._crop_pool_layer(net, rois)
+            pooled = self._crop_pool_layer(net, rois)
 
-            # cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
+            cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
 
 
             # self._predictions["cls_score"] = cls_score
@@ -117,7 +117,9 @@ class network():
 
 
             # return cls_score, cls_prob, bbox_prediction
-            return rois
+            # return rpn_cls_score_reshape, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights \
+            return cls_prob
+
 
 
 
@@ -151,9 +153,46 @@ class network():
 
         return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape
   
+    def _crop_pool_layer(self, bottom, rois):
+        batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
+        # Get the normalized coordinates of bboxes
+        bottom_shape = tf.shape(bottom)
+        height = (tf.to_float(bottom_shape[1]) - 1.) * np.float32(self.feat_stride[0])
+        width = (tf.to_float(bottom_shape[2]) - 1.) * np.float32(self.feat_stride[0])
+        x1 = tf.slice(rois, [0, 1], [-1, 1], name="x1") / width
+        y1 = tf.slice(rois, [0, 2], [-1, 1], name="y1") / height
+        x2 = tf.slice(rois, [0, 3], [-1, 1], name="x2") / width
+        y2 = tf.slice(rois, [0, 4], [-1, 1], name="y2") / height
+        # Won't be backpropagated to rois anyway, but to save time
+        bboxes = tf.stop_gradient(tf.concat([y1, x1, y2, x2], axis=1))
+        pre_pool_size = 7 * 2
+        crops = tf.image.crop_and_resize(bottom, bboxes, tf.to_int32(batch_ids), [pre_pool_size, pre_pool_size], name="crops")
+
+        return slim.max_pool2d(crops, [2, 2], padding='SAME')
 
 
 
+    def build_predictions(self, pooled, initializer, initializer_bbox):
+
+        fc6 = tf.layers.conv2d(pooled, 4096, [7, 7], padding='VALID')
+        fc7 = tf.layers.conv2d(fc6, 4096, [1, 1])
+
+        cls_score = tf.layers.conv2d(fc7,
+                                    filters=1,
+                                    kernel_size=(1, 1),
+                                    activation='sigmoid',
+                                    kernel_initializer=initializer,
+                                    name='rpn_out_classification')
+        cls_prob = tf.nn.softmax(cls_score)
+
+        bbox_prediction = tf.layers.conv2d(fc7,
+                                    filters=4,
+                                    kernel_size=(1, 1),
+                                    activation='linear',
+                                    kernel_initializer=initializer_bbox,
+                                    name='rpn_out_regression')
+        
+        return cls_score, cls_prob, bbox_prediction
 
 
     def getPlaceholders(self):
