@@ -39,12 +39,12 @@ class network():
             reshaped_score = tf.nn.softmax(reshape_, name=name)
             return tf.reshape(reshaped_score, shape)
 
-    def _reshape(self, rpn_cls, num, name):
-        with tf.variable_scope(name):
-            to_caffe = tf.transpose(rpn_cls, [0, 3, 1, 2])
-            reshaped = tf.reshape(to_caffe, tf.concat(axis=0, values=[[self._batch_size], [num, -1], [tf.shape(rpn_cls)[2]]]))
-            to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
-            return to_tf
+    # def _reshape(self, rpn_cls, num, name):
+    #     with tf.variable_scope(name):
+    #         to_caffe = tf.transpose(rpn_cls, [0, 3, 1, 2])
+    #         reshaped = tf.reshape(to_caffe, tf.concat(axis=0, values=[[self._batch_size], [num, -1], [tf.shape(rpn_cls)[2]]]))
+    #         to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
+    #         return to_tf
 
 
 
@@ -92,8 +92,7 @@ class network():
             vgg_16 = vgg.ConvNetVgg16('/home/christie/junk/frcnn-tf/vgg16.npy')
             cnn = vgg_16.inference(self.x)
             features = vgg_16.get_features()
-
-            rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape = self.build_rpn(features, initializer)
+            rpn_cls_prob, rpn_bbox_pred, rpn_cls_score = self.build_rpn(features, initializer)
             # rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
             rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = \
                 self.anchor_target_layer( rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
@@ -118,7 +117,7 @@ class network():
 
 
             # return cls_score, cls_prob, bbox_prediction
-            return rpn_cls_score_reshape, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights
+            return rpn_cls_score, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights
 
 
 
@@ -144,12 +143,14 @@ class network():
                                     kernel_initializer = initializer,
                                     name='rpn_out_regre')
         num = 2
-        rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
+        # rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
         
-        rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
+        # rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
+        # rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
+
         rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors * 2, "rpn_cls_prob")
 
-        return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape
+        return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score
   
     def _crop_pool_layer(self, bottom, rois):
         batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
