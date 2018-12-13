@@ -26,6 +26,25 @@ class network():
         self._proposal_targets = {}
         self._predictions = {}
         self._losses = {}
+
+        self.feature_vector     = feature_vector
+        self.ground_truth       = ground_truth
+        self.im_dims            = im_dims
+        self.anchor_scale       = anchor_scale
+
+        self.RPN_OUTPUT_CHANNEL = 512
+        self.RPN_KERNEL_SIZE    = 3
+        self.feat_stride        = 16
+
+        self.weights            = {
+        'w_rpn_conv1'     : tf.Variable(tf.random_normal([ self.RPN_KERNEL_SIZE, self.RPN_KERNEL_SIZE, 512, self.RPN_OUTPUT_CHANNEL ], stddev = 0.01)),
+        'w_rpn_cls_score' : tf.Variable(tf.random_normal([ 1, 1, self.RPN_OUTPUT_CHANNEL, 18  ], stddev = 0.01)),
+        'w_rpn_bbox_pred' : tf.Variable(tf.random_normal([ 1, 1, self.RPN_OUTPUT_CHANNEL, 36  ], stddev = 0.01))
+        }
+
+
+
+
     def _softmax(self, rpn_cls, name):
         if name == 'rpn_cls_softmax':
             shape = tf.shape(rpn_cls)
@@ -152,7 +171,7 @@ class network():
             # net = self.backbone()
 
             # self.rpn_cls_prob, self.rpn_bbox_pred, self.rpn_cls_score, self.rpn_cls_score_reshape = self.build_rpn(feature, initializer)
-            rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature, initializer)
+            rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
 
             # self.rpn_labels, self.rpn_bbox_targets, self.rpn_bbox_inside_weights, self.rpn_bbox_outside_weights = \
             #     self.anchor_target_layer( self.rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
@@ -181,26 +200,52 @@ class network():
 
 
 
-    def build_rpn(self, net, initializer):
-        num_anchors = 9
-        rpn1 = tf.layers.conv2d(net,
-                                    filters=512,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    kernel_initializer = initializer,
-                                    name='npn_conv/3x3')
-        rpn_cls_score = tf.layers.conv2d(rpn1,
-                                    filters= num_anchors * 2,
-                                    kernel_size=(1, 1),
-                                    activation='sigmoid',
-                                    kernel_initializer = initializer,
-                                    name="rpn_out_class")
-        rpn_bbox_pred = tf.layers.conv2d(rpn1,
-                                    filters=num_anchors * 4,
-                                    kernel_size=(1, 1),
-                                    activation='linear',
-                                    kernel_initializer = initializer,
-                                    name='rpn_out_regre')
+
+    def build_rpn(self, feature_vector):
+
+        # rpn_conv1
+        # slide a network on the feature map, for each nxn (n = 3), use a conv kernel to produce another feature map.
+        # each pixel in this fature map in an anchor 
+        ksize      = self.RPN_KERNEL_SIZE
+        feat       = tf.nn.conv2d( feature_vector, self.weights['w_rpn_conv1'], strides = [1, 1, 1, 1], padding = 'SAME' )
+        feat       = tf.nn.relu( feat )
+        self.feat  = feat
+
+        # for each anchor, propose k anchor boxes, 
+        # for each box, regress: objectness score and coordinates
+
+        # box-classification layer ( objectness scor)
+        with tf.variable_scope('cls'):
+            self.rpn_cls_score = tf.nn.conv2d(feat, self.weights['w_rpn_cls_score'], strides = [ 1, 1, 1, 1], padding = 'SAME')
+
+        # bounding-box prediction 
+        with tf.variable_scope('reg'): 
+            self.rpn_reg_pred  = tf.nn.conv2d(feat, self.weights['w_rpn_bbox_pred'], strides = [1, 1, 1, 1], padding = 'SAME')
+       
+
+        return self.rpn_cls_score, self.rpn_reg_pred
+
+
+    # def build_rpn(self, net, initializer):
+    #     num_anchors = 9
+    #     rpn1 = tf.layers.conv2d(net,
+    #                                 filters=512,
+    #                                 kernel_size=(3, 3),
+    #                                 padding='same',
+    #                                 kernel_initializer = initializer,
+    #                                 name='npn_conv/3x3')
+    #     rpn_cls_score = tf.layers.conv2d(rpn1,
+    #                                 filters= num_anchors * 2,
+    #                                 kernel_size=(1, 1),
+    #                                 activation='sigmoid',
+    #                                 kernel_initializer = initializer,
+    #                                 name="rpn_out_class")
+    #     rpn_bbox_pred = tf.layers.conv2d(rpn1,
+    #                                 filters=num_anchors * 4,
+    #                                 kernel_size=(1, 1),
+    #                                 activation='linear',
+    #                                 kernel_initializer = initializer,
+    #                                 name='rpn_out_regre')
         # rpn_shape = rpn_cls.shape
         # num = 2
         # rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
