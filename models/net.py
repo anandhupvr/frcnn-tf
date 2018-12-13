@@ -27,10 +27,10 @@ class network():
         self._predictions = {}
         self._losses = {}
 
-        self.feature_vector     = feature_vector
-        self.ground_truth       = ground_truth
-        self.im_dims            = im_dims
-        self.anchor_scale       = anchor_scale
+        # self.feature_vector     = feature_vector
+        # self.ground_truth       = ground_truth
+        # self.im_dims            = im_dims
+        # self.anchor_scale       = anchor_scale
 
         self.RPN_OUTPUT_CHANNEL = 512
         self.RPN_KERNEL_SIZE    = 3
