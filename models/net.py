@@ -102,7 +102,7 @@ class network():
             rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
 
 
-            pooled = self._crop_pool_layer(net, rois)
+            pooled = self._crop_pool_layer(features, rois)
 
             cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
 
