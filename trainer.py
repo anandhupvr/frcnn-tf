@@ -9,21 +9,17 @@ from loader.DataLoader import load
 import cv2
 # from models.rpn import RPN
 from models.net import network
-from models import vgg
+
 
 num_epo = 500
 import pdb; pdb.set_trace()
 dataset_path = sys.argv[1]
 data_loader = load(dataset_path)
-x = tf.placeholder(dtype=tf.float32, shape=[1, None, None, 3])
 net = network()
 # cls_score, cls_prob, bbox_pred = net.build_network()
 # test = net.build_network()
-im = np.expand_dims(cv2.imread('/home/christie/junk/frcnn-tf/dog.jpg'), axis=0)
-vgg_16 = vgg.ConvNetVgg16('/home/christie/junk/frcnn-tf/vgg16.npy')
-cnn = vgg_16.inference(x)
-features = vgg_16.get_features()
-# test = net.build_network(features)
+
+test = net.build_network()
 
 
 # x, gt_boxes, im_dims = net.getPlaceholders()
@@ -48,10 +44,9 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
             # loss = net.losses()
             # train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
             import pdb; pdb.set_trace()
-            feat = sess.run(features, feed_dict={x:im})
             # sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box, im_dims:im_info})
-            # ls_val = sess.run(test, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
-            # print ('loss : {}       --> : {}'.format(ls_val, _))
+            ls_val = sess.run(test, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
+            print ('loss : {}       --> : {}'.format(ls_val, _))
     #     print ('loss : {}      epoch --> : {}'.format(ls_val, i))
     # if i%100 == 0:
     #     save_path = saver.save(sess, 'weights/'+"model_{}.ckpt".format(i))
