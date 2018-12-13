@@ -8,6 +8,7 @@ import numpy.random as npr
 from lib.targets import anchor_target_layer_python
 from lib.proposal_layer import proposal_layer_py
 from models import vgg
+slim = tf.contrib.slim
 
 
 class network():
