@@ -39,12 +39,12 @@ class network():
             reshaped_score = tf.nn.softmax(reshape_, name=name)
             return tf.reshape(reshaped_score, shape)
 
-    # def _reshape(self, rpn_cls, num, name):
-    #     with tf.variable_scope(name):
-    #         to_caffe = tf.transpose(rpn_cls, [0, 3, 1, 2])
-    #         reshaped = tf.reshape(to_caffe, tf.concat(axis=0, values=[[self._batch_size], [num, -1], [tf.shape(rpn_cls)[2]]]))
-    #         to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
-    #         return to_tf
+    def _reshape(self, rpn_cls, num, name):
+        with tf.variable_scope(name):
+            to_caffe = tf.transpose(rpn_cls, [0, 3, 1, 2])
+            reshaped = tf.reshape(to_caffe, tf.concat(axis=0, values=[[self._batch_size], [num, -1], [tf.shape(rpn_cls)[2]]]))
+            to_tf = tf.transpose(reshaped, [0, 2, 3, 1])
+            return to_tf
 
 
 
@@ -150,7 +150,7 @@ class network():
 
         rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors * 2, "rpn_cls_prob")
 
-        return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score
+        return rrpn_bbox_pred, rpn_cls_score
   
     def _crop_pool_layer(self, bottom, rois):
         batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
