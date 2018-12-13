@@ -28,21 +28,6 @@ class network():
         self._predictions = {}
         self._losses = {}
 
-        # self.feature_vector     = feature_vector
-        # self.ground_truth       = ground_truth
-        # self.im_dims            = im_dims
-        # self.anchor_scale       = anchor_scale
-
-        self.RPN_OUTPUT_CHANNEL = 512
-        self.RPN_KERNEL_SIZE    = 3
-        self.feat_stride        = 16
-
-        self.weights            = {
-        'w_rpn_conv1'     : tf.Variable(tf.random_normal([ self.RPN_KERNEL_SIZE, self.RPN_KERNEL_SIZE, 512, self.RPN_OUTPUT_CHANNEL ], stddev = 0.01)),
-        'w_rpn_cls_score' : tf.Variable(tf.random_normal([ 1, 1, self.RPN_OUTPUT_CHANNEL, 18  ], stddev = 0.01)),
-        'w_rpn_bbox_pred' : tf.Variable(tf.random_normal([ 1, 1, self.RPN_OUTPUT_CHANNEL, 36  ], stddev = 0.01))
-        }
-
 
 
 
@@ -62,6 +47,42 @@ class network():
 
 
 
+    def anchor_target_layer(self, rpn_cls_score, _gt_boxes, im_dims, feat_stride):
+        rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = \
+        tf.py_func(anchor_target_layer_python, [rpn_cls_score, _gt_boxes, im_dims, feat_stride],
+            [tf.float32, tf.float32, tf.float32, tf.float32])
+
+        rpn_labels = tf.convert_to_tensor(tf.cast(rpn_labels, tf.int32), name='rpn_labels')
+        rpn_bbox_targets = tf.convert_to_tensor(rpn_bbox_targets, name='rpn_bbox_targets')
+        rpn_bbox_inside_weights = tf.convert_to_tensor(rpn_bbox_inside_weights, name='rpn_bbox_inside_weights')
+        rpn_bbox_outside_weights = tf.convert_to_tensor(rpn_bbox_outside_weights, name='rpn_bbox_outside_weights')
+
+        return rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights
+
+
+    def proposal_layer(self, rpn_bbox_cls_prob, rpn_bbox_pred, im_dims, feat_strides):
+        blob = tf.py_func(proposal_layer_py,
+                        [rpn_bbox_cls_prob, rpn_bbox_pred, im_dims, feat_strides],
+                        [tf.float32])
+        blob = tf.reshape(blob, [-1, 5])
+
+        return blob
+
+    def proposal_target_layer(self, rpn_rois, _gt_boxes, num_classes):
+        rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = tf.py_func( proposal_target_layer_py,
+                                                                                            [ rpn_rois, _gt_boxes, num_classes],
+                                                                                            [tf.float32, tf.int32, tf.float32, tf.float32, tf.float32])
+        rois = tf.reshape( rois, [-1, 5], name = 'rois')
+        labels = tf.convert_to_tensor( tf.cast(labels, tf.int32),name = 'labels')
+        bbox_targets = tf.convert_to_tensor( bbox_targets, name = 'bbox_targets')
+        bbox_inside_weights = tf.convert_to_tensor( bbox_inside_weights, name = 'bbox_inside_weights')
+        bbox_outside_weights = tf.convert_to_tensor( bbox_outside_weights, name = 'bbox_outside_weights')
+        
+        return rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights
+
+
+
+
     def build_network(self):
         with tf.variable_scope('vgg_16'):
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
@@ -73,11 +94,10 @@ class network():
 
             rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape = self.build_rpn(features, initializer)
             # rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
+            rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = \
+                self.anchor_target_layer( rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
 
-            # self.rpn_labels, self.rpn_bbox_targets, self.rpn_bbox_inside_weights, self.rpn_bbox_outside_weights = \
-            #     self.anchor_target_layer( self.rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
-
-            # blob = self.proposal_layer(self.rpn_cls_prob, self.rpn_bbox_pred, self.im_dims,self.feat_stride)
+            blob = self.proposal_layer(rpn_cls_prob, rpn_bbox_pred, self.im_dims,self.feat_stride)
 
             # rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
 
@@ -97,34 +117,10 @@ class network():
 
 
             # return cls_score, cls_prob, bbox_prediction
-            return rpn_cls_prob
+            return blob, rpn_labels
 
 
 
-
-    # def build_rpn(self, feature_vector):
-
-    #     # rpn_conv1
-    #     # slide a network on the feature map, for each nxn (n = 3), use a conv kernel to produce another feature map.
-    #     # each pixel in this fature map in an anchor 
-    #     ksize      = self.RPN_KERNEL_SIZE
-    #     feat       = tf.nn.conv2d( feature_vector, self.weights['w_rpn_conv1'], strides = [1, 1, 1, 1], padding = 'SAME' )
-    #     feat       = tf.nn.relu( feat )
-    #     self.feat  = feat
-
-    #     # for each anchor, propose k anchor boxes, 
-    #     # for each box, regress: objectness score and coordinates
-
-    #     # box-classification layer ( objectness scor)
-    #     with tf.variable_scope('cls'):
-    #         self.rpn_cls_score = tf.nn.conv2d(feat, self.weights['w_rpn_cls_score'], strides = [ 1, 1, 1, 1], padding = 'SAME')
-
-    #     # bounding-box prediction 
-    #     with tf.variable_scope('reg'): 
-    #         self.rpn_reg_pred  = tf.nn.conv2d(feat, self.weights['w_rpn_bbox_pred'], strides = [1, 1, 1, 1], padding = 'SAME')
-       
-
-    #     return self.rpn_cls_score, self.rpn_reg_pred
 
 
     def build_rpn(self, net, initializer):

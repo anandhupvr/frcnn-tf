@@ -19,7 +19,7 @@ net = network()
 # cls_score, cls_prob, bbox_pred = net.build_network()
 # test = net.build_network()
 
-test = net.build_network()
+blob, rpn_labels = net.build_network()
 
 
 x, gt_boxes, im_dims = net.getPlaceholders()
@@ -44,7 +44,7 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
             # loss = net.losses()
             # train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
             # sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box, im_dims:im_info})
-            ls_val = sess.run(test, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
+            ls_val = sess.run(blob, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
             print ('loss : {}       --> : {}'.format(ls_val, _))
     #     print ('loss : {}      epoch --> : {}'.format(ls_val, i))
     # if i%100 == 0:
