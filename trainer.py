@@ -39,7 +39,7 @@ features = vgg_16.get_features()
 # saver = tf.train.Saver()
 
 init_op = tf.global_variables_initializer()
-with tf.Session() as sess:
+with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
     sess.run(init_op)
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
