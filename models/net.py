@@ -151,7 +151,8 @@ class network():
             # vgg net
             # net = self.backbone()
 
-            self.rpn_cls_prob, self.rpn_bbox_pred, self.rpn_cls_score, self.rpn_cls_score_reshape = self.build_rpn(feature, initializer)
+            # self.rpn_cls_prob, self.rpn_bbox_pred, self.rpn_cls_score, self.rpn_cls_score_reshape = self.build_rpn(feature, initializer)
+            rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature, initializer)
 
             # self.rpn_labels, self.rpn_bbox_targets, self.rpn_bbox_inside_weights, self.rpn_bbox_outside_weights = \
             #     self.anchor_target_layer( self.rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
@@ -176,100 +177,8 @@ class network():
 
 
             # return cls_score, cls_prob, bbox_prediction
-            return self.rpn_cls_prob
+            return rpn_cls_score
 
-    def backbone(self):
-        num_anchors = 9
-        
-        conv1 = tf.layers.conv2d(self.x,
-                                    filters=64,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_1")
-        conv2 = tf.layers.conv2d(conv1,
-                                    filters=64,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_2")
-        pool1 = tf.layers.max_pooling2d(conv2,
-                                            pool_size=(2, 2),
-                                            strides=(2, 2),
-                                            name="vgg/pool_1")
-        conv3 = tf.layers.conv2d(pool1,
-                                    filters=128,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_3")
-        conv4 = tf.layers.conv2d(conv3,
-                                    filters=64,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_4")
-
-        pool2 = tf.layers.max_pooling2d(conv4,
-                                            pool_size=(2, 2),
-                                            strides=(2, 2),
-                                            name="vgg/pool_2")
-
-        conv5 = tf.layers.conv2d(pool2,
-                                    filters=256,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_5")
-
-        conv6 = tf.layers.conv2d(conv5,
-                                    filters=256,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_6")
-        conv7 = tf.layers.conv2d(conv6,
-                                    filters=256,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_7")
-
-        pool3 = tf.layers.max_pooling2d(conv7,
-                                            pool_size=(2, 2),
-                                            strides=(2, 2),
-                                            name="vgg/pool_3")
-
-        conv8 = tf.layers.conv2d(pool3,
-                                    filters=512,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_8")
-        conv9 = tf.layers.conv2d(conv8,
-                                    filters=512,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_9")
-        conv10 = tf.layers.conv2d(conv9,
-                                    filters=512,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_10")
-
-        pool3 = tf.layers.max_pooling2d(conv10,
-                                            pool_size=(2, 2),
-                                            strides=(2, 2),
-                                            name="vgg/pool_4")
-
-        conv11 = tf.layers.conv2d(pool3,
-                                    filters=512,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_11")
-        conv12 = tf.layers.conv2d(conv11,
-                                    filters=512,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_12")
-        conv13 = tf.layers.conv2d(conv12,
-                                    filters=512,
-                                    kernel_size=(3, 3),
-                                    padding='same',
-                                    name = "vgg/conv_13")
-        return conv13
 
 
     def build_rpn(self, net, initializer):
@@ -293,13 +202,14 @@ class network():
                                     kernel_initializer = initializer,
                                     name='rpn_out_regre')
         # rpn_shape = rpn_cls.shape
-        num = 2
-        rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
+        # num = 2
+        # rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
         
-        rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
-        rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors * 2, "rpn_cls_prob")
+        # rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
+        # rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors * 2, "rpn_cls_prob")
 
-        return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape
+        # return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, rpn_cls_score_reshape
+        return rpn_cls_score, rpn_bbox_pred
 
 
 
