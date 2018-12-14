@@ -57,7 +57,7 @@ class network():
         rpn_bbox_targets = tf.convert_to_tensor(rpn_bbox_targets, name='rpn_bbox_targets')
         rpn_bbox_inside_weights = tf.convert_to_tensor(rpn_bbox_inside_weights, name='rpn_bbox_inside_weights')
         rpn_bbox_outside_weights = tf.convert_to_tensor(rpn_bbox_outside_weights, name='rpn_bbox_outside_weights')
-
+        print (tf.shape(rpn_labels), tf.shape(rpn_bbox_targets), tf.shape(rpn_bbox_inside_weights),tf.shape(rpn_bbox_outside_weights))
         return rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights
 
 
