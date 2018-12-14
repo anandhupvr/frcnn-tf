@@ -8,6 +8,7 @@ class ConvNetVgg16(object):
 
     def __init__(self, vgg16_model_path):
         self.model = np.load(vgg16_model_path, encoding="latin1").item()
+        print ("vgg pretrained loaded")
 
     def get_weight(self, name):
         with tf.variable_scope(name) as scope:
