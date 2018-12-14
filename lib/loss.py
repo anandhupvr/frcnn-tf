@@ -28,6 +28,9 @@ def _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_w
 def rpn_cls(rpn_cls_score, rpn_labels):
     rpn_cls_score = tf.reshape(rpn_cls_score, [-1, 2])
     rpn_labels = tf.reshape(rpn_labels, [-1])
+    rpn_cls_score = tf.reshape(tf.gather(rpn_cls_score,tf.where(tf.not_equal(rpn_labels,-1))),[-1,2])
+    rpn_labels = tf.reshape(tf.gather(rpn_labels,tf.where(tf.not_equal(rpn_labels,-1))),[-1])
+    
     return [tf.shape(rpn_cls_score), tf.shape(rpn_labels)]
 
 
