@@ -127,6 +127,10 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, img, _feat_stride, all_anchors,
         .reshape((1, height, width, A * 4))
 
     rpn_bbox_outside_weights = bbox_outside_weights
+
+    print ("  --------------- ")
+    print (np.shape(rpn_labels), np.shape(rpn_bbox_targets), np.shape(rpn_bbox_inside_weights),np.shape(rpn_bbox_outside_weights))
+
     return rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights
 
 

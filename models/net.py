@@ -84,7 +84,7 @@ class network():
 
 
     def build_network(self):
-        with tf.variable_scope('vgg_16'):
+        with tf.variable_scope('f-rcnn'):
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
 
@@ -99,8 +99,6 @@ class network():
             blob = self.proposal_layer(rpn_cls_prob, rpn_bbox_pred, self.im_dims,self.feat_stride)
 
             rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
-            print ("  --------------- ")
-            print (tf.shape(rpn_labels), tf.shape(rpn_bbox_targets), tf.shape(rpn_bbox_inside_weights),tf.shape(rpn_bbox_outside_weights))
 
             pooled = self._crop_pool_layer(features, rois)
 
