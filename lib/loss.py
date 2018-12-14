@@ -24,6 +24,9 @@ def _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_w
     ))
     return loss_box
 
+def rpn_bbox(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights):
+
+    return [tf.shape(rpn_bbox_pred), tf.shape(rpn_bbox_targets), tf.shape(rpn_bbox_inside_weights),tf.shape(rpn_bbox_outside_weights)]
 
 def rpn_cls(rpn_cls_score, rpn_labels):
     rpn_cls_score = tf.reshape(rpn_cls_score, [-1, 2])
@@ -37,11 +40,11 @@ def rpn_cls(rpn_cls_score, rpn_labels):
 
 def losses(rpn_cls_score, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights):
     rpn_cls_loss = rpn_cls(rpn_cls_score, rpn_labels)
-    # rpn_bbox_loss = rpn_bbox(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights)
+    rpn_bbox_loss = rpn_bbox(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights)
     
     # rcnn_bbox = rcnn_bbox_los(bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights)
     # rcnn_cls = rcnn_cls_loss(cls_score, labels)
     # loss = rpn_bbox_loss + rpn_cls_loss + rcnn_bbox + rcnn_cls
-    loss =  rpn_cls_loss
+    loss =  rpn_bbox_loss
 
     return loss
