@@ -30,8 +30,9 @@ def rpn_cls(rpn_cls_score, rpn_labels):
     rpn_labels = tf.reshape(rpn_labels, [-1])
     rpn_cls_score = tf.reshape(tf.gather(rpn_cls_score,tf.where(tf.not_equal(rpn_labels,-1))),[-1,2])
     rpn_labels = tf.reshape(tf.gather(rpn_labels,tf.where(tf.not_equal(rpn_labels,-1))),[-1])
-    
-    return [tf.shape(rpn_cls_score), tf.shape(rpn_labels)]
+    rpn_cross_entropy = tf.reduce_mean(
+                    tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_label))
+    return rpn_cross_entropy
 
 
 def losses(rpn_cls_score, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights):
