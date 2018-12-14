@@ -27,7 +27,7 @@ def _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_w
 
 def rpn_cls(rpn_cls_score, rpn_labels):
     rpn_cls_score = tf.reshape(rpn_cls_score, [-1, 2])
-    rpn_labels = tf.reshape(rpn_labels, [, 2])
+    rpn_labels = tf.reshape(rpn_labels, [-1])
     return [tf.shape(rpn_cls_score), tf.shape[rpn_labels]]
 
 
