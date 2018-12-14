@@ -26,7 +26,7 @@ def _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_w
 
 def rpn_bbox(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights):
 
-    return _smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights)
+    return _smooth_l1_loss(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights)
 
 
 def rpn_cls(rpn_cls_score, rpn_labels):
