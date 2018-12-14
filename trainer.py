@@ -21,8 +21,8 @@ saver = tf.train.Saver()
 
 # init_op = tf.global_variables_initializer()
 with tf.Session() as sess:
-    import pdb; pdb.set_trace()
-    sess.run(tf.global_variables_initializer())
+    frcnn_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
+    sess.run(tf.global_variables_initializer(frcnn_vars))
     for i in range(num_epo):
         for _ in range(len(open("train.txt", "r").readlines())):
             data = data_loader.data_batch()
