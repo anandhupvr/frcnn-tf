@@ -60,7 +60,7 @@ def rpn_bbox(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_
     return rpn_bbox_reg
 
 
-def rpn_cls(rpn_cls_score_reshape, rpn_labels):
+def rpn_cls(rpn_cls_score, rpn_labels):
 
     shape = tf.shape(rpn_cls_score)
 
