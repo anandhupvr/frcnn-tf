@@ -93,12 +93,12 @@ def anchor_target_layer_python(rpn_cls_score, _gt_boxes, im_dims, feat_stride):
     bbox_inside_weights = unmap(bbox_inside_weights, total_anchors, inds_inside, fill = 0 )
     bbox_outside_weights = unmap(bbox_outside_weights,total_anchors, inds_inside, fill = 0 )
     # labels
-    labels = labels.reshape((1, height, width, num_anchors)).transpose(0, 3, 1, 2)
+    labels = labels.reshape((1, height, width, num_anchors))
     labels = labels.reshape((1,1, num_anchors * height* width))
     rpn_labels = labels
-    rpn_bbox_targets = bbox_targets.reshape((1, height, width, num_anchors * 4)).transpose(0,3,1,2)
-    rpn_bbox_inside_weights = bbox_inside_weights.reshape ((1, height, width, num_anchors * 4)).transpose(0,3,1,2)
-    rpn_bbox_outside_weights = bbox_outside_weights.reshape((1, height, width, num_anchors * 4)).transpose(0,3,1,2)
+    rpn_bbox_targets = bbox_targets.reshape((1, height, width, num_anchors * 4))
+    rpn_bbox_inside_weights = bbox_inside_weights.reshape ((1, height, width, num_anchors * 4))
+    rpn_bbox_outside_weights = bbox_outside_weights.reshape((1, height, width, num_anchors * 4))
     return rpn_labels,rpn_bbox_targets,rpn_bbox_inside_weights,rpn_bbox_outside_weights
 
 def unmap( data, count, inds, fill = 0):
