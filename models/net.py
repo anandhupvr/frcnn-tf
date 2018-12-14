@@ -57,7 +57,6 @@ class network():
         rpn_bbox_targets = tf.convert_to_tensor(rpn_bbox_targets, name='rpn_bbox_targets')
         rpn_bbox_inside_weights = tf.convert_to_tensor(rpn_bbox_inside_weights, name='rpn_bbox_inside_weights')
         rpn_bbox_outside_weights = tf.convert_to_tensor(rpn_bbox_outside_weights, name='rpn_bbox_outside_weights')
-        print (tf.shape(rpn_labels), tf.shape(rpn_bbox_targets), tf.shape(rpn_bbox_inside_weights),tf.shape(rpn_bbox_outside_weights))
         return rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights
 
 
@@ -100,7 +99,8 @@ class network():
             blob = self.proposal_layer(rpn_cls_prob, rpn_bbox_pred, self.im_dims,self.feat_stride)
 
             rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = self.proposal_target_layer(blob, self._gt_boxes, self.class_num)
-
+            print ("  --------------- ")
+            print (tf.shape(rpn_labels), tf.shape(rpn_bbox_targets), tf.shape(rpn_bbox_inside_weights),tf.shape(rpn_bbox_outside_weights))
 
             pooled = self._crop_pool_layer(features, rois)
 
