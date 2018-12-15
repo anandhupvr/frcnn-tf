@@ -37,15 +37,28 @@ def rpn_cls(rpn_cls_score, rpn_labels):
     rpn_cross_entropy = tf.reduce_mean(
                     tf.nn.sparse_softmax_cross_entropy_with_logits(logits=rpn_cls_score, labels=rpn_labels))
     return rpn_cross_entropy
+    # return [tf.shape(rpn_cls_score), tf.shape(rpn_labels)]
 
+
+
+def rcnn_cls_loss(cls_score, labels):
+
+    labels = tf.reshape(labels, [-1])
+    cross_entropy = tf.reduce_mean(
+                    tf.nn.sparse_softmax_cross_entropy_with_logits(logits=cls_score, labels=labels))
+    return cross_entropy
+
+def rcnn_bbox_los(bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights):
+
+    return _smooth_l1_loss(bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights)
 
 def losses(rpn_cls_score, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights):
     rpn_cls_loss = rpn_cls(rpn_cls_score, rpn_labels)
     rpn_bbox_loss = rpn_bbox(rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights)
     
-    # rcnn_bbox = rcnn_bbox_los(bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights)
-    # rcnn_cls = rcnn_cls_loss(cls_score, labels)
-    # loss = rpn_bbox_loss + rpn_cls_loss + rcnn_bbox + rcnn_cls
-    loss =  rpn_bbox_loss
+    rcnn_bbox = rcnn_bbox_los(bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights)
+    rcnn_cls = rcnn_cls_loss(cls_score, labels)
+
+    loss =  rpn_bbox_loss + rpn_cls_loss + rcnn_cls + rcnn_bbox
 
     return loss

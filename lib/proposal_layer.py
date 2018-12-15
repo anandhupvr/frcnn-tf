@@ -50,7 +50,6 @@ def proposal_layer_py(rpn_bbox_cls_prob, rpn_bbox_pred, im_dims, feat_strides):
     shift_x, shift_y = np.meshgrid( shift_x, shift_y )
     shifts = np.vstack( ( shift_x.ravel(), shift_y.ravel(), shift_x.ravel(), shift_y.ravel() ) )
     shifts = shifts.transpose() # 
-   
     A = num_anchors        # number of anchor per shift = 9
     K = shifts.shape[0]    # number of shift
     aaa = anchors.reshape((1, A, 4 ))

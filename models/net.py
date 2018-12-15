@@ -10,6 +10,8 @@ from lib.proposal_layer import proposal_layer_py
 from models import vgg
 slim = tf.contrib.slim
 
+from lib.p_target import proposal_target_layer_t
+
 
 class network():
     def __init__(self, batch_size=1):
@@ -20,7 +22,7 @@ class network():
         self.im_dims = tf.placeholder(tf.float32, shape=[2])
         # self.im_info = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 2])
         self.box = []
-        self.class_num = 1
+        self.class_num = 2
         # self.im_info = self.x.shape[1], self.x.shape[2]
         self.feat_stride = [16,]
         # self.rois_ = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 4])
@@ -28,6 +30,26 @@ class network():
         self._proposal_targets = {}
         self._predictions = {}
         self._losses = {}
+        self.num_classes = 2
+
+
+        self.p_drop                  = 0.5 
+        self.bn1                     = BatchNorm( name='bn1')
+        self.bn2                     = BatchNorm( name='bn2')
+
+        self.weights                 = {
+            'wfc1':     tf.Variable( tf.random_normal([49*512,  1024], stddev=0.005)), 
+            'wfc2':     tf.Variable( tf.random_normal([1024,1024], stddev=0.005)),
+            'wfccls':   tf.Variable( tf.random_normal([1024,self.num_classes    ], stddev=0.005)),
+            'wfcbbox':  tf.Variable( tf.random_normal([1024,self.num_classes*4  ], stddev=0.005))
+        } 
+
+        self.biases                  = {
+            'bfc1':     tf.Variable( tf.ones([1024])),
+            'bfc2':     tf.Variable( tf.ones([1024])),
+            'bfccls':   tf.Variable( tf.ones([self.num_classes])),
+            'bfcbbox':  tf.Variable( tf.ones([self.num_classes*4]))
+        }
 
 
 
@@ -80,6 +102,19 @@ class network():
         
         return rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights
 
+    # def proposal_target_layer(self, rpn_rois, rpn_cls_score, _gt_boxes, num_classes):
+    #     rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = tf.py_func( proposal_target_layer_t,
+    #                                                                                         [ rpn_rois, rpn_cls_score, _gt_boxes, num_classes],
+    #                                                                                         [tf.float32, tf.float32, tf.float32, tf.float32, tf.float32])
+    #     rois = tf.reshape( rois, [-1, 5], name = 'rois')
+    #     labels = tf.convert_to_tensor( tf.cast(labels, tf.int32), name = 'labels')
+    #     bbox_targets = tf.convert_to_tensor( bbox_targets, name = 'bbox_targets')
+    #     bbox_inside_weights = tf.convert_to_tensor( bbox_inside_weights, name = 'bbox_inside_weights')
+    #     bbox_outside_weights = tf.convert_to_tensor( bbox_outside_weights, name = 'bbox_outside_weights')
+        
+    #     return rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights
+
+
 
 
 
@@ -88,7 +123,7 @@ class network():
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
 
-            vgg_16 = vgg.ConvNetVgg16('/home/christie/junk/frcnn-tf/vgg16.npy')
+            vgg_16 = vgg.ConvNetVgg16('/home/user1/Documents/frcnn-tf/vgg16.npy')
             cnn = vgg_16.inference(self.x)
             features = vgg_16.get_features()
             rpn_cls_prob, rpn_bbox_pred, rpn_cls_score = self.build_rpn(features, initializer)
@@ -171,26 +206,37 @@ class network():
 
     def build_predictions(self, pooled, initializer, initializer_bbox):
 
-        fc6 = tf.layers.conv2d(pooled, 4096, [7, 7], padding='VALID')
-        fc7 = tf.layers.conv2d(fc6, 4096, [1, 1])
+        pooled_features = tf.contrib.layers.flatten(pooled)
+        # Fully connected layers
+        fc1 = tf.nn.dropout( self.fc(pooled_features, self.weights['wfc1'], self.biases['bfc1']), self.p_drop)
+        fc2 = tf.nn.dropout( self.fc(fc1, self.weights['wfc2'], self.biases['bfc2']), self.p_drop)
+        feature = fc2
 
-        cls_score = tf.layers.conv2d(fc7,
-                                    filters=1,
-                                    kernel_size=(1, 1),
-                                    activation='sigmoid',
-                                    kernel_initializer=initializer,
-                                    name='rpn_out_classification')
-        cls_prob = tf.nn.softmax(cls_score)
+        with tf.variable_scope('cls'):
+            rcnn_cls_score      = self.fc(feature, self.weights['wfccls'], self.biases['bfccls'] ) 
 
-        bbox_prediction = tf.layers.conv2d(fc7,
-                                    filters=4,
-                                    kernel_size=(1, 1),
-                                    activation='linear',
-                                    kernel_initializer=initializer_bbox,
-                                    name='rpn_out_regression')
-        
-        return cls_score, cls_prob, bbox_prediction
+        with tf.variable_scope('bbox'):
+            rcnn_bbox_refine    = self.fc(feature, self.weights['wfcbbox'],self.biases['bfcbbox'])
+
+        cls_prob = tf.nn.softmax(rcnn_cls_score)
+        return rcnn_cls_score, cls_prob, rcnn_bbox_refine
+
+    def fc(self,x,W,b):          
+        h                            = tf.matmul(x, W) + b
+        h                            = tf.nn.relu(h)
+        return h
 
 
     def getPlaceholders(self):
         return self.x, self._gt_boxes, self.im_dims
+
+
+class BatchNorm(object):
+    def __init__(self, epsilon=1e-5, momentum = 0.9, name="batch_norm"):
+        with tf.variable_scope(name):
+            self.epsilon  = epsilon
+            self.momentum = momentum
+            self.name     = name
+
+    def __call__(self, x, train=True):
+        return tf.contrib.layers.batch_norm(x, decay=self.momentum, updates_collections=None, epsilon=self.epsilon, scale=True, is_training=train, scope=self.name)

@@ -6,6 +6,8 @@ from lib.bbox_transform import bbox_transform
 
 
 def anchor_target_layer_python(rpn_cls_score, _gt_boxes, im_dims, feat_stride):
+
+
     allowded_border = 0
     # im_dims = im_dims[0]
     _gt_boxes = _gt_boxes[:, :-1]
@@ -39,10 +41,9 @@ def anchor_target_layer_python(rpn_cls_score, _gt_boxes, im_dims, feat_stride):
                             ( all_anchors[:,3] <  im_dims[0])+0)[0]   # take the row index
 
     anchors = all_anchors[inds_inside, :]
-
     labels = np.empty( (len(inds_inside), ), dtype=np.float32)
     labels.fill(-1)
-    
+
     overlaps = bbox_overlaps(
                             np.ascontiguousarray(anchors, dtype = np.float), 
                             np.ascontiguousarray(_gt_boxes, dtype = np.float)       
@@ -53,7 +54,6 @@ def anchor_target_layer_python(rpn_cls_score, _gt_boxes, im_dims, feat_stride):
     gt_argmax_overlaps = overlaps.argmax(axis=0)
     gt_argmax_overlaps = overlaps[gt_argmax_overlaps, np.arange(overlaps.shape[1])]
     gt_argmax_overlaps = np.where(overlaps == gt_argmax_overlaps)[0]
-
     labels[max_overlaps < 0.3] = 0
     labels[gt_argmax_overlaps] = 1
     labels[max_overlaps > 0.7] = 1

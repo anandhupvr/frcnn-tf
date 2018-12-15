@@ -42,7 +42,7 @@ def box_plot(box):
     # print (a)
 
     fig, ax = plt.subplots(1)
-    im = np.array(Image.open('/run/media/user1/disk2/agrima/git_repos/frcnn-tf/dataset/images/apple/apple_10.jpg'),dtype=np.uint8)
+    im = np.array(Image.open('/home/user1/Documents/frcnn-tf/dataset/images/human/applauding_101.jpg'),dtype=np.uint8)
     ax.imshow(im)
     for i in range(3):
         k = 0
@@ -164,7 +164,6 @@ def bbox_overlaps(boxes, query_boxes):
     K = query_boxes.shape[0]
 
     overlaps = np.zeros((N, K), dtype=np.float)
-
     for k in range(K):
         box_area = ((query_boxes[k, 2] - query_boxes[k, 0] + 1) * (query_boxes[k, 3] - query_boxes[k, 1] + 1))
         for n in range(N):
@@ -201,7 +200,7 @@ def bbox_transform(ex_rois, gt_rois):
     return targets
 
 def bbox_plot(box):
-    im = np.array(Image.open('/run/media/user1/tesla/agrima/git_repos/frcnn-tf/dataset/images/apple/apple_10.jpg'),dtype=np.uint8)
+    im = np.array(Image.open('/home/user1/Documents/frcnn-tf/dataset/images/human/applauding_101.jpg'),dtype=np.uint8)
     fig, ax = plt.subplots(1)
     # import pdb; pdb.set_trace()
     ax.imshow(im)
