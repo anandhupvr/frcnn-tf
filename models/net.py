@@ -200,7 +200,7 @@ class network():
         pre_pool_size = 7 * 2
         crops = tf.image.crop_and_resize(bottom, bboxes, tf.to_int32(batch_ids), [pre_pool_size, pre_pool_size], name="crops")
 
-        return tf.layers.max_pooling2d(crops, [2, 2],[1,1], padding='SAME')
+        return slim.max_pool2d(crops, [2, 2], padding='SAME')
 
 
 
