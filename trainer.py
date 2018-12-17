@@ -34,7 +34,7 @@ with tf.Session() as sess:
             ls_val = sess.run(loss, feed_dict={x:img, gt_boxes:gt_box, im_dims:(im_info)})
             print ('loss : {}       --> : {}'.format(ls_val, _))
         print ('loss : {}      epoch --> : {}'.format(ls_val, i))
-    if i%50 == 0:
+    if i%5 == 0:
         save_path = saver.save(sess, 'weights/'+"model_{}.ckpt".format(i))
         print ("Model at {} epoch saved at {}".format(i, save_path))
 
