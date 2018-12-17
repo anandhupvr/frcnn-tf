@@ -59,6 +59,6 @@ def losses(rpn_cls_score, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_
     rcnn_bbox = rcnn_bbox_los(bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights)
     rcnn_cls = rcnn_cls_loss(cls_score, labels)
 
-    loss =  (rpn_bbox_loss + rpn_cls_loss + rcnn_cls + rcnn_bbox) * 10
+    loss =  rpn_bbox_loss + rpn_cls_loss + rcnn_cls + rcnn_bbox
 
     return loss
