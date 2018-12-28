@@ -9,10 +9,10 @@ import cv2
 class load:
     def __init__(self, dataset_path):
         self.dataset_path = dataset_path
-        self.classes = ('human', 'meatballs_dish')
+        self.classes = ('mango', 'meatballs_dish')
         self._class_to_ind = dict(list(zip(self.classes, list(range(len(self.classes))))))
         self.imdb = {}
-        utils.train_test_split(self.dataset_path+"images/human")
+        utils.train_test_split(self.dataset_path+"images/egg")
         self.ptr = 0
 
     def _get_width(self, img):

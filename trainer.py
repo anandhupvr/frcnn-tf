@@ -13,7 +13,11 @@ data_loader = load(dataset_path)
 net = network()
 
 
-rpn_cls_score_reshape, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights = net.build_network()
+rpn_cls_score_reshape, rpn_labels, rpn_bbox_pred, \
+rpn_bbox_targets, rpn_bbox_inside_weights, \
+rpn_bbox_outside_weights, cls_score, labels, \
+bbox_prediction, bbox_targets, bbox_inside_weights, \
+bbox_outside_weights = net.build_network()
 
 x, gt_boxes, im_dims = net.getPlaceholders()
 
@@ -26,7 +30,11 @@ with tf.Session() as sess:
         for _ in range(len(open("train.txt", "r").readlines())):
             data = data_loader.data_batch()
             img, gt_box, im_info = data[0][0], data[0][1], data[0][2]
-            loss = losses(rpn_cls_score_reshape, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights)
+            loss = losses(rpn_cls_score_reshape, rpn_labels, rpn_bbox_pred, \
+                            rpn_bbox_targets, rpn_bbox_inside_weights, \
+                            rpn_bbox_outside_weights, cls_score, labels, \
+                            bbox_prediction, bbox_targets, bbox_inside_weights, \
+                            bbox_outside_weights)
             train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
             optimizer = tf.train.GradientDescentOptimizer(0.01)
             train_step = optimizer.minimize(loss)

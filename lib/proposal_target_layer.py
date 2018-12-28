@@ -18,7 +18,7 @@ def proposal_target_layer_py(rpn_rois, gt_boxes, num_classes):
     all_rois = all_rois.astype(np.float32)
     # print ("all_rois.shape", all_rois.shape)
     num_images = 1 
-    rois_per_image = 128
+    rois_per_image = 64
     fg_rois_per_image = np.round( 0.25 * rois_per_image).astype(np.int32)
 
     # sample rois with classfication labels and bounding box regression targets
@@ -55,7 +55,7 @@ def sample_rois(all_rois, gt_boxes, fg_rois_per_image, rois_per_image, num_class
         fg_inds = np.random.choice(fg_inds, fg_rois_per_this_image, replace=False)
 
     # select background ROIs as those within [BG_THRESH_LO, BG_THRESH_HI]
-    bg_inds = np.where((max_overlaps < 0.5) & (max_overlaps >= 0.0 ))[0]
+    bg_inds = np.where((max_overlaps < 0.3) & (max_overlaps >= 0.0 ))[0]
     # compute number of background ROI to take from this image
     bg_rois_per_this_image = rois_per_image -fg_rois_per_image
     bg_rois_per_this_image = min(bg_rois_per_this_image, bg_inds.size)

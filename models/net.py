@@ -1,8 +1,5 @@
 import numpy as np
 import tensorflow as tf
-# from lib.anchor_pre import generate_anchors_pre
-# from lib.proposal_layer import proposal_layer
-# from lib.anchor_target import anchor_target_layer
 from lib.proposal_target_layer import proposal_target_layer_py
 import numpy.random as npr
 from lib.targets import anchor_target_layer_python
@@ -10,7 +7,6 @@ from lib.proposal_layer import proposal_layer_py
 from models import vgg
 slim = tf.contrib.slim
 
-from lib.p_target import proposal_target_layer_t
 
 
 class network():
@@ -102,19 +98,6 @@ class network():
         
         return rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights
 
-    # def proposal_target_layer(self, rpn_rois, rpn_cls_score, _gt_boxes, num_classes):
-    #     rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights = tf.py_func( proposal_target_layer_t,
-    #                                                                                         [ rpn_rois, rpn_cls_score, _gt_boxes, num_classes],
-    #                                                                                         [tf.float32, tf.float32, tf.float32, tf.float32, tf.float32])
-    #     rois = tf.reshape( rois, [-1, 5], name = 'rois')
-    #     labels = tf.convert_to_tensor( tf.cast(labels, tf.int32), name = 'labels')
-    #     bbox_targets = tf.convert_to_tensor( bbox_targets, name = 'bbox_targets')
-    #     bbox_inside_weights = tf.convert_to_tensor( bbox_inside_weights, name = 'bbox_inside_weights')
-    #     bbox_outside_weights = tf.convert_to_tensor( bbox_outside_weights, name = 'bbox_outside_weights')
-        
-    #     return rois, labels, bbox_targets, bbox_inside_weights, bbox_outside_weights
-
-
 
 
 
@@ -123,7 +106,7 @@ class network():
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
 
-            vgg_16 = vgg.ConvNetVgg16('/home/christie/junk/frcnn-tf/vgg16.npy')
+            vgg_16 = vgg.ConvNetVgg16('/run/media/user1/disk2/works/frcnn-tf/vgg16.npy')
             cnn = vgg_16.inference(self.x)
             features = vgg_16.get_features()
             rpn_cls_prob, rpn_bbox_pred, rpn_cls_score = self.build_rpn(features, initializer)
@@ -139,17 +122,6 @@ class network():
 
             cls_score, cls_prob, bbox_prediction = self.build_predictions(pooled, initializer, initializer_bbox)
 
-
-            # self._predictions["cls_score"] = cls_score
-            # self._predictions["bbox_pred"] = bbox_prediction
-
-            # self._predictions["labels"] = labels
-            # self._predictions["bbox_targets"] = bbox_targets
-            # self._predictions["bbox_inside_weights"] = bbox_inside_weights
-            # self._predictions["bbox_outside_weights"] = bbox_outside_weights
-
-
-            # return cls_score, cls_prob, bbox_prediction
             return rpn_cls_score, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights
 
 
