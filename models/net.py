@@ -106,7 +106,7 @@ class network():
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
 
-            vgg_16 = vgg.ConvNetVgg16('/run/media/user1/disk2/works/frcnn-tf/vgg16.npy')
+            vgg_16 = vgg.ConvNetVgg16('/home/christie/junk/frcnn-tf/vgg16.npy')
             cnn = vgg_16.inference(self.x)
             features = vgg_16.get_features()
             rpn_cls_prob, rpn_bbox_pred, rpn_cls_score = self.build_rpn(features, initializer)
