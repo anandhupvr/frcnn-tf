@@ -23,7 +23,7 @@ class load:
         def to_float(box):
             st = box.split(' ')
             return [float(i) for i in st]
-
+        import pdb; pdb.set_trace()
         image_files = open("train.txt", "r").readlines()[self.ptr: self.ptr + 1]
         if len(image_files) - 2 == self.ptr:
             self.ptr = -1
