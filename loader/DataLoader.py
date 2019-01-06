@@ -19,13 +19,11 @@ class load:
         return(Image.open(img).size[0])
 
     def data_batch(self):
-        import pdb; pdb.set_trace()
         def to_float(box):
             st = box.split(' ')
             return [float(i) for i in st]
-        import pdb; pdb.set_trace()
         image_files = open("train.txt", "r").readlines()[self.ptr: self.ptr + 1]
-        if len(image_files) - 2 == self.ptr:
+        if len(open("train.txt", "r").readlines()) - 1 == self.ptr:
             self.ptr = -1
         # img = np.expand_dims(np.array(Image.open(image_files[0].strip()),dtype=np.uint8), axis=0).astype('float32')
         img = np.expand_dims(cv2.imread(image_files[0].strip()), axis=0).astype('float32')
