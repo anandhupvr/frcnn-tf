@@ -19,7 +19,7 @@ class load:
         return(Image.open(img).size[0])
 
     def data_batch(self):
-
+        import pdb; pdb.set_trace()
         def to_float(box):
             st = box.split(' ')
             return [float(i) for i in st]
