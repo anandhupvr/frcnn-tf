@@ -35,7 +35,7 @@ with tf.Session() as sess:
                             rpn_bbox_outside_weights, cls_score, labels, \
                             bbox_prediction, bbox_targets, bbox_inside_weights, \
                             bbox_outside_weights)
-            train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
+            #train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
             optimizer = tf.train.GradientDescentOptimizer(0.01)
             train_step = optimizer.minimize(loss)
             sess.run(train_step, feed_dict={x:img, gt_boxes:gt_box, im_dims:im_info})
