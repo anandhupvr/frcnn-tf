@@ -14,8 +14,8 @@ class network():
         self._batch_size = 1
 
         self.x = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, None, None, 3])
-        self._gt_boxes = tf.placeholder(tf.float32, shape=[None, 5])
-        self.im_dims = tf.placeholder(tf.float32, shape=[2])
+        self.cls_plc = tf.placeholder(tf.float32, shape=[self._batch_size, None, None, 18])
+        self.box_plc = tf.placeholder(tf.float32, shape=[self._batch_size, None, None, 72])
         # self.im_info = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 2])
         self.box = []
         self.class_num = 2
@@ -105,11 +105,21 @@ class network():
         with tf.variable_scope('f-rcnn'):
             initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
             initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
-
-            vgg_16 = vgg.ConvNetVgg16('/home/christie/junk/frcnn-tf/vgg16.npy')
+            vgg_16 = vgg.ConvNetVgg16('vgg16.npy')
             cnn = vgg_16.inference(self.x)
             features = vgg_16.get_features()
+
+
+
+
+
+
+            # return features
+
             rpn_cls_prob, rpn_bbox_pred, rpn_cls_score = self.build_rpn(features, initializer)
+            return [rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, features]
+
+            '''
             # rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
             rpn_labels, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights = \
                 self.anchor_target_layer( rpn_cls_score, self._gt_boxes, self.im_dims, self.feat_stride)
@@ -124,8 +134,7 @@ class network():
 
             return rpn_cls_score, rpn_labels, rpn_bbox_pred, rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights, cls_score, labels, bbox_prediction, bbox_targets, bbox_inside_weights, bbox_outside_weights
 
-
-
+            '''
 
     def build_rpn(self, net, initializer):
         num_anchors = 9
@@ -136,7 +145,7 @@ class network():
                                     kernel_initializer = initializer,
                                     name='npn_conv/3x3')
         rpn_cls_score = tf.layers.conv2d(rpn1,
-                                    filters= num_anchors * 2,
+                                    filters= num_anchors,
                                     kernel_size=(1, 1),
                                     activation='sigmoid',
                                     kernel_initializer = initializer,
@@ -147,13 +156,13 @@ class network():
                                     activation='linear',
                                     kernel_initializer = initializer,
                                     name='rpn_out_regre')
-        num = 2
+        # num = 2
         # rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
         
         # rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
         # rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
 
-        rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors * 2, "rpn_cls_prob")
+        rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors , "rpn_cls_prob")
 
         return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score
   
@@ -176,7 +185,8 @@ class network():
 
 
 
-    def build_predictions(self, pooled, initializer, initializer_bbox):
+    def build_predictions(self, feature, rois, initializer, initializer_bbox):
+        pooled = self._crop_pool_layer(feature, rois)
 
         pooled_features = tf.contrib.layers.flatten(pooled)
         # Fully connected layers
@@ -191,7 +201,7 @@ class network():
             rcnn_bbox_refine    = self.fc(feature, self.weights['wfcbbox'],self.biases['bfcbbox'])
 
         cls_prob = tf.nn.softmax(rcnn_cls_score)
-        return rcnn_cls_score, cls_prob, rcnn_bbox_refine
+        return [rcnn_cls_score, cls_prob, rcnn_bbox_refine]
 
     def fc(self,x,W,b):          
         h                            = tf.matmul(x, W) + b
@@ -200,7 +210,7 @@ class network():
 
 
     def getPlaceholders(self):
-        return self.x, self._gt_boxes, self.im_dims
+        return self.x, self.cls_plc, self.box_plc
 
 
 class BatchNorm(object):
