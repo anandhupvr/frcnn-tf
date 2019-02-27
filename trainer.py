@@ -55,17 +55,21 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     for i in range(num_epo):
         # import pdb; pdb.set_trace()
+        los = 0
         for _ in range(256):
             X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
             # optimizer = tf.train.GradientDescentOptimizer(0.01)
             # train_step = optimizer.minimize(rpn_loss)
             sess.run(train_step, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             ls_val = sess.run(rpn_loss, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
+            
+            total_loss = ls_val + los
+            los = ls_val
             # print ("epoch : %s   loss  %s "%(_,ls_val))
-        print ("epoch : %s    ******** losss : %s ***** "%(i,ls_val))
+        print ("epoch : %s    ******** losss : %s ***** "%(i,total_loss/256))
 
-    if i == 100:
-        save_path = saver.save(sess, ''+"model_{}.ckpt".format(i))
-        print ("epoch : %s   saved at  %s "%(i,save_path))
+        if i == 100:
+            save_path = saver.save(sess, ''+"model_{}.ckpt".format(i))
+            print ("epoch : %s   saved at  %s "%(i,save_path))
 
 

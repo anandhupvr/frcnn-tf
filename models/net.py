@@ -13,9 +13,9 @@ class network():
     def __init__(self, batch_size=1):
         self._batch_size = 1
 
-        self.x = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, None, None, 3])
-        self.cls_plc = tf.placeholder(tf.float32, shape=[self._batch_size, None, None, 18])
-        self.box_plc = tf.placeholder(tf.float32, shape=[self._batch_size, None, None, 72])
+        self.x = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, None, None, 3], name="input_image")
+        self.cls_plc = tf.placeholder(tf.float32, shape=[self._batch_size, None, None, 18], name="rpn_cls")
+        self.box_plc = tf.placeholder(tf.float32, shape=[self._batch_size, None, None, 72], name="rpn_box")
         # self.im_info = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, 2])
         self.box = []
         self.class_num = 2
