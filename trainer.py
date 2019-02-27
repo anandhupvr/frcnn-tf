@@ -47,7 +47,7 @@ rpn_loss = los_c + los_b
 # rpn_loss = losses.rpn()
 
 # classification = net.build_predictions(rpn_out[3], rois, initializer, initializer_bbox)
-
+train_step = tf.train.AdamOptimizer(1e-4).minimize(rpn_loss)
 saver = tf.train.Saver()
 
 
@@ -57,8 +57,8 @@ with tf.Session() as sess:
         # import pdb; pdb.set_trace()
         for _ in range(256):
             X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
-            optimizer = tf.train.GradientDescentOptimizer(0.01)
-            train_step = optimizer.minimize(rpn_loss)
+            # optimizer = tf.train.GradientDescentOptimizer(0.01)
+            # train_step = optimizer.minimize(rpn_loss)
             sess.run(train_step, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             ls_val = sess.run(rpn_loss, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             print ("epoch : %s   loss  %s "%(_,ls_val))
