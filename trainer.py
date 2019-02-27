@@ -52,17 +52,17 @@ saver = tf.train.Saver()
 
 
 with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
     for i in range(num_epo):
-        for _ in range(284):
+        # import pdb; pdb.set_trace()
+        for _ in range(256):
             X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
-
-            sess.run(tf.global_variables_initializer())
-            # loss_ = sess.run(rpn_loss, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             optimizer = tf.train.GradientDescentOptimizer(0.01)
             train_step = optimizer.minimize(rpn_loss)
             sess.run(train_step, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             ls_val = sess.run(rpn_loss, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
-            print ("epoch : %s   loss  %s "%(i,ls_val))
+            print ("epoch : %s   loss  %s "%(_,ls_val))
+        print ("epoch : ******** %s ***** "%ls_val)
 
     if i == 100:
         save_path = saver.save(sess, ''+"model_{}.ckpt".format(i))

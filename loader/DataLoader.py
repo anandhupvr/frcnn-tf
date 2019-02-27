@@ -395,10 +395,11 @@ class load:
     def get_anchor_gt(self, all_img_data, C, img_length_calc_function, mode):
         while True:
             i = 0
+            # import pdb; pdb.set_trace()
             for img_data in all_img_data:
 
                 try:
-
+                    # import pdb; pdb.set_trace()
                     # read in image, and optionally add augmentation
                     if mode == 'train':
                         img_data_aug, x_img = self.augment(img_data, C, augment=True)
