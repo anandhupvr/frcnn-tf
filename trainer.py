@@ -61,8 +61,8 @@ with tf.Session() as sess:
             # train_step = optimizer.minimize(rpn_loss)
             sess.run(train_step, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             ls_val = sess.run(rpn_loss, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
-            print ("epoch : %s   loss  %s "%(_,ls_val))
-        print ("epoch : ******** %s ***** "%ls_val)
+            # print ("epoch : %s   loss  %s "%(_,ls_val))
+        print ("epoch : %s    ******** losss : %s ***** "%(i,ls_val))
 
     if i == 100:
         save_path = saver.save(sess, ''+"model_{}.ckpt".format(i))
