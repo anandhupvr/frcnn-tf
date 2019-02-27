@@ -68,8 +68,8 @@ with tf.Session() as sess:
             # print ("epoch : %s   loss  %s "%(_,ls_val))
         print ("epoch : %s    ******** losss : %s ***** "%(i,total_loss/256))
 
-        if i == 100:
-            save_path = saver.save(sess, ''+"model_{}.ckpt".format(i))
+        if i == 5:
+            save_path = saver.save(sess, 'weight/'+"model_{}.ckpt".format(i))
             print ("epoch : %s   saved at  %s "%(i,save_path))
 
 
