@@ -112,7 +112,7 @@ with tf.Session() as sess:
                     sel_samples = random.choice(neg_samples)
                 else:
                     sel_samples = random.choice(pos_samples)
-
+            import pdb; pdb.set_trace()
             sess.run(train_step, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             ls_val = sess.run(total_loss, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             total_loss = ls_val + los
