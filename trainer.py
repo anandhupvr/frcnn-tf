@@ -52,8 +52,9 @@ class_mapping = {'human': 0, 'bg': 1}
 
 classifier = net.classifier(rpn_out[2], roi_input, num_rois, nb_classes=len(class_mapping), trainable=True)
 
-lab_cls = tf.placeholder(tf.float32, shape=classifier[0].shape)
-lab_reg = tf.placeholder(tf.float32, shape=[1, None, 8])
+lab_cls = tf.placeholder(tf.float32, shape=classifier[0].shape, name='label_class')
+lab_reg = tf.placeholder(tf.float32, shape=[1, None, 8], name='label_regression')
+
 clf = lss.class_loss_regr(1)
 clf_cls = lss.class_loss_cls(lab_cls, classifier[0])
 clf_reg = clf(lab_reg, classifier[1])
@@ -116,11 +117,11 @@ with tf.Session() as sess:
             ls_val = sess.run(total_loss, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             loss_ = ls_val + los
             los = ls_val
-            print (loss_)
         print ("epoch : %s    ******** losss : %s ***** "%(i,total_loss/256))
 
-
-
+        if i%100 == 0:
+            save_path = saver.save(sess, 'weight/'+"model_{}.ckpt".format(i))
+            print ("epoch : %s   saved at  %s "%(i,save_path))
 
 
 
