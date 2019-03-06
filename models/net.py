@@ -5,7 +5,13 @@ import numpy.random as npr
 from lib.targets import anchor_target_layer_python
 from lib.proposal_layer import proposal_layer_py
 from models import vgg
+from models.RoiPooling import RoiPoolingConv
+
 slim = tf.contrib.slim
+
+from keras import backend as K
+from keras.layers import Flatten, Dense, Input, Conv2D, MaxPooling2D, Dropout
+from keras.layers import GlobalAveragePooling2D, GlobalMaxPooling2D, TimeDistributed
 
 
 
@@ -116,8 +122,8 @@ class network():
 
             # return features
 
-            rpn_cls_prob, rpn_bbox_pred, rpn_cls_score = self.build_rpn(features, initializer)
-            return [rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, features]
+            rpn_cls_score, rpn_bbox_pred = self.build_rpn(features, initializer)
+            return [rpn_cls_score, rpn_bbox_pred, features]
 
             '''
             # rpn_cls_score, rpn_bbox_pred = self.build_rpn(feature)
@@ -161,10 +167,9 @@ class network():
         
         # rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
         # rpn_cls_score_reshape = self._softmax(rpn_cls_score_reshape, 'rpn_cls_softmax')
+        # rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors , "rpn_cls_prob")
 
-        rpn_cls_prob = self._reshape(rpn_cls_score, num_anchors , "rpn_cls_prob")
-
-        return rpn_cls_prob, rpn_bbox_pred, rpn_cls_score
+        return rpn_cls_score, rpn_bbox_pred
   
     def _crop_pool_layer(self, bottom, rois):
         batch_ids = tf.squeeze(tf.slice(rois, [0, 0], [-1, 1], name="batch_id"), [1])
@@ -186,6 +191,7 @@ class network():
 
 
     def build_predictions(self, feature, rois, initializer, initializer_bbox):
+
         pooled = self._crop_pool_layer(feature, rois)
 
         pooled_features = tf.contrib.layers.flatten(pooled)
@@ -200,8 +206,42 @@ class network():
         with tf.variable_scope('bbox'):
             rcnn_bbox_refine    = self.fc(feature, self.weights['wfcbbox'],self.biases['bfcbbox'])
 
-        cls_prob = tf.nn.softmax(rcnn_cls_score)
-        return [rcnn_cls_score, cls_prob, rcnn_bbox_refine]
+        # cls_prob = tf.nn.softmax(rcnn_cls_score, name="rcnn_class_prob")
+        predictions = [rcnn_cls_score, rcnn_bbox_refine]
+        return predictions
+
+
+
+    def classifier(self, base_layers, input_rois, num_rois, nb_classes = 2, trainable=False):
+        # compile times on theano tend to be very high, so we use smaller ROI pooling regions to workaround
+        if K.backend() == 'tensorflow':
+            pooling_regions = 7
+            input_shape = (num_rois,7,7,512)
+        elif K.backend() == 'theano':
+            pooling_regions = 7
+            input_shape = (num_rois,512,7,7)
+        out_roi_pool = RoiPoolingConv(pooling_regions, num_rois)([base_layers, input_rois])
+
+        out = TimeDistributed(Flatten(name='flatten'))(out_roi_pool)
+        out = TimeDistributed(Dense(4096, activation='relu', name='fc1'))(out)
+        out = TimeDistributed(Dropout(0.5))(out)
+        out = TimeDistributed(Dense(4096, activation='relu', name='fc2'))(out)
+        out = TimeDistributed(Dropout(0.5))(out)
+
+        out_class = TimeDistributed(Dense(nb_classes, activation='softmax', kernel_initializer='zero'), name='dense_class_{}'.format(nb_classes))(out)
+        # note: no regression target for bg class
+        out_regr = TimeDistributed(Dense(4 * (nb_classes-1), activation='linear', kernel_initializer='zero'), name='dense_regress_{}'.format(nb_classes))(out)
+
+        return [out_class, out_regr]
+
+
+
+
+
+
+
+
+
 
     def fc(self,x,W,b):          
         h                            = tf.matmul(x, W) + b

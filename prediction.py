@@ -1,17 +1,29 @@
 import tensorflow as tf
-import cv2
+from PIL import Image
+
+import numpy as np
 
 
-img_path = ''
-img = np.expand_dims(cv2.imread(img_path), axis=0).astype('float32')
 
 tf.reset_default_graph()
 
-im = tf.placeholder(dtype=tf.float32, shape=[self._batch_size, None, None, 3])
+img = Image.open('human.jpg')
 
-saver = tf.train.Saver()
+im = tf.placeholder(dtype=tf.float32, shape=[1, None, None, 3])
+new_graph = tf.Graph()
 
-with tf.Session() as sess:
-    saver.restore(sess, "/tmp/model.ckpt")
-    print ("Model restored")
+import pdb; pdb.set_trace()
+with tf.Session(graph=new_graph) as sess:
+	tf.global_variables_initializer().run()
+	saver = tf.train.import_meta_graph('/run/media/user1/disk2/agrima/testing/frcnn-tf/weight/model_400.ckpt.meta')
+	checkpoint = tf.train.latest_checkpoint('/run/media/user1/disk2/agrima/testing/frcnn-tf/weight')
+
+	saver.restore(sess, checkpoint)
+	print ("model restored")
+
+	img = np.expand_dims(img.resize([224, 224]), axis=0)
+
+	image_tensor = tf.get_default_graph().get_tensor_by_name('input_image:0')
+
+
      
