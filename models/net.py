@@ -151,7 +151,7 @@ class network():
                                     kernel_initializer = initializer,
                                     name='npn_conv/3x3')
         rpn_cls_score = tf.layers.conv2d(rpn1,
-                                    filters= num_anchors,
+                                    filters=num_anchors,
                                     kernel_size=(1, 1),
                                     activation='sigmoid',
                                     kernel_initializer = initializer,
@@ -162,6 +162,7 @@ class network():
                                     activation='linear',
                                     kernel_initializer = initializer,
                                     name='rpn_out_regre')
+        
         # num = 2
         # rpn_cls_score_reshape = self._reshape(rpn_cls_score, num, 'rpn_cls_scores_reshape')
         

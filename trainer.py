@@ -61,7 +61,7 @@ clf_reg = clf(lab_reg, classifier[1])
 clf_loss = clf_cls + clf_reg
 total_loss = rpn_loss + clf_loss
 # classification = net.build_predictions(rpn_out[2], roi_input, initializer, initializer_bbox)
-
+tf.summary.scalar("loss", total_loss)
 train_step = tf.train.AdamOptimizer(1e-4).minimize(total_loss)
 # train__step_cls = tf.train.AdamOptimizer(1e-4).minimize(clf_loss)
 
@@ -69,6 +69,9 @@ saver = tf.train.Saver()
 
 
 with tf.Session() as sess:
+    train_writer = tf.summary.FileWriter( 'logs/', sess.graph)
+    merged = tf.summary.merge_all()
+
     sess.run(tf.global_variables_initializer())
     for i in range(num_epo):
         # import pdb; pdb.set_trace()
@@ -88,7 +91,6 @@ with tf.Session() as sess:
                 neg_samples = neg_samples[0]
             else:
                 neg_samples = []
-
             if len(pos_samples) > 0:
                 pos_samples = pos_samples[0]
             else:
@@ -113,10 +115,11 @@ with tf.Session() as sess:
                     sel_samples = random.choice(neg_samples)
                 else:
                     sel_samples = random.choice(pos_samples)
-            sess.run(train_step, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
+            summary = sess.run([merged, train_step], feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             ls_val = sess.run(total_loss, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             loss_ = ls_val + los
             los = loss_
+        train_writer.add_summary(summary[0], i)
         print ("epoch : %s  ***** losss : %s ***** "%(i, loss_/256))
 
         if i%100 == 0:
