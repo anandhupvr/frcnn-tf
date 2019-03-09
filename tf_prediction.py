@@ -134,14 +134,3 @@ with tf.Session(graph=new_graph) as sess:
 	cv2.imshow('img', img)
 	cv2.waitKey(0)
 
-
-		print ("kdk")
-		print ("kdkkkkkk")
-# dense_class_2/Softmax:0
-# dense_regress_2/Reshape_1:0
-
-	print ("hellow ")
-	print ("hdh")
-
-     
-
