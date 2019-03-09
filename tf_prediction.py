@@ -81,7 +81,6 @@ with tf.Session(graph=new_graph) as sess:
 			ROIs_padded[0, curr_shape[1]:, :] = ROIs[0, 0, :]
 			ROIs = ROIs_padded
 		P_cls, P_regr = sess.run([out_cls, out_box], feed_dict={image_tensor:img, roi:ROIs})
-		import pdb; pdb.set_trace()
 		for ii in range(P_cls.shape[1]):
 
 			if np.max(P_cls[0, ii, :]) < bbox_threshold:
@@ -96,7 +95,7 @@ with tf.Session(graph=new_graph) as sess:
 			(x, y, w, h) = ROIs[0, ii, :]
 			cls_num = np.argmax(P_cls[0, ii, :])
 			try:
-				(tx, ty, tw, th) = P_regr[0, ii, 4*cls_num:4*(cls_num+1)]
+				(tx, ty, tw, th) = P_regr[0, ii, :]
 				tx /= C.classifier_regr_std[0]
 				ty /= C.classifier_regr_std[1]
 				tw /= C.classifier_regr_std[2]
@@ -106,7 +105,34 @@ with tf.Session(graph=new_graph) as sess:
 				pass
 			bboxes[cls_name].append([C.rpn_stride*x, C.rpn_stride*y, C.rpn_stride*(x+w), C.rpn_stride*(y+h)])
 			probs[cls_name].append(np.max(P_cls[0, ii, :]))
+	import pdb; pdb.set_trace()
+	all_dets = []
 
+	for key in bboxes:
+		bbox = np.array(bboxes[key])
+
+		new_boxes, new_probs = utils.non_max_suppression_fast(bbox, np.array(probs[key]), overlap_thresh=0.5)
+		for jk in range(new_boxes.shape[0]):
+			(x1, y1, x2, y2) = new_boxes[jk,:]
+
+			(real_x1, real_y1, real_x2, real_y2) = get_real_coordinates(ratio, x1, y1, x2, y2)
+
+			cv2.rectangle(img,(real_x1, real_y1), (real_x2, real_y2), (int(class_to_color[key][0]), int(class_to_color[key][1]), int(class_to_color[key][2])),2)
+
+			textLabel = '{}: {}'.format(key,int(100*new_probs[jk]))
+			all_dets.append((key,100*new_probs[jk]))
+
+			(retval,baseLine) = cv2.getTextSize(textLabel,cv2.FONT_HERSHEY_COMPLEX,1,1)
+			textOrg = (real_x1, real_y1-0)
+
+			cv2.rectangle(img, (textOrg[0] - 5, textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (0, 0, 0), 2)
+			cv2.rectangle(img, (textOrg[0] - 5,textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (255, 255, 255), -1)
+			cv2.putText(img, textLabel, textOrg, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0), 1)
+
+	print('Elapsed time = {}'.format(time.time() - st))
+	print(all_dets)
+	cv2.imshow('img', img)
+	cv2.waitKey(0)
 
 
 		print ("kdk")
