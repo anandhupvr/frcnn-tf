@@ -4,3 +4,4 @@ vgg16.ckpt
 dataset/*
 *.npy
 weight/*
+logs/*

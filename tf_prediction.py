@@ -16,7 +16,7 @@ tf.reset_default_graph()
 
 C = Config()
 
-bbox_threshold = 0.53
+bbox_threshold = 0.3
 
 
 
@@ -42,12 +42,11 @@ with tf.Session(graph=new_graph) as sess:
 
 	saver.restore(sess, checkpoint)
 	print ("model restored")
-	import pdb; pdb.set_trace()
 	img = np.expand_dims(img.resize([224, 224]), axis=0)
 
 	image_tensor = tf.get_default_graph().get_tensor_by_name('input_image:0')
-	rpn_reg_out = tf.get_default_graph().get_tensor_by_name('rpn_out_regre:0')
-	rpn_cls_out = tf.get_default_graph().get_tensor_by_name('rpn_out_regre:0')
+	rpn_reg_out = tf.get_default_graph().get_tensor_by_name('rpn_bbox_pred:0')
+	rpn_cls_out = tf.get_default_graph().get_tensor_by_name('rpn_cls_pred:0')
 
 	base_layer = tf.get_default_graph().get_tensor_by_name('conv5_3/Relu:0')
 	out_cls = tf.get_default_graph().get_tensor_by_name('class_prediction:0')
@@ -81,12 +80,11 @@ with tf.Session(graph=new_graph) as sess:
 			ROIs_padded[:, :curr_shape[1], :] = ROIs
 			ROIs_padded[0, curr_shape[1]:, :] = ROIs[0, 0, :]
 			ROIs = ROIs_padded
-		P_cls, P_regr = sess.run([cls_out, box_out], feed_dict={image_tensor:img, roi:ROIs})
-		P_cls = np.expand_dims(P_cls, axis=0)
+		P_cls, P_regr = sess.run([out_cls, out_box], feed_dict={image_tensor:img, roi:ROIs})
 		import pdb; pdb.set_trace()
 		for ii in range(P_cls.shape[1]):
 
-			if np.max(P_cls[0, ii, :]) < bbox_threshold or np.argmax(P_cls[0, ii, :]) == (P_cls.shape[2] - 1):
+			if np.max(P_cls[0, ii, :]) < bbox_threshold:
 				continue
 
 			cls_name = class_mapping[np.argmax(P_cls[0, ii, :])]
@@ -120,3 +118,4 @@ with tf.Session(graph=new_graph) as sess:
 	print ("hdh")
 
      
+
