@@ -16,7 +16,7 @@ tf.reset_default_graph()
 
 C = Config()
 
-bbox_threshold = 0.3
+bbox_threshold = 0.85
 
 
 
@@ -81,9 +81,10 @@ with tf.Session(graph=new_graph) as sess:
 			ROIs_padded[0, curr_shape[1]:, :] = ROIs[0, 0, :]
 			ROIs = ROIs_padded
 		P_cls, P_regr = sess.run([out_cls, out_box], feed_dict={image_tensor:img, roi:ROIs})
+		import pdb; pdb.set_trace()
 		for ii in range(P_cls.shape[1]):
 
-			if np.max(P_cls[0, ii, :]) < bbox_threshold:
+			if np.max(P_cls[0, ii, :]) < bbox_threshold or np.argmax(P_cls[0, ii, :]) == (P_cls.shape[2] - 1):
 				continue
 
 			cls_name = class_mapping[np.argmax(P_cls[0, ii, :])]
