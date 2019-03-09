@@ -160,7 +160,7 @@ def non_max_suppression_fast(boxes, probs, overlap_thresh=0.9, max_boxes=300):
 	# if there are no boxes, return an empty list
 	if len(boxes) == 0:
 		return []
-
+	import pdb; pdb.set_trace()
 	# grab the coordinates of the bounding boxes
 	x1 = boxes[:, 0]
 	y1 = boxes[:, 1]
