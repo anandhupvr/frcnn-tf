@@ -16,7 +16,7 @@ tf.reset_default_graph()
 
 C = Config()
 
-bbox_threshold = 0.85
+bbox_threshold = 0.95
 
 
 
