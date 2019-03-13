@@ -102,7 +102,7 @@ def calc_iou(R, img_data, C, class_mapping):
 def apply_regr(x, y, w, h, tx, ty, tw, th):
 	try:
 		cx = x + w/2.
-		cy = y - h/2.
+		cy = y + h/2.
 		cx1 = tx * w + cx
 		cy1 = ty * h + cy
 		w1 = math.exp(tw) * w

@@ -64,8 +64,6 @@ class load:
                         "jpg","txt")).strip("\n")).readlines()
                 clas_name = int(label_file[0].strip())
                 (x1, y1, x2, y2) = label_file[1].strip().split(' ')
-                x2 = int(x2) - int(x1)
-                y2 = int(y2) - int(y1)
                 filename = line
                 if filename not in all_imgs:
                     all_imgs[filename] = {}
