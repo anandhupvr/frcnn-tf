@@ -59,7 +59,6 @@ class load:
                 i += 1
 
                 # img = np.expand_dims(cv2.imread(image_files[0].strip()), axis=0).astype('float32')
-
                 label_file = open(((line.strip()).split("images")[0] +
                      "labelsbbox" + (line.strip()).split("images")[1].replace(
                         "jpg","txt")).strip("\n")).readlines()
