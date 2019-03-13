@@ -64,7 +64,6 @@ class load:
                      "labelsbbox" + (line.strip()).split("images")[1].replace(
                         "jpg","txt")).strip("\n")).readlines()
                 clas_name = int(label_file[0].strip())
-                import pdb; pdb.set_trace()
                 (x1, y1, x2, y2) = label_file[1].strip().split(' ')
                 x2 = int(x2) - int(x1)
                 y2 = int(y2) - int(y1)
