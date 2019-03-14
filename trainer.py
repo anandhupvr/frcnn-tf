@@ -114,7 +114,7 @@ with tf.Session() as sess:
                 else:
                     sel_samples = random.choice(pos_samples)
             summary = sess.run([merged, train_step], feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :1], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
-            ls_val = sess.run(total_loss, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
+            ls_val = sess.run(total_loss, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :1], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             loss_ = ls_val + los
             los = loss_
         train_writer.add_summary(summary[0], i)
