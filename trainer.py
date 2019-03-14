@@ -40,7 +40,6 @@ initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
 rpn_out = net.build_network()
 x, cls_plc, box_plc = net.getPlaceholders()
 
-
 lsr = lss.rpn_loss_cls_org(9)
 lgr = lss.rpn_loss_regr_org(9)
 # rg = lss.rpn_loss_regr(9)
@@ -54,7 +53,6 @@ classifier = net.classifier(rpn_out[2], roi_input, num_rois, nb_classes=len(clas
 
 lab_cls = tf.placeholder(tf.float32, shape=[1, None, 1], name='label_class')
 lab_reg = tf.placeholder(tf.float32, shape=[1, None, 4], name='label_regression')
-
 clf = lss.class_loss_regr(1)
 clf_cls = lss.class_loss_cls(lab_cls, classifier[0])
 clf_reg = clf(lab_reg, classifier[1])
@@ -115,7 +113,7 @@ with tf.Session() as sess:
                     sel_samples = random.choice(neg_samples)
                 else:
                     sel_samples = random.choice(pos_samples)
-            summary = sess.run([merged, train_step], feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
+            summary = sess.run([merged, train_step], feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :1], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             ls_val = sess.run(total_loss, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
             loss_ = ls_val + los
             los = loss_
