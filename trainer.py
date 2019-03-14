@@ -48,7 +48,7 @@ los_c = lsr(cls_plc, rpn_out[0])
 los_b = lgr(box_plc, rpn_out[1])
 rpn_loss = los_c + los_b
 # rpn_loss = losses.rpn()
-class_mapping = {'racoon': 0}
+class_mapping = {'raccoon':1, 'bg':0}
 
 classifier = net.classifier(rpn_out[2], roi_input, num_rois, nb_classes=len(class_mapping), trainable=True)
 

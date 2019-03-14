@@ -57,7 +57,7 @@ def calc_iou(R, img_data, C, class_mapping):
 			elif C.classifier_max_overlap <= best_iou:
 
 				cls_name = bboxes[best_bbox]['class']
-				cls_name = 'human'
+				cls_name = 'raccoon'
 				cxg = (gta[best_bbox, 0] + gta[best_bbox, 1]) / 2.0
 				cyg = (gta[best_bbox, 2] + gta[best_bbox, 3]) / 2.0
 
