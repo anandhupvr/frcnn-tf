@@ -45,7 +45,7 @@ class_mapping = {1:'human', 0:'bg'}
 with tf.Session(graph=new_graph) as sess:
 	# X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
 	tf.global_variables_initializer().run()
-	saver = tf.train.import_meta_graph('weight/model_400.ckpt.meta')
+	saver = tf.train.import_meta_graph('weight/model_300.ckpt.meta')
 	checkpoint = tf.train.latest_checkpoint('weight')
 
 	saver.restore(sess, checkpoint)
@@ -64,7 +64,7 @@ with tf.Session(graph=new_graph) as sess:
 	#box_out = tf.get_default_graph().get_tensor_by_name('dense_regress_2/Reshape_1:0')
 	#cls_out = tf.get_default_graph().get_tensor_by_name('dense_class_2/Softmax:0')
 
-
+	import pdb; pdb.set_trace()
 
 	P_rpn = sess.run([rpn_cls_out, rpn_reg_out, base_layer], feed_dict={image_tensor:img})
 
@@ -89,7 +89,7 @@ with tf.Session(graph=new_graph) as sess:
 			ROIs_padded[0, curr_shape[1]:, :] = ROIs[0, 0, :]
 			ROIs = ROIs_padded
 		P_cls, P_regr = sess.run([out_cls, out_box], feed_dict={image_tensor:img, roi:ROIs})
-		# import pdb; pdb.set_trace()
+		import pdb; pdb.set_trace()
 		for ii in range(P_cls.shape[1]):
 
 			if np.max(P_cls[0, ii, :]) < bbox_threshold or np.argmax(P_cls[0, ii, :]) == (P_cls.shape[2] - 1):
@@ -124,19 +124,19 @@ with tf.Session(graph=new_graph) as sess:
 		for jk in range(new_boxes.shape[0]):
 			(x1, y1, x2, y2) = new_boxes[jk,:]
 
-			(real_x1, real_y1, real_x2, real_y2) = get_real_coordinates(ratio, x1, y1, x2, y2)
+			(real_x1, real_y1, real_x2, real_y2) = (x1, y1, x2, y2)
 
-			cv2.rectangle(img,(real_x1, real_y1), (real_x2, real_y2), (int(class_to_color[key][0]), int(class_to_color[key][1]), int(class_to_color[key][2])),2)
+			# cv2.rectangle(img,(real_x1, real_y1), (real_x2, real_y2), (int(class_to_color[key][0]), int(class_to_color[key][1]), int(class_to_color[key][2])),2)
 
 			textLabel = '{}: {}'.format(key,int(100*new_probs[jk]))
 			all_dets.append((key,100*new_probs[jk]))
 
-			(retval,baseLine) = cv2.getTextSize(textLabel,cv2.FONT_HERSHEY_COMPLEX,1,1)
-			textOrg = (real_x1, real_y1-0)
+			# (retval,baseLine) = cv2.getTextSize(textLabel,cv2.FONT_HERSHEY_COMPLEX,1,1)
+			# textOrg = (real_x1, real_y1-0)
 
-			cv2.rectangle(img, (textOrg[0] - 5, textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (0, 0, 0), 2)
-			cv2.rectangle(img, (textOrg[0] - 5,textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (255, 255, 255), -1)
-			cv2.putText(img, textLabel, textOrg, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0), 1)
+			# cv2.rectangle(img, (textOrg[0] - 5, textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (0, 0, 0), 2)
+			# cv2.rectangle(img, (textOrg[0] - 5,textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (255, 255, 255), -1)
+			# cv2.putText(img, textLabel, textOrg, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0), 1)
 
 	print('Elapsed time = {}'.format(time.time() - st))
 	print(all_dets)
