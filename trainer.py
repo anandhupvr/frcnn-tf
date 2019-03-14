@@ -52,8 +52,8 @@ class_mapping = {'raccoon':0, 'bg':1}
 
 classifier = net.classifier(rpn_out[2], roi_input, num_rois, nb_classes=len(class_mapping), trainable=True)
 
-lab_cls = tf.placeholder(tf.float32, shape=classifier[0].shape, name='label_class')
-lab_reg = tf.placeholder(tf.float32, shape=[1, None, 8], name='label_regression')
+lab_cls = tf.placeholder(tf.float32, shape=[1, None, 1], name='label_class')
+lab_reg = tf.placeholder(tf.float32, shape=[1, None, 4], name='label_regression')
 
 clf = lss.class_loss_regr(1)
 clf_cls = lss.class_loss_cls(lab_cls, classifier[0])
