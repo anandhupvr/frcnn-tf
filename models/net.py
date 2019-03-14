@@ -159,7 +159,7 @@ class network():
         out_class = TimeDistributed(Dense(nb_classes, activation='softmax', kernel_initializer='zero'), name='dense_class_{}'.format(nb_classes))(out)
         # note: no regression target for bg class
         out_regr = TimeDistributed(Dense(4 * (nb_classes), activation='linear', kernel_initializer='zero'), name='dense_regress_{}'.format(nb_classes))(out)
-        out_class = tf.reshape(out_class, [1, 4, 2], name='class_prediction')
+        out_class = tf.reshape(out_class, [1, 4, 1], name='class_prediction')
         out_regr = tf.reshape(out_regr, [1, 4, 4], name='box_prediction')
         return [out_class, out_regr]
 
