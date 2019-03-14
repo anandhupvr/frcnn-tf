@@ -15,7 +15,7 @@ class load:
         self.classes = ('mango', 'meatballs_dish')
         self._class_to_ind = dict(list(zip(self.classes, list(range(len(self.classes))))))
         self.imdb = {}
-        utils.train_test_split(self.dataset_path+"images/human")
+        utils.train_test_split(self.dataset_path+"images/racoon")
         self.ptr = 0
 
     def _get_width(self, img):
