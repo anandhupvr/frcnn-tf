@@ -77,6 +77,7 @@ with tf.Session() as sess:
         # import pdb; pdb.set_trace()
         los = 0
         for _ in range(256):
+            import pdb; pdb.set_trace()
             X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
             # sess.run(train_step_rpn, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             P_rpn = sess.run(rpn_out, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
