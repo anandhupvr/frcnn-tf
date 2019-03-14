@@ -141,7 +141,7 @@ class network():
 
 
 
-    def classifier(self, base_layers, input_rois, num_rois, nb_classes = 2, trainable=False):
+    def classifier(self, base_layers, input_rois, num_rois, nb_classes = 1, trainable=False):
         # compile times on theano tend to be very high, so we use smaller ROI pooling regions to workaround
         if K.backend() == 'tensorflow':
             pooling_regions = 7
@@ -158,7 +158,7 @@ class network():
         out = TimeDistributed(Dropout(0.5))(out)
         out_class = TimeDistributed(Dense(nb_classes, activation='softmax', kernel_initializer='zero'), name='dense_class_{}'.format(nb_classes))(out)
         # note: no regression target for bg class
-        out_regr = TimeDistributed(Dense(4 * (nb_classes-1), activation='linear', kernel_initializer='zero'), name='dense_regress_{}'.format(nb_classes))(out)
+        out_regr = TimeDistributed(Dense(4 * (nb_classes), activation='linear', kernel_initializer='zero'), name='dense_regress_{}'.format(nb_classes))(out)
         out_class = tf.reshape(out_class, [1, 4, 2], name='class_prediction')
         out_regr = tf.reshape(out_regr, [1, 4, 4], name='box_prediction')
         return [out_class, out_regr]

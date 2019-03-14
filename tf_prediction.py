@@ -16,17 +16,7 @@ tf.reset_default_graph()
 
 C = Config()
 
-bbox_threshold = 0.95
-# Method to transform the coordinates of the bounding box to its original size
-def get_real_coordinates(ratio, x1, y1, x2, y2):
-
-	real_x1 = int(round(x1 // ratio))
-	real_y1 = int(round(y1 // ratio))
-	real_x2 = int(round(x2 // ratio))
-	real_y2 = int(round(y2 // ratio))
-
-	return (real_x1, real_y1, real_x2 ,real_y2)
-
+bbox_threshold = 0.2
 
 # load = load(dataset_path)
 
@@ -35,7 +25,7 @@ def get_real_coordinates(ratio, x1, y1, x2, y2):
 # data_gen = load.get_anchor_gt(data, C, get_img_output_length, mode='test')
 
 
-img = Image.open('human.jpg')
+img = Image.open(sys.argv[1])
 
 # im = tf.placeholder(dtype=tf.float32, shape=[1, None, None, 3])
 new_graph = tf.Graph()
@@ -89,7 +79,6 @@ with tf.Session(graph=new_graph) as sess:
 			ROIs_padded[0, curr_shape[1]:, :] = ROIs[0, 0, :]
 			ROIs = ROIs_padded
 		P_cls, P_regr = sess.run([out_cls, out_box], feed_dict={image_tensor:img, roi:ROIs})
-		import pdb; pdb.set_trace()
 		for ii in range(P_cls.shape[1]):
 
 			if np.max(P_cls[0, ii, :]) < bbox_threshold or np.argmax(P_cls[0, ii, :]) == (P_cls.shape[2] - 1):
@@ -114,7 +103,6 @@ with tf.Session(graph=new_graph) as sess:
 				pass
 			bboxes[cls_name].append([C.rpn_stride*x, C.rpn_stride*y, C.rpn_stride*(x+w), C.rpn_stride*(y+h)])
 			probs[cls_name].append(np.max(P_cls[0, ii, :]))
-	import pdb; pdb.set_trace()
 	all_dets = []
 
 	for key in bboxes:
@@ -138,8 +126,9 @@ with tf.Session(graph=new_graph) as sess:
 			# cv2.rectangle(img, (textOrg[0] - 5,textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (255, 255, 255), -1)
 			# cv2.putText(img, textLabel, textOrg, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0), 1)
 
-	print('Elapsed time = {}'.format(time.time() - st))
+	# print('Elapsed time = {}'.format(time.time() - st))
 	print(all_dets)
-	cv2.imshow('img', img)
-	cv2.waitKey(0)
+	print (real_x1, real_y1, real_x2, real_y2)
+	# cv2.imshow('img', img)
+	# cv2.waitKey(0)
 
