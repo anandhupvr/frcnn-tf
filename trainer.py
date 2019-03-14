@@ -48,7 +48,7 @@ los_c = lsr(cls_plc, rpn_out[0])
 los_b = lgr(box_plc, rpn_out[1])
 rpn_loss = los_c + los_b
 # rpn_loss = losses.rpn()
-class_mapping = {'raccoon':1, 'bg':0}
+class_mapping = {'raccoon':0, 'bg':1}
 
 classifier = net.classifier(rpn_out[2], roi_input, num_rois, nb_classes=len(class_mapping), trainable=True)
 
@@ -77,7 +77,6 @@ with tf.Session() as sess:
         # import pdb; pdb.set_trace()
         los = 0
         for _ in range(256):
-            import pdb; pdb.set_trace()
             X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
             # sess.run(train_step_rpn, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
             P_rpn = sess.run(rpn_out, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
