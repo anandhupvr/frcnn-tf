@@ -77,6 +77,7 @@ with tf.Session(graph=new_graph) as sess:
 			ROIs_padded[:, :curr_shape[1], :] = ROIs
 			ROIs_padded[0, curr_shape[1]:, :] = ROIs[0, 0, :]
 			ROIs = ROIs_padded
+		import pdb; pdb.set_trace()
 		P_cls, P_regr = sess.run([out_cls, out_box], feed_dict={image_tensor:img, roi:ROIs})
 		for ii in range(P_cls.shape[1]):
 
