@@ -30,7 +30,7 @@ img = Image.open(sys.argv[1])
 # im = tf.placeholder(dtype=tf.float32, shape=[1, None, None, 3])
 new_graph = tf.Graph()
 
-class_mapping = {1:'human', 0:'bg'}
+class_mapping = {1:'bg', 0:'racoon'}
 
 with tf.Session(graph=new_graph) as sess:
 	# X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
@@ -54,7 +54,6 @@ with tf.Session(graph=new_graph) as sess:
 	#box_out = tf.get_default_graph().get_tensor_by_name('dense_regress_2/Reshape_1:0')
 	#cls_out = tf.get_default_graph().get_tensor_by_name('dense_class_2/Softmax:0')
 
-	import pdb; pdb.set_trace()
 
 	P_rpn = sess.run([rpn_cls_out, rpn_reg_out, base_layer], feed_dict={image_tensor:img})
 
