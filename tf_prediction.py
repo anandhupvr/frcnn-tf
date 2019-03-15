@@ -103,7 +103,7 @@ with tf.Session(graph=new_graph) as sess:
 			bboxes[cls_name].append([C.rpn_stride*x, C.rpn_stride*y, C.rpn_stride*(x+w), C.rpn_stride*(y+h)])
 			probs[cls_name].append(np.max(P_cls[0, ii, :]))
 	all_dets = []
-
+	import pdb; pdb.set_trace()
 	for key in bboxes:
 		bbox = np.array(bboxes[key])
 
