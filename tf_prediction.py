@@ -81,7 +81,7 @@ with tf.Session(graph=new_graph) as sess:
 		P_cls, P_regr = sess.run([out_cls, out_box], feed_dict={image_tensor:img, roi:ROIs})
 		for ii in range(P_cls.shape[1]):
 
-			if np.max(P_cls[0, ii, :]) < bbox_threshold or np.argmax(P_cls[0, ii, :]) == (P_cls.shape[2] - 1):
+			if np.max(P_cls[0, ii, :]) < bbox_threshold:
 				continue
 
 			cls_name = class_mapping[np.argmax(P_cls[0, ii, :])]
