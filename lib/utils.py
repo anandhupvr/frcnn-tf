@@ -8,7 +8,7 @@ data = load('dataset/')
 
 
 def calc_iou(R, img_data, C, class_mapping):
-
+	import pdb; pdb.set_trace()
 	bboxes = img_data['bboxes']
 	(width, height) = (img_data['width'], img_data['height'])
 	# get image dimensions for resizing
@@ -57,7 +57,7 @@ def calc_iou(R, img_data, C, class_mapping):
 			elif C.classifier_max_overlap <= best_iou:
 
 				cls_name = bboxes[best_bbox]['class']
-				cls_name = 'raccoon'
+				# cls_name = 'raccoon'
 				cxg = (gta[best_bbox, 0] + gta[best_bbox, 1]) / 2.0
 				cyg = (gta[best_bbox, 2] + gta[best_bbox, 3]) / 2.0
 

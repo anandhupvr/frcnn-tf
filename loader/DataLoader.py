@@ -15,8 +15,33 @@ class load:
         self.classes = ('mango', 'meatballs_dish')
         self._class_to_ind = dict(list(zip(self.classes, list(range(len(self.classes))))))
         self.imdb = {}
-        utils.train_test_split(self.dataset_path+"images/racoon")
+        self.images_path = os.path.join(self.dataset_path, 'images')
+        # utils.train_test_split(self.dataset_path+"images/racoon")
         self.ptr = 0
+        self.cats = os.listdir(self.dataset_path + "/images")
+        self.build()
+
+    def build(self):
+        self.image_list = self._get_image_files()
+        self.train_test_split()
+
+    def _get_image_files(self):
+        images_list = []
+        for cat in os.listdir(self.images_path):
+            for im in os.listdir(os.path.join(self.images_path, cat)):
+                images_list.append(os.path.join(self.images_path, cat, im))
+        return images_list
+
+    def train_test_split(self):
+        random.shuffle(self.image_list)
+        train_count = int(len(self.image_list)*.9)
+        train_file = open('train.txt','w')
+        for img in self.image_list[:train_count]:
+            train_file.write("%s\n"%img)
+        test_file = open('test.txt','w')
+        for img in self.image_list[train_count:]:
+            test_file.write("%s\n"%img)
+
 
     def _get_width(self, img):
         return(Image.open(img).size[0])
@@ -46,9 +71,6 @@ class load:
         return feed
 
 
-
-
-
     def get_data(self):
         i = 1
         all_imgs = {} 
@@ -57,17 +79,13 @@ class load:
             for line in f:
                 sys.stdout.write('\r'+'idx=' + str(i))
                 i += 1
+                label_file = open(line.strip().replace('images','labelsbbox').replace('jpg', 'txt')).readlines()
 
-                # img = np.expand_dims(cv2.imread(image_files[0].strip()), axis=0).astype('float32')
-                label_file = open(((line.strip()).split("images")[0] +
-                     "labelsbbox" + (line.strip()).split("images")[1].replace(
-                        "jpg","txt")).strip("\n")).readlines()
                 clas_name = int(label_file[0].strip())
                 (x1, y1, x2, y2) = label_file[1].strip().split(' ')
                 filename = line
                 if filename not in all_imgs:
                     all_imgs[filename] = {}
-
                     all_imgs[filename]['filepath'] = filename
                     all_imgs[filename]['bboxes'] = []
                 all_imgs[filename]['bboxes'].append({'class':clas_name, 'x1': int(x1), 'x2': int(x2), 'y1':int(y1), 'y2':int(y2)})
@@ -82,7 +100,6 @@ class load:
         area_b = (bu[2] - bu[0]) * (bu[3] - bu[1])
         area_union = area_a + area_b - area_intersection
         return area_union
-
 
     def intersection(self, ai, bi):
         x = max(ai[0], bi[0])

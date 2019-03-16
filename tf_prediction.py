@@ -112,7 +112,7 @@ with tf.Session(graph=new_graph) as sess:
 
 			(real_x1, real_y1, real_x2, real_y2) = (x1, y1, x2, y2)
 
-			cv2.rectangle(img,(real_x1, real_y1), (real_x2, real_y2), (int(class_to_color[key][0]), int(class_to_color[key][1]), (0,255,0)),2)
+			cv2.rectangle(img,(real_x1, real_y1), (real_x2, real_y2), (int(class_to_color[key][0]), (, (0,255,0)),2)
 
 			textLabel = '{}: {}'.format(key,int(100*new_probs[jk]))
 			all_dets.append((key,100*new_probs[jk]))

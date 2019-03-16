@@ -1,519 +1,1229 @@
-Using TensorFlow backend.
-Parsing annotation files
-idx=1idx=2idx=3idx=4idx=5idx=6idx=7idx=8idx=9idx=10idx=11idx=12idx=13idx=14idx=15idx=16idx=17idx=18idx=19idx=20idx=21idx=22idx=23idx=24idx=25idx=26idx=27idx=28idx=29idx=30idx=31idx=32idx=33idx=34idx=35idx=36idx=37idx=38idx=39idx=40idx=41idx=42idx=43idx=44idx=45idx=46idx=47idx=48idx=49idx=50idx=51idx=52idx=53idx=54idx=55idx=56idx=57idx=58idx=59idx=60idx=61idx=62idx=63idx=64idx=65idx=66idx=67idx=68idx=69idx=70idx=71idx=72idx=73idx=74idx=75idx=76idx=77idx=78idx=79idx=80idx=81idx=82idx=83idx=84idx=85idx=86idx=87idx=88idx=89idx=90idx=91idx=92idx=93idx=94idx=95idx=96idx=97idx=98idx=99idx=100idx=101idx=102idx=103idx=104idx=105idx=106idx=107idx=108idx=109idx=110idx=111idx=112idx=113idx=114idx=115idx=116idx=117idx=118idx=119idx=120idx=121idx=122idx=123idx=124idx=125idx=126idx=127idx=128idx=129idx=130idx=131idx=132idx=133idx=134idx=135idx=136idx=137idx=138idx=139idx=140idx=141idx=142idx=143idx=144idx=145idx=146idx=147idx=148idx=149idx=150idx=151idx=152idx=153idx=154idx=155idx=156idx=157idx=158idx=159idx=160idx=161idx=162idx=163idx=164idx=165idx=166idx=167idx=168idx=169idx=170idx=171idx=172idx=173idx=174idx=175idx=176idx=177idx=178idx=179idx=180idx=181idx=182idx=183idx=184idx=185idx=186idx=187idx=188idx=189idx=190idx=191idx=192idx=193idx=194idx=195idx=196idx=197idx=198idx=199idx=200idx=201idx=202idx=203idx=204idx=205idx=206idx=207idx=208idx=209idx=210idx=211idx=212idx=213idx=214idx=215idx=216idx=217idx=218idx=219idx=220idx=221idx=222idx=223idx=224idx=225idx=226idx=227idx=228idx=229idx=230idx=231idx=232idx=233idx=234idx=235idx=236idx=237idx=238idx=239idx=240idx=241idx=242idx=243idx=244idx=245idx=246idx=247idx=248idx=249idx=250idx=251idx=252idx=253idx=254idx=255idx=256vgg pretrained loaded
-2019-03-08 17:58:01.200467: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
-2019-03-08 17:58:03.651464: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:964] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
-2019-03-08 17:58:03.651929: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1432] Found device 0 with properties: 
+2019-03-15 11:04:15.787272: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2019-03-15 11:04:18.386827: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:897] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-03-15 11:04:18.387242: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1405] Found device 0 with properties: 
 name: Tesla K80 major: 3 minor: 7 memoryClockRate(GHz): 0.8235
 pciBusID: 0000:00:04.0
 totalMemory: 11.17GiB freeMemory: 11.10GiB
-2019-03-08 17:58:03.651955: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1511] Adding visible gpu devices: 0
-2019-03-08 17:58:03.946257: I tensorflow/core/common_runtime/gpu/gpu_device.cc:982] Device interconnect StreamExecutor with strength 1 edge matrix:
-2019-03-08 17:58:03.946320: I tensorflow/core/common_runtime/gpu/gpu_device.cc:988]      0 
-2019-03-08 17:58:03.946330: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1001] 0:   N 
-2019-03-08 17:58:03.946619: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1115] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10758 MB memory) -> physical GPU (device: 0, name: Tesla K80, pci bus id: 0000:00:04.0, compute capability: 3.7)
-epoch : 0  ***** losss : 2.1182663689833134 ***** 
+2019-03-15 11:04:18.387267: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1484] Adding visible gpu devices: 0
+2019-03-15 11:04:18.679642: I tensorflow/core/common_runtime/gpu/gpu_device.cc:965] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-03-15 11:04:18.679694: I tensorflow/core/common_runtime/gpu/gpu_device.cc:971]      0 
+2019-03-15 11:04:18.679704: I tensorflow/core/common_runtime/gpu/gpu_device.cc:984] 0:   N 
+2019-03-15 11:04:18.680109: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1097] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10758 MB memory) -> physical GPU (device: 0, name: Tesla K80, pci bus id: 0000:00:04.0, compute capability: 3.7)
+/usr/lib/python3/dist-packages/h5py/__init__.py:34: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+Parsing annotation files
+idx=1idx=2idx=3idx=4idx=5idx=6idx=7idx=8idx=9idx=10idx=11idx=12idx=13idx=14idx=15idx=16idx=17idx=18idx=19idx=20idx=21idx=22idx=23idx=24idx=25idx=26idx=27idx=28idx=29idx=30idx=31idx=32idx=33idx=34idx=35idx=36idx=37idx=38idx=39idx=40idx=41idx=42idx=43idx=44idx=45idx=46idx=47idx=48idx=49idx=50idx=51idx=52idx=53idx=54idx=55idx=56idx=57idx=58idx=59idx=60idx=61idx=62idx=63idx=64idx=65idx=66idx=67idx=68idx=69idx=70idx=71idx=72idx=73idx=74idx=75idx=76idx=77idx=78idx=79idx=80idx=81idx=82idx=83idx=84idx=85idx=86idx=87idx=88idx=89idx=90idx=91idx=92idx=93idx=94idx=95idx=96idx=97idx=98idx=99idx=100idx=101idx=102idx=103idx=104idx=105idx=106idx=107idx=108idx=109idx=110idx=111idx=112idx=113idx=114idx=115idx=116idx=117idx=118idx=119idx=120idx=121idx=122idx=123idx=124idx=125idx=126idx=127idx=128idx=129idx=130idx=131idx=132idx=133idx=134idx=135idx=136idx=137idx=138idx=139idx=140idx=141idx=142idx=143idx=144idx=145idx=146idx=147idx=148idx=149idx=150idx=151idx=152idx=153idx=154idx=155idx=156idx=157idx=158idx=159idx=160idx=161idx=162idx=163idx=164idx=165idx=166idx=167idx=168idx=169idx=170idx=171idx=172idx=173idx=174idx=175idx=176idx=177idx=178idx=179idx=180vgg pretrained loaded
+2019-03-15 11:08:04.670477: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2019-03-15 11:08:06.847777: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:897] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-03-15 11:08:06.848261: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1405] Found device 0 with properties: 
+name: Tesla K80 major: 3 minor: 7 memoryClockRate(GHz): 0.8235
+pciBusID: 0000:00:04.0
+totalMemory: 11.17GiB freeMemory: 11.10GiB
+2019-03-15 11:08:06.849235: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1484] Adding visible gpu devices: 0
+2019-03-15 11:08:07.155259: I tensorflow/core/common_runtime/gpu/gpu_device.cc:965] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-03-15 11:08:07.155339: I tensorflow/core/common_runtime/gpu/gpu_device.cc:971]      0 
+2019-03-15 11:08:07.155351: I tensorflow/core/common_runtime/gpu/gpu_device.cc:984] 0:   N 
+2019-03-15 11:08:07.155654: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1097] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10758 MB memory) -> physical GPU (device: 0, name: Tesla K80, pci bus id: 0000:00:04.0, compute capability: 3.7)
+epoch : 0  ***** losss : 1.2324698986121803 ***** 
 epoch : 0   saved at  weight/model_0.ckpt 
-epoch : 1  ***** losss : 1.5539294592454098 ***** 
-epoch : 2  ***** losss : 1.6157568917260505 ***** 
-epoch : 3  ***** losss : 1.3248554818565026 ***** 
-epoch : 4  ***** losss : 1.4365104130120017 ***** 
-epoch : 5  ***** losss : 1.361927091202233 ***** 
-epoch : 6  ***** losss : 1.2870050828205422 ***** 
-epoch : 7  ***** losss : 1.5017385884420946 ***** 
-epoch : 8  ***** losss : 1.2920241839601658 ***** 
-epoch : 9  ***** losss : 1.298876373883104 ***** 
-epoch : 10  ***** losss : 1.2278105826699175 ***** 
-epoch : 11  ***** losss : 1.344619419251103 ***** 
-epoch : 12  ***** losss : 1.2807345311739482 ***** 
-epoch : 13  ***** losss : 1.010425944114104 ***** 
-epoch : 14  ***** losss : 1.0132307827152545 ***** 
-epoch : 15  ***** losss : 0.9509484577865805 ***** 
-epoch : 16  ***** losss : 1.209538897674065 ***** 
-epoch : 17  ***** losss : 1.0508653128345031 ***** 
-epoch : 18  ***** losss : 1.085922013488016 ***** 
-epoch : 19  ***** losss : 1.2264253102766816 ***** 
-epoch : 20  ***** losss : 1.0372179653786588 ***** 
-epoch : 21  ***** losss : 0.9087998757895548 ***** 
-epoch : 22  ***** losss : 0.9234777052188292 ***** 
-epoch : 23  ***** losss : 0.6869218685606029 ***** 
-epoch : 24  ***** losss : 0.8545015104391496 ***** 
-epoch : 25  ***** losss : 0.6842581796081504 ***** 
-epoch : 26  ***** losss : 0.6831921265547862 ***** 
-epoch : 27  ***** losss : 1.3304643107112497 ***** 
-epoch : 28  ***** losss : 1.2621712071704678 ***** 
-epoch : 29  ***** losss : 0.9797952482185792 ***** 
-epoch : 30  ***** losss : 1.0695182595954975 ***** 
-epoch : 31  ***** losss : 0.7323148491414031 ***** 
-epoch : 32  ***** losss : 0.6212816663028207 ***** 
-epoch : 33  ***** losss : 0.7234270903645665 ***** 
-epoch : 34  ***** losss : 0.7355239247262944 ***** 
-epoch : 35  ***** losss : 0.6372555669004214 ***** 
-epoch : 36  ***** losss : 0.5627025599533226 ***** 
-epoch : 37  ***** losss : 1.0553225144103635 ***** 
-epoch : 38  ***** losss : 0.7206870079389773 ***** 
-epoch : 39  ***** losss : 0.6020856514951447 ***** 
-epoch : 40  ***** losss : 0.43062448462296743 ***** 
-epoch : 41  ***** losss : 0.6469105558790034 ***** 
-epoch : 42  ***** losss : 0.5223579627927393 ***** 
-epoch : 43  ***** losss : 0.43682304851245135 ***** 
-epoch : 44  ***** losss : 0.5170176774008723 ***** 
-epoch : 45  ***** losss : 0.5080835120752454 ***** 
-epoch : 46  ***** losss : 0.5178576735197566 ***** 
-epoch : 47  ***** losss : 0.5617564148560632 ***** 
-epoch : 48  ***** losss : 0.4182710553650395 ***** 
-epoch : 49  ***** losss : 0.4914239869103767 ***** 
-epoch : 50  ***** losss : 1.1373190533631714 ***** 
-epoch : 51  ***** losss : 1.1818342072656378 ***** 
-epoch : 52  ***** losss : 0.7908590111183003 ***** 
-epoch : 53  ***** losss : 0.7463361769623589 ***** 
-epoch : 54  ***** losss : 0.964705692109419 ***** 
-epoch : 55  ***** losss : 0.7994649913453031 ***** 
-epoch : 56  ***** losss : 0.40636456399806775 ***** 
-epoch : 57  ***** losss : 0.6356275345242466 ***** 
-epoch : 58  ***** losss : 0.7187091857776977 ***** 
-epoch : 59  ***** losss : 0.5325865180784604 ***** 
-epoch : 60  ***** losss : 0.3424086357554188 ***** 
-epoch : 61  ***** losss : 0.3889362893096404 ***** 
-epoch : 62  ***** losss : 0.3776174368831562 ***** 
-epoch : 63  ***** losss : 0.3940205208491534 ***** 
-epoch : 64  ***** losss : 0.3872142974869348 ***** 
-epoch : 65  ***** losss : 0.40893644683092134 ***** 
-epoch : 66  ***** losss : 0.26013919977413025 ***** 
-epoch : 67  ***** losss : 0.30671630694996566 ***** 
-epoch : 68  ***** losss : 0.6698874037538189 ***** 
-epoch : 69  ***** losss : 1.1053912762727123 ***** 
-epoch : 70  ***** losss : 0.7996424099255819 ***** 
-epoch : 71  ***** losss : 0.4586498005082831 ***** 
-epoch : 72  ***** losss : 0.6144361078331713 ***** 
-epoch : 73  ***** losss : 0.5251858979754616 ***** 
-epoch : 74  ***** losss : 0.4261828655944555 ***** 
-epoch : 75  ***** losss : 0.37735104974126443 ***** 
-epoch : 76  ***** losss : 0.3519465246499749 ***** 
-epoch : 77  ***** losss : 0.2330012789061584 ***** 
-epoch : 78  ***** losss : 0.43214742506097537 ***** 
-epoch : 79  ***** losss : 0.38440310789155774 ***** 
-epoch : 80  ***** losss : 0.4882955271823448 ***** 
-epoch : 81  ***** losss : 0.3744039573648479 ***** 
-epoch : 82  ***** losss : 0.343430598393752 ***** 
-epoch : 83  ***** losss : 0.39376542606623843 ***** 
-epoch : 84  ***** losss : 0.3466385895735584 ***** 
-epoch : 85  ***** losss : 0.3850283476567711 ***** 
-epoch : 86  ***** losss : 0.3041534628791851 ***** 
-epoch : 87  ***** losss : 0.30864573482904234 ***** 
-epoch : 88  ***** losss : 0.2766318898575264 ***** 
-epoch : 89  ***** losss : 0.311148477216193 ***** 
-epoch : 90  ***** losss : 0.6918006396881538 ***** 
-epoch : 91  ***** losss : 0.7412012113782112 ***** 
-epoch : 92  ***** losss : 0.33161472886422416 ***** 
-epoch : 93  ***** losss : 0.33073054605483776 ***** 
-epoch : 94  ***** losss : 0.22302337503788294 ***** 
-epoch : 95  ***** losss : 0.2739342510030838 ***** 
-epoch : 96  ***** losss : 0.2541656996036181 ***** 
-epoch : 97  ***** losss : 0.293631768796331 ***** 
-epoch : 98  ***** losss : 0.16849666197958868 ***** 
-epoch : 99  ***** losss : 0.30541904602432624 ***** 
-epoch : 100  ***** losss : 0.506389679860149 ***** 
+epoch : 1  ***** losss : 1.098564737912966 ***** 
+epoch : 2  ***** losss : 1.0960621795602492 ***** 
+epoch : 3  ***** losss : 0.9998824401554884 ***** 
+epoch : 4  ***** losss : 1.100681776413694 ***** 
+epoch : 5  ***** losss : 1.011183464230271 ***** 
+epoch : 6  ***** losss : 0.8763859871596651 ***** 
+epoch : 7  ***** losss : 1.0596389794081915 ***** 
+epoch : 8  ***** losss : 0.9992897702850314 ***** 
+epoch : 9  ***** losss : 1.1498550986725604 ***** 
+epoch : 10  ***** losss : 0.8067161741200835 ***** 
+epoch : 11  ***** losss : 1.0035781560654868 ***** 
+epoch : 12  ***** losss : 0.9908379698654244 ***** 
+epoch : 13  ***** losss : 0.9577752878722094 ***** 
+epoch : 14  ***** losss : 0.9992548253831046 ***** 
+epoch : 15  ***** losss : 1.0178535204377113 ***** 
+epoch : 16  ***** losss : 1.1532016131095588 ***** 
+epoch : 17  ***** losss : 0.7570731527448515 ***** 
+epoch : 18  ***** losss : 0.9923877107394219 ***** 
+epoch : 19  ***** losss : 1.054163099548532 ***** 
+epoch : 20  ***** losss : 0.9738293236150639 ***** 
+epoch : 21  ***** losss : 0.788435884664068 ***** 
+epoch : 22  ***** losss : 0.9049782067850174 ***** 
+epoch : 23  ***** losss : 1.2058485340553489 ***** 
+epoch : 24  ***** losss : 1.0083354472280917 ***** 
+epoch : 25  ***** losss : 0.8982276187130083 ***** 
+epoch : 26  ***** losss : 1.0202563582352013 ***** 
+epoch : 27  ***** losss : 0.9097243303585856 ***** 
+epoch : 28  ***** losss : 1.26719629008403 ***** 
+epoch : 29  ***** losss : 0.9038645110194921 ***** 
+epoch : 30  ***** losss : 1.005344867857275 ***** 
+epoch : 31  ***** losss : 1.070648135329975 ***** 
+epoch : 32  ***** losss : 0.9983902835556364 ***** 
+epoch : 33  ***** losss : 1.0199151824890578 ***** 
+epoch : 34  ***** losss : 1.0147735713362636 ***** 
+epoch : 35  ***** losss : 0.9958369266205409 ***** 
+epoch : 36  ***** losss : 1.0761100806939794 ***** 
+epoch : 37  ***** losss : 1.0658802563975769 ***** 
+epoch : 38  ***** losss : 0.9194862075046331 ***** 
+epoch : 39  ***** losss : 0.7067408159637125 ***** 
+epoch : 40  ***** losss : 1.1589962973162073 ***** 
+epoch : 41  ***** losss : 0.8189728781890153 ***** 
+epoch : 42  ***** losss : 0.8770090765719942 ***** 
+epoch : 43  ***** losss : 0.8179893471406103 ***** 
+epoch : 44  ***** losss : 0.9757046616941807 ***** 
+epoch : 45  ***** losss : 0.875810399202237 ***** 
+epoch : 46  ***** losss : 1.0578353879027418 ***** 
+epoch : 47  ***** losss : 1.0267078513461456 ***** 
+epoch : 48  ***** losss : 0.9288503517855133 ***** 
+epoch : 49  ***** losss : 1.0288842255904456 ***** 
+epoch : 50  ***** losss : 0.8637025695948068 ***** 
+epoch : 51  ***** losss : 1.0563309100871265 ***** 
+epoch : 52  ***** losss : 1.0046145602391334 ***** 
+epoch : 53  ***** losss : 1.087439154139247 ***** 
+epoch : 54  ***** losss : 0.9056809375433659 ***** 
+epoch : 55  ***** losss : 0.8423825188206138 ***** 
+epoch : 56  ***** losss : 1.182640168000944 ***** 
+epoch : 57  ***** losss : 0.7743584783966071 ***** 
+epoch : 58  ***** losss : 0.7191630444494876 ***** 
+epoch : 59  ***** losss : 0.7130555368028126 ***** 
+epoch : 60  ***** losss : 0.9068288095413664 ***** 
+epoch : 61  ***** losss : 1.1631700517627905 ***** 
+epoch : 62  ***** losss : 0.8075621889033755 ***** 
+epoch : 63  ***** losss : 0.8773080725810587 ***** 
+epoch : 64  ***** losss : 1.0003569812861315 ***** 
+epoch : 65  ***** losss : 0.7639286832372818 ***** 
+epoch : 66  ***** losss : 1.0838939925833984 ***** 
+epoch : 67  ***** losss : 0.8778283858100622 ***** 
+epoch : 68  ***** losss : 0.9479502844751551 ***** 
+epoch : 69  ***** losss : 0.8516561711530812 ***** 
+epoch : 70  ***** losss : 0.9483282660439727 ***** 
+epoch : 71  ***** losss : 0.9142124711170254 ***** 
+epoch : 72  ***** losss : 0.8071187111199833 ***** 
+epoch : 73  ***** losss : 0.8285438962248008 ***** 
+epoch : 74  ***** losss : 0.8938766294195375 ***** 
+epoch : 75  ***** losss : 0.8410643675715619 ***** 
+epoch : 76  ***** losss : 0.8568460811347904 ***** 
+epoch : 77  ***** losss : 0.940754340354033 ***** 
+epoch : 78  ***** losss : 0.9615479939184297 ***** 
+epoch : 79  ***** losss : 0.8771365300854086 ***** 
+epoch : 80  ***** losss : 0.886233277118663 ***** 
+epoch : 81  ***** losss : 0.8770421978206286 ***** 
+epoch : 82  ***** losss : 0.8961789857148688 ***** 
+epoch : 83  ***** losss : 1.069737402490773 ***** 
+epoch : 84  ***** losss : 0.6626956673335371 ***** 
+epoch : 85  ***** losss : 0.8090047855484954 ***** 
+epoch : 86  ***** losss : 0.8162351105543166 ***** 
+epoch : 87  ***** losss : 0.7919739318076608 ***** 
+epoch : 88  ***** losss : 0.7548512792754991 ***** 
+epoch : 89  ***** losss : 0.6990101282053729 ***** 
+epoch : 90  ***** losss : 1.1390477256409213 ***** 
+epoch : 91  ***** losss : 0.7093221439463377 ***** 
+epoch : 92  ***** losss : 0.7115963380474568 ***** 
+epoch : 93  ***** losss : 0.7082762242025638 ***** 
+epoch : 94  ***** losss : 0.6977285133195892 ***** 
+epoch : 95  ***** losss : 0.8603918210810662 ***** 
+epoch : 96  ***** losss : 0.8368533875536741 ***** 
+epoch : 97  ***** losss : 0.6676595704279862 ***** 
+epoch : 98  ***** losss : 0.7777985327875285 ***** 
+epoch : 99  ***** losss : 0.8734517172943015 ***** 
+epoch : 100  ***** losss : 0.8776070884887304 ***** 
 epoch : 100   saved at  weight/model_100.ckpt 
-epoch : 101  ***** losss : 0.42934684925421607 ***** 
-epoch : 102  ***** losss : 0.3408140025421744 ***** 
-epoch : 103  ***** losss : 1.000174427012098 ***** 
-epoch : 104  ***** losss : 0.8634206366841681 ***** 
-epoch : 105  ***** losss : 1.5350257608806714 ***** 
-epoch : 106  ***** losss : 0.7580510127299931 ***** 
-epoch : 107  ***** losss : 0.5326685846230248 ***** 
-epoch : 108  ***** losss : 0.3486402033595368 ***** 
-epoch : 109  ***** losss : 0.306294433074072 ***** 
-epoch : 110  ***** losss : 0.49115032589179464 ***** 
-epoch : 111  ***** losss : 0.30859725968912244 ***** 
-epoch : 112  ***** losss : 0.26944993888173485 ***** 
-epoch : 113  ***** losss : 0.35238767525879666 ***** 
-epoch : 114  ***** losss : 0.24924043560167775 ***** 
-epoch : 115  ***** losss : 0.281821131673496 ***** 
-epoch : 116  ***** losss : 0.2175867429250502 ***** 
-epoch : 117  ***** losss : 0.3374927065015072 ***** 
-epoch : 118  ***** losss : 0.22182267303287517 ***** 
-epoch : 119  ***** losss : 0.2562647439990542 ***** 
-epoch : 120  ***** losss : 0.35635173032278544 ***** 
-epoch : 121  ***** losss : 0.3153168176722829 ***** 
-epoch : 122  ***** losss : 0.5945019031059928 ***** 
-epoch : 123  ***** losss : 0.367604161350755 ***** 
-epoch : 124  ***** losss : 0.2689207897383312 ***** 
-epoch : 125  ***** losss : 1.1760843325828318 ***** 
-epoch : 126  ***** losss : 0.6323134217527695 ***** 
-epoch : 127  ***** losss : 0.5567123050786904 ***** 
-epoch : 128  ***** losss : 0.6367739766646991 ***** 
-epoch : 129  ***** losss : 0.3140035964024719 ***** 
-epoch : 130  ***** losss : 0.22317386262875516 ***** 
-epoch : 131  ***** losss : 0.25660187031826354 ***** 
-epoch : 132  ***** losss : 0.254304629026592 ***** 
-epoch : 133  ***** losss : 0.2220128840781399 ***** 
-epoch : 134  ***** losss : 0.31765654817718314 ***** 
-epoch : 135  ***** losss : 0.3277258512680419 ***** 
-epoch : 136  ***** losss : 0.2938586891250452 ***** 
-epoch : 137  ***** losss : 0.3163346754372469 ***** 
-epoch : 138  ***** losss : 0.38762838825641666 ***** 
-epoch : 139  ***** losss : 0.24815167228371138 ***** 
-epoch : 140  ***** losss : 0.44826740538701415 ***** 
-epoch : 141  ***** losss : 0.3011227639617573 ***** 
-epoch : 142  ***** losss : 0.22492514898840454 ***** 
-epoch : 143  ***** losss : 0.29395963140632375 ***** 
-epoch : 144  ***** losss : 0.2759937870214344 ***** 
-epoch : 145  ***** losss : 0.2859346177392581 ***** 
-epoch : 146  ***** losss : 0.2926497734115401 ***** 
-epoch : 147  ***** losss : 0.3530712870269781 ***** 
-epoch : 148  ***** losss : 0.2867255340279371 ***** 
-epoch : 149  ***** losss : 0.4441700008865155 ***** 
-epoch : 150  ***** losss : 0.4826427205844084 ***** 
-epoch : 151  ***** losss : 0.2066294327050855 ***** 
-epoch : 152  ***** losss : 0.37173520870055654 ***** 
-epoch : 153  ***** losss : 0.3121659677126445 ***** 
-epoch : 154  ***** losss : 0.32135355989521486 ***** 
-epoch : 155  ***** losss : 0.5626631096165511 ***** 
-epoch : 156  ***** losss : 0.3805332309129881 ***** 
-epoch : 157  ***** losss : 0.4257840978243621 ***** 
-epoch : 158  ***** losss : 0.3622574327819166 ***** 
-epoch : 159  ***** losss : 0.2822887971487944 ***** 
-epoch : 160  ***** losss : 0.32512970975221833 ***** 
-epoch : 161  ***** losss : 0.23851989931063144 ***** 
-epoch : 162  ***** losss : 0.4461470903115696 ***** 
-epoch : 163  ***** losss : 0.43494606902095256 ***** 
-epoch : 164  ***** losss : 0.2723838333185995 ***** 
-epoch : 165  ***** losss : 0.22989556322136195 ***** 
-epoch : 166  ***** losss : 0.2618110154144233 ***** 
-epoch : 167  ***** losss : 0.238971979219059 ***** 
-epoch : 168  ***** losss : 0.2965298641138361 ***** 
-epoch : 169  ***** losss : 0.3001751127594616 ***** 
-epoch : 170  ***** losss : 0.19559818873676704 ***** 
-epoch : 171  ***** losss : 0.20546203872800106 ***** 
-epoch : 172  ***** losss : 0.30288240125082666 ***** 
-epoch : 173  ***** losss : 0.2161425795966352 ***** 
-epoch : 174  ***** losss : 0.27369638904565363 ***** 
-epoch : 175  ***** losss : 0.253795501710556 ***** 
-epoch : 176  ***** losss : 0.3484323174270685 ***** 
-epoch : 177  ***** losss : 0.24673054769664304 ***** 
-epoch : 178  ***** losss : 0.19181809619658452 ***** 
-epoch : 179  ***** losss : 0.27748163571595796 ***** 
-epoch : 180  ***** losss : 0.2543420825059002 ***** 
-epoch : 181  ***** losss : 0.2865137514163507 ***** 
-epoch : 182  ***** losss : 0.2588011381776596 ***** 
-epoch : 183  ***** losss : 0.49493539426475763 ***** 
-epoch : 184  ***** losss : 0.5333219127569464 ***** 
-epoch : 185  ***** losss : 0.4253624400735134 ***** 
-epoch : 186  ***** losss : 0.285982455337944 ***** 
-epoch : 187  ***** losss : 0.31246763799572363 ***** 
-epoch : 188  ***** losss : 0.21777304704664857 ***** 
-epoch : 189  ***** losss : 0.24549549973016838 ***** 
-epoch : 190  ***** losss : 0.3981158946753567 ***** 
-epoch : 191  ***** losss : 0.33662679603730794 ***** 
-epoch : 192  ***** losss : 0.28642752515224856 ***** 
-epoch : 193  ***** losss : 0.33684769888350274 ***** 
-epoch : 194  ***** losss : 0.15439478892221814 ***** 
-epoch : 195  ***** losss : 0.2732943831379089 ***** 
-epoch : 196  ***** losss : 0.20936902887478936 ***** 
-epoch : 197  ***** losss : 0.3253185010617017 ***** 
-epoch : 198  ***** losss : 0.1599711825911072 ***** 
-epoch : 199  ***** losss : 0.25659363140221103 ***** 
-epoch : 200  ***** losss : 0.2021614727564156 ***** 
+epoch : 101  ***** losss : 0.9469845168978281 ***** 
+epoch : 102  ***** losss : 0.898528274165983 ***** 
+epoch : 103  ***** losss : 0.8639981362252911 ***** 
+epoch : 104  ***** losss : 0.7341155710892053 ***** 
+epoch : 105  ***** losss : 1.024178329775168 ***** 
+epoch : 106  ***** losss : 0.7483353851348511 ***** 
+epoch : 107  ***** losss : 0.7190700151104465 ***** 
+epoch : 108  ***** losss : 0.8094967090464706 ***** 
+epoch : 109  ***** losss : 1.2020520713012957 ***** 
+epoch : 110  ***** losss : 0.892700773971228 ***** 
+epoch : 111  ***** losss : 0.7881807726935222 ***** 
+epoch : 112  ***** losss : 0.6059116262204043 ***** 
+epoch : 113  ***** losss : 0.7346797798636544 ***** 
+epoch : 114  ***** losss : 0.619757764222868 ***** 
+epoch : 115  ***** losss : 0.6591238109622282 ***** 
+epoch : 116  ***** losss : 0.8983553975431278 ***** 
+epoch : 117  ***** losss : 0.9693980584961537 ***** 
+epoch : 118  ***** losss : 0.920631258179128 ***** 
+epoch : 119  ***** losss : 0.7137675155390752 ***** 
+epoch : 120  ***** losss : 0.6378445201135037 ***** 
+epoch : 121  ***** losss : 0.7113353599179391 ***** 
+epoch : 122  ***** losss : 0.6574545256835336 ***** 
+epoch : 123  ***** losss : 0.7228010208623346 ***** 
+epoch : 124  ***** losss : 0.8497487842651026 ***** 
+epoch : 125  ***** losss : 0.8745209165281267 ***** 
+epoch : 126  ***** losss : 0.8110581802084198 ***** 
+epoch : 127  ***** losss : 0.8165652810175743 ***** 
+epoch : 128  ***** losss : 0.8133477277510792 ***** 
+epoch : 129  ***** losss : 0.947800006793841 ***** 
+epoch : 130  ***** losss : 0.7005131646546943 ***** 
+epoch : 131  ***** losss : 0.7992613106489443 ***** 
+epoch : 132  ***** losss : 0.6150250079031139 ***** 
+epoch : 133  ***** losss : 0.5744459330417158 ***** 
+epoch : 134  ***** losss : 0.6083513025732827 ***** 
+epoch : 135  ***** losss : 0.7596505332348897 ***** 
+epoch : 136  ***** losss : 0.6538670603104038 ***** 
+epoch : 137  ***** losss : 0.6013774854545773 ***** 
+epoch : 138  ***** losss : 0.7568809199528914 ***** 
+epoch : 139  ***** losss : 0.6004275943105313 ***** 
+epoch : 140  ***** losss : 0.5474862435366958 ***** 
+epoch : 141  ***** losss : 0.5423166918562856 ***** 
+epoch : 142  ***** losss : 0.6754897991722828 ***** 
+epoch : 143  ***** losss : 0.5872427688345851 ***** 
+epoch : 144  ***** losss : 0.8112730117636602 ***** 
+epoch : 145  ***** losss : 0.6485787619833445 ***** 
+epoch : 146  ***** losss : 0.6870015382837664 ***** 
+epoch : 147  ***** losss : 0.8704568221091904 ***** 
+epoch : 148  ***** losss : 0.7128484270187982 ***** 
+epoch : 149  ***** losss : 0.7252629866325151 ***** 
+epoch : 150  ***** losss : 0.7925621727808903 ***** 
+epoch : 151  ***** losss : 0.7029998576384742 ***** 
+epoch : 152  ***** losss : 0.6465058362459786 ***** 
+epoch : 153  ***** losss : 0.5503114806620033 ***** 
+epoch : 154  ***** losss : 0.673695970095423 ***** 
+epoch : 155  ***** losss : 0.7280197445425074 ***** 
+epoch : 156  ***** losss : 0.8228317885350407 ***** 
+epoch : 157  ***** losss : 0.7618134219123931 ***** 
+epoch : 158  ***** losss : 1.0325509519216212 ***** 
+epoch : 159  ***** losss : 1.0419149417157314 ***** 
+epoch : 160  ***** losss : 0.8605765959227938 ***** 
+epoch : 161  ***** losss : 0.8804098871250972 ***** 
+epoch : 162  ***** losss : 0.8695281504187733 ***** 
+epoch : 163  ***** losss : 0.8463795450952603 ***** 
+epoch : 164  ***** losss : 0.7958078794526955 ***** 
+epoch : 165  ***** losss : 0.6549829102195872 ***** 
+epoch : 166  ***** losss : 0.7359775611494115 ***** 
+epoch : 167  ***** losss : 0.7523613019729964 ***** 
+epoch : 168  ***** losss : 0.7569309978289311 ***** 
+epoch : 169  ***** losss : 0.7276116035350242 ***** 
+epoch : 170  ***** losss : 0.5684216542513241 ***** 
+epoch : 171  ***** losss : 0.8036454936282098 ***** 
+epoch : 172  ***** losss : 0.7738494135282963 ***** 
+epoch : 173  ***** losss : 0.7905237656459576 ***** 
+epoch : 174  ***** losss : 0.6044667408832538 ***** 
+epoch : 175  ***** losss : 0.4629422718276146 ***** 
+epoch : 176  ***** losss : 0.5042902976711048 ***** 
+epoch : 177  ***** losss : 0.5766856565692251 ***** 
+epoch : 178  ***** losss : 0.6357704625581846 ***** 
+epoch : 179  ***** losss : 0.558990921998543 ***** 
+epoch : 180  ***** losss : 0.5061913982038959 ***** 
+epoch : 181  ***** losss : 0.5835963929114314 ***** 
+epoch : 182  ***** losss : 0.6386117080319309 ***** 
+epoch : 183  ***** losss : 0.5865266329365113 ***** 
+epoch : 184  ***** losss : 0.45066801473552687 ***** 
+epoch : 185  ***** losss : 0.5325284505242962 ***** 
+epoch : 186  ***** losss : 0.5610234934022174 ***** 
+epoch : 187  ***** losss : 0.6419237141085432 ***** 
+epoch : 188  ***** losss : 0.7817416984146348 ***** 
+epoch : 189  ***** losss : 0.5807337982587342 ***** 
+epoch : 190  ***** losss : 0.5411914671931299 ***** 
+epoch : 191  ***** losss : 0.7146286734000569 ***** 
+epoch : 192  ***** losss : 0.6329157784853123 ***** 
+epoch : 193  ***** losss : 0.4977201284376065 ***** 
+epoch : 194  ***** losss : 0.4399745372495545 ***** 
+epoch : 195  ***** losss : 0.4370431793577154 ***** 
+epoch : 196  ***** losss : 0.5110835865436911 ***** 
+epoch : 197  ***** losss : 0.5315039147317293 ***** 
+epoch : 198  ***** losss : 0.543772354955081 ***** 
+epoch : 199  ***** losss : 0.4713742640738019 ***** 
+epoch : 200  ***** losss : 0.361434308243588 ***** 
 epoch : 200   saved at  weight/model_200.ckpt 
-epoch : 201  ***** losss : 0.35944195260344713 ***** 
-epoch : 202  ***** losss : 0.22503806622353295 ***** 
-epoch : 203  ***** losss : 0.28941541821404826 ***** 
-epoch : 204  ***** losss : 0.292748367661261 ***** 
-epoch : 205  ***** losss : 0.2848100062637968 ***** 
-epoch : 206  ***** losss : 0.6833535933983512 ***** 
-epoch : 207  ***** losss : 1.187419674854027 ***** 
-epoch : 208  ***** losss : 0.4860904105771624 ***** 
-epoch : 209  ***** losss : 0.3174541893931746 ***** 
-epoch : 210  ***** losss : 0.1819843887751631 ***** 
-epoch : 211  ***** losss : 0.21022438392901677 ***** 
-epoch : 212  ***** losss : 0.23905814201498288 ***** 
-epoch : 213  ***** losss : 0.19683904718476697 ***** 
-epoch : 214  ***** losss : 0.19534818543615984 ***** 
-epoch : 215  ***** losss : 0.27477650553919375 ***** 
-epoch : 216  ***** losss : 0.20788300881940813 ***** 
-epoch : 217  ***** losss : 0.2473340929573169 ***** 
-epoch : 218  ***** losss : 0.5725412158208201 ***** 
-epoch : 219  ***** losss : 0.423981599516992 ***** 
-epoch : 220  ***** losss : 0.27798957671620883 ***** 
-epoch : 221  ***** losss : 0.30518796408250637 ***** 
-epoch : 222  ***** losss : 0.19892345317020954 ***** 
-epoch : 223  ***** losss : 0.21433816593162192 ***** 
-epoch : 224  ***** losss : 0.1355564797831903 ***** 
-epoch : 225  ***** losss : 0.29483164270095585 ***** 
-epoch : 226  ***** losss : 0.1626351769627945 ***** 
-epoch : 227  ***** losss : 0.18126875127927633 ***** 
-epoch : 228  ***** losss : 0.2350197715113609 ***** 
-epoch : 229  ***** losss : 0.185861882961035 ***** 
-epoch : 230  ***** losss : 0.2636336297564412 ***** 
-epoch : 231  ***** losss : 0.27931959662601 ***** 
-epoch : 232  ***** losss : 0.3040112407907145 ***** 
-epoch : 233  ***** losss : 0.3988707878670539 ***** 
-epoch : 234  ***** losss : 0.29472491347405594 ***** 
-epoch : 235  ***** losss : 0.2668361884680053 ***** 
-epoch : 236  ***** losss : 0.21077644166871323 ***** 
-epoch : 237  ***** losss : 0.18748016364406794 ***** 
-epoch : 238  ***** losss : 0.213587859798281 ***** 
-epoch : 239  ***** losss : 0.22379201034345897 ***** 
-epoch : 240  ***** losss : 0.26200804111249454 ***** 
-epoch : 241  ***** losss : 0.19056492927302315 ***** 
-epoch : 242  ***** losss : 0.22159563824607176 ***** 
-epoch : 243  ***** losss : 0.23941720112634357 ***** 
-epoch : 244  ***** losss : 0.26360166988706624 ***** 
-epoch : 245  ***** losss : 0.3191221553061041 ***** 
-epoch : 246  ***** losss : 0.37367123025251203 ***** 
-epoch : 247  ***** losss : 0.33605623211769853 ***** 
-epoch : 248  ***** losss : 0.18496290308758034 ***** 
-epoch : 249  ***** losss : 0.289050969240634 ***** 
-epoch : 250  ***** losss : 0.25064529168594163 ***** 
-epoch : 251  ***** losss : 0.18409028381938697 ***** 
-epoch : 252  ***** losss : 0.1993472800722884 ***** 
-epoch : 253  ***** losss : 0.2476046177725948 ***** 
-epoch : 254  ***** losss : 0.26455615218219464 ***** 
-epoch : 255  ***** losss : 0.22177821532386588 ***** 
-epoch : 256  ***** losss : 0.19653095971079892 ***** 
-epoch : 257  ***** losss : 0.1799881358492712 ***** 
-epoch : 258  ***** losss : 0.27175523668847745 ***** 
-epoch : 259  ***** losss : 0.28130936866728007 ***** 
-epoch : 260  ***** losss : 0.22082737596610968 ***** 
-epoch : 261  ***** losss : 0.2096121699505602 ***** 
-epoch : 262  ***** losss : 0.17810975572137977 ***** 
-epoch : 263  ***** losss : 0.21129926271350996 ***** 
-epoch : 264  ***** losss : 0.3016832214962051 ***** 
-epoch : 265  ***** losss : 0.28955770553147886 ***** 
-epoch : 266  ***** losss : 0.24963028344154736 ***** 
-epoch : 267  ***** losss : 0.2781951232609572 ***** 
-epoch : 268  ***** losss : 0.19611609853382106 ***** 
-epoch : 269  ***** losss : 0.15418758261694165 ***** 
-epoch : 270  ***** losss : 0.3170753237172903 ***** 
-epoch : 271  ***** losss : 0.2655928298845538 ***** 
-epoch : 272  ***** losss : 0.3515936253097607 ***** 
-epoch : 273  ***** losss : 0.17091790348422364 ***** 
-epoch : 274  ***** losss : 0.18625570986114326 ***** 
-epoch : 275  ***** losss : 0.23520120259490795 ***** 
-epoch : 276  ***** losss : 0.1654482812191418 ***** 
-epoch : 277  ***** losss : 0.2126110570061428 ***** 
-epoch : 278  ***** losss : 0.24366654096229468 ***** 
-epoch : 279  ***** losss : 0.29199796018474444 ***** 
-epoch : 280  ***** losss : 0.3966713761401479 ***** 
-epoch : 281  ***** losss : 0.17028950936582987 ***** 
-epoch : 282  ***** losss : 0.2763886215288949 ***** 
-epoch : 283  ***** losss : 0.20422862771738437 ***** 
-epoch : 284  ***** losss : 0.2744954748741293 ***** 
-epoch : 285  ***** losss : 0.26804521057056263 ***** 
-epoch : 286  ***** losss : 0.30919923079636646 ***** 
-epoch : 287  ***** losss : 0.2548466990047018 ***** 
-epoch : 288  ***** losss : 0.28743408481386723 ***** 
-epoch : 289  ***** losss : 0.31923716196251917 ***** 
-epoch : 290  ***** losss : 0.11816715615714202 ***** 
-epoch : 291  ***** losss : 0.18998675752936833 ***** 
-epoch : 292  ***** losss : 0.21270727406226797 ***** 
-epoch : 293  ***** losss : 0.18317679269239306 ***** 
-epoch : 294  ***** losss : 0.1679360348098271 ***** 
-epoch : 295  ***** losss : 0.21187040938821156 ***** 
-epoch : 296  ***** losss : 0.2871366796352959 ***** 
-epoch : 297  ***** losss : 0.23678172111067397 ***** 
-epoch : 298  ***** losss : 0.2660839487925841 ***** 
-epoch : 299  ***** losss : 0.31737149029868306 ***** 
-epoch : 300  ***** losss : 0.22903266725188587 ***** 
+epoch : 201  ***** losss : 0.4750042573882638 ***** 
+epoch : 202  ***** losss : 0.58580569556716 ***** 
+epoch : 203  ***** losss : 0.944960755289685 ***** 
+epoch : 204  ***** losss : 0.5573539337783586 ***** 
+epoch : 205  ***** losss : 0.361017419525524 ***** 
+epoch : 206  ***** losss : 0.3549017104123777 ***** 
+epoch : 207  ***** losss : 0.35543043364396 ***** 
+epoch : 208  ***** losss : 0.3868854834111062 ***** 
+epoch : 209  ***** losss : 0.264504858883015 ***** 
+epoch : 210  ***** losss : 0.1944719670051711 ***** 
+epoch : 211  ***** losss : 0.45266311448256147 ***** 
+epoch : 212  ***** losss : 0.33397476208011767 ***** 
+epoch : 213  ***** losss : 0.42659400246111545 ***** 
+epoch : 214  ***** losss : 0.5997583667322601 ***** 
+epoch : 215  ***** losss : 0.5408472992556312 ***** 
+epoch : 216  ***** losss : 0.5219172663539666 ***** 
+epoch : 217  ***** losss : 0.6584847883286784 ***** 
+epoch : 218  ***** losss : 0.8480560847438028 ***** 
+epoch : 219  ***** losss : 0.8859958432167332 ***** 
+epoch : 220  ***** losss : 0.7612074466796912 ***** 
+epoch : 221  ***** losss : 0.6980058745393762 ***** 
+epoch : 222  ***** losss : 0.6528395584596183 ***** 
+epoch : 223  ***** losss : 0.5101952587383494 ***** 
+epoch : 224  ***** losss : 0.49518351673577854 ***** 
+epoch : 225  ***** losss : 0.47138490274483047 ***** 
+epoch : 226  ***** losss : 0.4929377105727326 ***** 
+epoch : 227  ***** losss : 0.5246382102727694 ***** 
+epoch : 228  ***** losss : 0.7138933781393462 ***** 
+epoch : 229  ***** losss : 0.3871679796757235 ***** 
+epoch : 230  ***** losss : 0.5122008418252335 ***** 
+epoch : 231  ***** losss : 0.5074711587872116 ***** 
+epoch : 232  ***** losss : 0.6717098937142509 ***** 
+epoch : 233  ***** losss : 0.510024274583202 ***** 
+epoch : 234  ***** losss : 0.36861047707867556 ***** 
+epoch : 235  ***** losss : 0.5233044419084081 ***** 
+epoch : 236  ***** losss : 0.5381331336061521 ***** 
+epoch : 237  ***** losss : 0.4731223214707825 ***** 
+epoch : 238  ***** losss : 0.5828472274515661 ***** 
+epoch : 239  ***** losss : 0.6451136829168718 ***** 
+epoch : 240  ***** losss : 0.4184280725160079 ***** 
+epoch : 241  ***** losss : 0.48809338836849747 ***** 
+epoch : 242  ***** losss : 0.4823814324543605 ***** 
+epoch : 243  ***** losss : 0.4372176925058966 ***** 
+epoch : 244  ***** losss : 0.6445588426531685 ***** 
+epoch : 245  ***** losss : 0.606760610226047 ***** 
+epoch : 246  ***** losss : 0.542379901960885 ***** 
+epoch : 247  ***** losss : 0.49715388711501873 ***** 
+epoch : 248  ***** losss : 0.6073512376324288 ***** 
+epoch : 249  ***** losss : 0.6284713182831183 ***** 
+epoch : 250  ***** losss : 0.43218105291543907 ***** 
+epoch : 251  ***** losss : 0.7628144103564409 ***** 
+epoch : 252  ***** losss : 0.6125222293585466 ***** 
+epoch : 253  ***** losss : 0.5720965114712726 ***** 
+epoch : 254  ***** losss : 0.39148546469573375 ***** 
+epoch : 255  ***** losss : 0.6398919267799101 ***** 
+epoch : 256  ***** losss : 0.5477363767927272 ***** 
+epoch : 257  ***** losss : 0.511891858431909 ***** 
+epoch : 258  ***** losss : 0.4138810577003369 ***** 
+epoch : 259  ***** losss : 0.452781554413491 ***** 
+epoch : 260  ***** losss : 0.24287154557839585 ***** 
+epoch : 261  ***** losss : 0.4026848010457229 ***** 
+epoch : 262  ***** losss : 0.4335595305232687 ***** 
+epoch : 263  ***** losss : 0.4052604036440641 ***** 
+epoch : 264  ***** losss : 0.705796459768294 ***** 
+epoch : 265  ***** losss : 1.061272699125766 ***** 
+epoch : 266  ***** losss : 0.7979707600125039 ***** 
+epoch : 267  ***** losss : 0.5686131580901019 ***** 
+epoch : 268  ***** losss : 0.43996463198709534 ***** 
+epoch : 269  ***** losss : 0.47633291432566693 ***** 
+epoch : 270  ***** losss : 0.5539822206665121 ***** 
+epoch : 271  ***** losss : 0.8412459525625309 ***** 
+epoch : 272  ***** losss : 0.4525840458870789 ***** 
+epoch : 273  ***** losss : 0.4488472304155948 ***** 
+epoch : 274  ***** losss : 0.7334076749148153 ***** 
+epoch : 275  ***** losss : 0.5610800419367479 ***** 
+epoch : 276  ***** losss : 0.42926797676682327 ***** 
+epoch : 277  ***** losss : 0.5565699730806841 ***** 
+epoch : 278  ***** losss : 0.5133434443772558 ***** 
+epoch : 279  ***** losss : 0.7320159258570129 ***** 
+epoch : 280  ***** losss : 0.5616786506570861 ***** 
+epoch : 281  ***** losss : 0.572715256174888 ***** 
+epoch : 282  ***** losss : 0.7060481137716579 ***** 
+epoch : 283  ***** losss : 0.35584391809470617 ***** 
+epoch : 284  ***** losss : 0.4720349905458079 ***** 
+epoch : 285  ***** losss : 0.40786821936046636 ***** 
+epoch : 286  ***** losss : 0.487147036039687 ***** 
+epoch : 287  ***** losss : 0.573753107304924 ***** 
+epoch : 288  ***** losss : 0.393489647209492 ***** 
+epoch : 289  ***** losss : 0.387905771341849 ***** 
+epoch : 290  ***** losss : 0.45977724370152373 ***** 
+epoch : 291  ***** losss : 0.43434120061192516 ***** 
+epoch : 292  ***** losss : 0.5829997022142379 ***** 
+epoch : 293  ***** losss : 0.7379276109995772 ***** 
+epoch : 294  ***** losss : 0.5378869861838211 ***** 
+epoch : 295  ***** losss : 0.8593528744288506 ***** 
+epoch : 296  ***** losss : 0.8380235108852503 ***** 
+epoch : 297  ***** losss : 1.102362535566499 ***** 
+epoch : 298  ***** losss : 0.924525597547472 ***** 
+epoch : 299  ***** losss : 1.0951766999060055 ***** 
+epoch : 300  ***** losss : 0.7126327648020379 ***** 
 epoch : 300   saved at  weight/model_300.ckpt 
-epoch : 301  ***** losss : 0.1308568324020598 ***** 
-epoch : 302  ***** losss : 0.26697987591614947 ***** 
-epoch : 303  ***** losss : 0.18108951109388727 ***** 
-epoch : 304  ***** losss : 0.3033123207405879 ***** 
-epoch : 305  ***** losss : 0.16554016556801798 ***** 
-epoch : 306  ***** losss : 0.3696654732339084 ***** 
-epoch : 307  ***** losss : 0.26626414481143 ***** 
-epoch : 308  ***** losss : 0.21441336361203867 ***** 
-epoch : 309  ***** losss : 0.15936120141304855 ***** 
-epoch : 310  ***** losss : 0.2151495216676267 ***** 
-epoch : 311  ***** losss : 0.19020111105783144 ***** 
-epoch : 312  ***** losss : 0.22041450911638094 ***** 
-epoch : 313  ***** losss : 0.23077120256130002 ***** 
-epoch : 314  ***** losss : 0.30173054248371045 ***** 
-epoch : 315  ***** losss : 0.1746533246441686 ***** 
-epoch : 316  ***** losss : 0.2567661479788512 ***** 
-epoch : 317  ***** losss : 0.2027006307416741 ***** 
-epoch : 318  ***** losss : 0.21136409562677727 ***** 
-epoch : 319  ***** losss : 0.1444169009955658 ***** 
-epoch : 320  ***** losss : 0.19833154415482568 ***** 
-epoch : 321  ***** losss : 0.21444148413138464 ***** 
-epoch : 322  ***** losss : 0.2725302753242431 ***** 
-epoch : 323  ***** losss : 0.16779328254961 ***** 
-epoch : 324  ***** losss : 0.18123215343621268 ***** 
-epoch : 325  ***** losss : 0.1038700828612491 ***** 
-epoch : 326  ***** losss : 0.234216986104002 ***** 
-epoch : 327  ***** losss : 0.15451044095607358 ***** 
-epoch : 328  ***** losss : 0.24039975961386517 ***** 
-epoch : 329  ***** losss : 0.23159224316805194 ***** 
-epoch : 330  ***** losss : 0.17608813429433212 ***** 
-epoch : 331  ***** losss : 0.1823989049935335 ***** 
-epoch : 332  ***** losss : 0.1517473500862252 ***** 
-epoch : 333  ***** losss : 0.17022494949196698 ***** 
-epoch : 334  ***** losss : 0.19604599834565306 ***** 
-epoch : 335  ***** losss : 0.1496912228412839 ***** 
-epoch : 336  ***** losss : 0.16568911253307306 ***** 
-epoch : 337  ***** losss : 0.18631972249477258 ***** 
-epoch : 338  ***** losss : 0.2881747904630174 ***** 
-epoch : 339  ***** losss : 0.28446550230000867 ***** 
-epoch : 340  ***** losss : 0.1292422748520039 ***** 
-epoch : 341  ***** losss : 0.3775775552076084 ***** 
-epoch : 342  ***** losss : 0.21407202510454226 ***** 
-epoch : 343  ***** losss : 0.19795343221267103 ***** 
-epoch : 344  ***** losss : 0.20087665314895276 ***** 
-epoch : 345  ***** losss : 0.32631532448613143 ***** 
-epoch : 346  ***** losss : 0.21870302583192824 ***** 
-epoch : 347  ***** losss : 0.2649174171165214 ***** 
-epoch : 348  ***** losss : 0.17818172554780176 ***** 
-epoch : 349  ***** losss : 0.25122069889039267 ***** 
-epoch : 350  ***** losss : 0.23057989301378257 ***** 
-epoch : 351  ***** losss : 0.2626746568676026 ***** 
-epoch : 352  ***** losss : 0.18629562660316878 ***** 
-epoch : 353  ***** losss : 0.2133861856382282 ***** 
-epoch : 354  ***** losss : 0.24744608883884212 ***** 
-epoch : 355  ***** losss : 0.22667379628637718 ***** 
-epoch : 356  ***** losss : 0.22891946886011283 ***** 
-epoch : 357  ***** losss : 0.22362525146309054 ***** 
-epoch : 358  ***** losss : 0.24598619634343777 ***** 
-epoch : 359  ***** losss : 0.36034833141820855 ***** 
-epoch : 360  ***** losss : 0.24365776620834367 ***** 
-epoch : 361  ***** losss : 0.13217449796502478 ***** 
-epoch : 362  ***** losss : 0.14871312469813347 ***** 
-epoch : 363  ***** losss : 0.17909837143179175 ***** 
-epoch : 364  ***** losss : 0.17064470971490664 ***** 
-epoch : 365  ***** losss : 0.35344698032895394 ***** 
-epoch : 366  ***** losss : 0.24232711950753583 ***** 
-epoch : 367  ***** losss : 0.24312637367620482 ***** 
-epoch : 368  ***** losss : 0.13841534448692983 ***** 
-epoch : 369  ***** losss : 0.22759076377769816 ***** 
-epoch : 370  ***** losss : 0.22662458380091266 ***** 
-epoch : 371  ***** losss : 0.2946735725581675 ***** 
-epoch : 372  ***** losss : 0.18458920637567644 ***** 
-epoch : 373  ***** losss : 0.22372525676473742 ***** 
-epoch : 374  ***** losss : 0.15761717337863956 ***** 
-epoch : 375  ***** losss : 0.1842250424415397 ***** 
-epoch : 376  ***** losss : 0.13913555841645575 ***** 
-epoch : 377  ***** losss : 0.23556530799760367 ***** 
-epoch : 378  ***** losss : 0.14429153821401997 ***** 
-epoch : 379  ***** losss : 0.21027011350452085 ***** 
-epoch : 380  ***** losss : 0.1708787119387125 ***** 
-epoch : 381  ***** losss : 0.08998804303155339 ***** 
-epoch : 382  ***** losss : 0.11590540106953995 ***** 
-epoch : 383  ***** losss : 0.19427874807570333 ***** 
-epoch : 384  ***** losss : 0.27804640940303216 ***** 
-epoch : 385  ***** losss : 0.19578339485633478 ***** 
-epoch : 386  ***** losss : 0.14946563970715943 ***** 
-epoch : 387  ***** losss : 0.17012766280276992 ***** 
-epoch : 388  ***** losss : 0.23388001496823563 ***** 
-epoch : 389  ***** losss : 0.1527024238694139 ***** 
-epoch : 390  ***** losss : 0.1915186087389884 ***** 
-epoch : 391  ***** losss : 0.22782705573627027 ***** 
-epoch : 392  ***** losss : 0.21879609907955455 ***** 
-epoch : 393  ***** losss : 0.13930618242375203 ***** 
-epoch : 394  ***** losss : 0.20298957729937683 ***** 
-epoch : 395  ***** losss : 0.32932038655053475 ***** 
-epoch : 396  ***** losss : 0.2839928727080405 ***** 
-epoch : 397  ***** losss : 0.1879740139702335 ***** 
-epoch : 398  ***** losss : 0.19023218218171678 ***** 
-epoch : 399  ***** losss : 0.19668366086443712 ***** 
-epoch : 400  ***** losss : 0.27749997956743755 ***** 
+epoch : 301  ***** losss : 0.5095626907677797 ***** 
+epoch : 302  ***** losss : 0.8253159167015838 ***** 
+epoch : 303  ***** losss : 0.6107571536176692 ***** 
+epoch : 304  ***** losss : 0.9383009519624466 ***** 
+epoch : 305  ***** losss : 0.6144007081970813 ***** 
+epoch : 306  ***** losss : 0.6583310249825445 ***** 
+epoch : 307  ***** losss : 0.640880841373928 ***** 
+epoch : 308  ***** losss : 0.910613093568827 ***** 
+epoch : 309  ***** losss : 0.514465123901573 ***** 
+epoch : 310  ***** losss : 0.5956843697276781 ***** 
+epoch : 311  ***** losss : 0.45031240142816387 ***** 
+epoch : 312  ***** losss : 0.5384252376143195 ***** 
+epoch : 313  ***** losss : 0.595042793034736 ***** 
+epoch : 314  ***** losss : 0.5848586567012717 ***** 
+epoch : 315  ***** losss : 0.7613999045479432 ***** 
+epoch : 316  ***** losss : 0.5699412609328647 ***** 
+epoch : 317  ***** losss : 0.7311014774891191 ***** 
+epoch : 318  ***** losss : 0.5426423017106572 ***** 
+epoch : 319  ***** losss : 0.6229278305395383 ***** 
+epoch : 320  ***** losss : 0.6052743405956562 ***** 
+epoch : 321  ***** losss : 0.6321662028037736 ***** 
+epoch : 322  ***** losss : 0.5031365300783364 ***** 
+epoch : 323  ***** losss : 0.8632680755654292 ***** 
+epoch : 324  ***** losss : 0.990067114114936 ***** 
+epoch : 325  ***** losss : 0.8920114602433387 ***** 
+epoch : 326  ***** losss : 0.7187517766251403 ***** 
+epoch : 327  ***** losss : 0.7026966413079663 ***** 
+epoch : 328  ***** losss : 0.7496626417505468 ***** 
+epoch : 329  ***** losss : 0.744161873102712 ***** 
+epoch : 330  ***** losss : 0.8065831146850542 ***** 
+epoch : 331  ***** losss : 0.5658143381779155 ***** 
+epoch : 332  ***** losss : 0.7313293142492512 ***** 
+epoch : 333  ***** losss : 0.9345905231548386 ***** 
+epoch : 334  ***** losss : 0.7659735366023597 ***** 
+epoch : 335  ***** losss : 1.0765053504110256 ***** 
+epoch : 336  ***** losss : 0.7003590441736378 ***** 
+epoch : 337  ***** losss : 0.519277414801536 ***** 
+epoch : 338  ***** losss : 0.5783532767304678 ***** 
+epoch : 339  ***** losss : 0.5363515121973705 ***** 
+epoch : 340  ***** losss : 0.5476851741323117 ***** 
+epoch : 341  ***** losss : 0.5171101214436931 ***** 
+epoch : 342  ***** losss : 0.4066538850258894 ***** 
+epoch : 343  ***** losss : 0.5610302756804231 ***** 
+epoch : 344  ***** losss : 0.5294819708637988 ***** 
+epoch : 345  ***** losss : 0.6814515662676968 ***** 
+epoch : 346  ***** losss : 0.4783655275643923 ***** 
+epoch : 347  ***** losss : 0.4571065910273546 ***** 
+epoch : 348  ***** losss : 0.6914359770926239 ***** 
+epoch : 349  ***** losss : 0.565651547051857 ***** 
+epoch : 350  ***** losss : 0.4987298036558059 ***** 
+epoch : 351  ***** losss : 0.4921729045597658 ***** 
+epoch : 352  ***** losss : 0.4224554445859212 ***** 
+epoch : 353  ***** losss : 0.5172398097984114 ***** 
+epoch : 354  ***** losss : 0.8981842849552777 ***** 
+epoch : 355  ***** losss : 0.7593008054577695 ***** 
+epoch : 356  ***** losss : 0.715522816410612 ***** 
+epoch : 357  ***** losss : 0.9766076555742984 ***** 
+epoch : 358  ***** losss : 0.5485110672734663 ***** 
+epoch : 359  ***** losss : 0.6047816725144912 ***** 
+epoch : 360  ***** losss : 0.4181441133659973 ***** 
+epoch : 361  ***** losss : 0.6096416621049912 ***** 
+epoch : 362  ***** losss : 0.6550038720531575 ***** 
+epoch : 363  ***** losss : 0.40954390474257707 ***** 
+epoch : 364  ***** losss : 0.5159239855728401 ***** 
+epoch : 365  ***** losss : 0.7510680977753736 ***** 
+epoch : 366  ***** losss : 0.5671086235655594 ***** 
+epoch : 367  ***** losss : 0.7788702825860128 ***** 
+epoch : 368  ***** losss : 0.636905978363302 ***** 
+epoch : 369  ***** losss : 0.7876123991255781 ***** 
+epoch : 370  ***** losss : 0.34288059119215575 ***** 
+epoch : 371  ***** losss : 0.403679230623311 ***** 
+epoch : 372  ***** losss : 0.5596299989829276 ***** 
+epoch : 373  ***** losss : 0.6798939002055704 ***** 
+epoch : 374  ***** losss : 0.9255502116338903 ***** 
+epoch : 375  ***** losss : 0.597788039801344 ***** 
+epoch : 376  ***** losss : 0.44581524775776415 ***** 
+epoch : 377  ***** losss : 0.45504389883421936 ***** 
+epoch : 378  ***** losss : 0.5813431681026486 ***** 
+epoch : 379  ***** losss : 0.5775466779323324 ***** 
+epoch : 380  ***** losss : 0.4128521239672409 ***** 
+epoch : 381  ***** losss : 0.6824522829729176 ***** 
+epoch : 382  ***** losss : 0.6771599412463729 ***** 
+epoch : 383  ***** losss : 0.5658115174164777 ***** 
+epoch : 384  ***** losss : 0.6751091938640457 ***** 
+epoch : 385  ***** losss : 0.38987211443327396 ***** 
+epoch : 386  ***** losss : 0.6028310072979366 ***** 
+epoch : 387  ***** losss : 0.7197605841520271 ***** 
+epoch : 388  ***** losss : 0.5026716949960246 ***** 
+epoch : 389  ***** losss : 0.6396904595076194 ***** 
+epoch : 390  ***** losss : 0.3344312334534152 ***** 
+epoch : 391  ***** losss : 0.5293854489918886 ***** 
+epoch : 392  ***** losss : 0.3728715321717573 ***** 
+epoch : 393  ***** losss : 0.6219622674893799 ***** 
+epoch : 394  ***** losss : 0.383421676690773 ***** 
+epoch : 395  ***** losss : 0.40537184610218446 ***** 
+epoch : 396  ***** losss : 0.35573406238162875 ***** 
+epoch : 397  ***** losss : 0.7301070320590952 ***** 
+epoch : 398  ***** losss : 0.6406316984639489 ***** 
+epoch : 399  ***** losss : 0.5367985067005066 ***** 
+epoch : 400  ***** losss : 0.5668977131640531 ***** 
 epoch : 400   saved at  weight/model_400.ckpt 
-epoch : 401  ***** losss : 0.2752280309632624 ***** 
-epoch : 402  ***** losss : 0.17091207795601804 ***** 
-epoch : 403  ***** losss : 0.25088380978741043 ***** 
-epoch : 404  ***** losss : 0.23091116478099138 ***** 
-epoch : 405  ***** losss : 0.14797660773092502 ***** 
-epoch : 406  ***** losss : 0.25783688377396174 ***** 
-epoch : 407  ***** losss : 0.23606478106921713 ***** 
-epoch : 408  ***** losss : 0.1337855960946399 ***** 
-epoch : 409  ***** losss : 0.24039742557033605 ***** 
-epoch : 410  ***** losss : 0.20878529027322656 ***** 
-epoch : 411  ***** losss : 0.2576698187240254 ***** 
-epoch : 412  ***** losss : 0.19204205548066966 ***** 
-epoch : 413  ***** losss : 0.1660482250727 ***** 
-epoch : 414  ***** losss : 0.18295355639747868 ***** 
-epoch : 415  ***** losss : 0.22193655981209304 ***** 
-epoch : 416  ***** losss : 0.22651181155379163 ***** 
-epoch : 417  ***** losss : 0.22817180592028308 ***** 
-epoch : 418  ***** losss : 0.26756912045493664 ***** 
-epoch : 419  ***** losss : 0.2328341900556552 ***** 
-epoch : 420  ***** losss : 0.24021665729560482 ***** 
-epoch : 421  ***** losss : 0.20016869458049769 ***** 
-epoch : 422  ***** losss : 0.25299500335495395 ***** 
-epoch : 423  ***** losss : 0.275504518962407 ***** 
-epoch : 424  ***** losss : 0.13537917833036772 ***** 
-epoch : 425  ***** losss : 0.15471890780281683 ***** 
-epoch : 426  ***** losss : 0.2729744568205206 ***** 
-epoch : 427  ***** losss : 0.16531199910241412 ***** 
-epoch : 428  ***** losss : 0.1955378720213048 ***** 
-epoch : 429  ***** losss : 0.18475718490117288 ***** 
-epoch : 430  ***** losss : 0.21466994737420464 ***** 
-epoch : 431  ***** losss : 0.20669930388521607 ***** 
-epoch : 432  ***** losss : 0.14867975126799138 ***** 
-epoch : 433  ***** losss : 0.28430813183695136 ***** 
-epoch : 434  ***** losss : 0.1561882301557489 ***** 
-epoch : 435  ***** losss : 0.18248945534105587 ***** 
-epoch : 436  ***** losss : 0.1314815666373761 ***** 
-epoch : 437  ***** losss : 0.18635777378403873 ***** 
-epoch : 438  ***** losss : 0.20064756710507936 ***** 
-epoch : 439  ***** losss : 0.12829243844862503 ***** 
-epoch : 440  ***** losss : 0.1874333763080358 ***** 
-epoch : 441  ***** losss : 0.16360045778674248 ***** 
-epoch : 442  ***** losss : 0.23925713581138552 ***** 
-epoch : 443  ***** losss : 0.18677163051825119 ***** 
-epoch : 444  ***** losss : 0.1816790909260817 ***** 
-epoch : 445  ***** losss : 0.35412687674033805 ***** 
-epoch : 446  ***** losss : 0.19512299523739784 ***** 
-epoch : 447  ***** losss : 0.13118801112977962 ***** 
-epoch : 448  ***** losss : 0.22786833253576333 ***** 
-epoch : 449  ***** losss : 0.22568860996670992 ***** 
-epoch : 450  ***** losss : 0.1740742152560415 ***** 
-epoch : 451  ***** losss : 0.38890038513090985 ***** 
-epoch : 452  ***** losss : 0.15674808330732048 ***** 
-epoch : 453  ***** losss : 0.14042776826318004 ***** 
-epoch : 454  ***** losss : 0.13649350132891414 ***** 
-epoch : 455  ***** losss : 0.16746839282950532 ***** 
-epoch : 456  ***** losss : 0.18652100671533844 ***** 
-epoch : 457  ***** losss : 0.23319247589824954 ***** 
-epoch : 458  ***** losss : 0.1891797930602479 ***** 
-epoch : 459  ***** losss : 0.18720245473105024 ***** 
-epoch : 460  ***** losss : 0.19014792845700867 ***** 
-epoch : 461  ***** losss : 0.3501749886399921 ***** 
-epoch : 462  ***** losss : 0.23755819253528898 ***** 
-epoch : 463  ***** losss : 0.20206326533480023 ***** 
-epoch : 464  ***** losss : 0.19260011021287937 ***** 
-epoch : 465  ***** losss : 0.24133588439599407 ***** 
-epoch : 466  ***** losss : 0.25113136243271583 ***** 
-epoch : 467  ***** losss : 0.1260392597378086 ***** 
-epoch : 468  ***** losss : 0.25530824171619315 ***** 
-epoch : 469  ***** losss : 0.32552405815840757 ***** 
-epoch : 470  ***** losss : 0.29887390132716973 ***** 
-epoch : 471  ***** losss : 0.23553796629494173 ***** 
-epoch : 472  ***** losss : 0.16967881177242816 ***** 
-epoch : 473  ***** losss : 0.1695713113376769 ***** 
-epoch : 474  ***** losss : 0.09788657629542286 ***** 
-epoch : 475  ***** losss : 0.1768876825699408 ***** 
-epoch : 476  ***** losss : 0.24383613911732027 ***** 
-epoch : 477  ***** losss : 0.24988463952649909 ***** 
-epoch : 478  ***** losss : 0.11588523207683465 ***** 
-epoch : 479  ***** losss : 0.2240487857370681 ***** 
-epoch : 480  ***** losss : 0.2660972420580947 ***** 
-epoch : 481  ***** losss : 0.2519073656949331 ***** 
-epoch : 482  ***** losss : 0.19733321380226698 ***** 
-epoch : 483  ***** losss : 0.130585180449998 ***** 
-epoch : 484  ***** losss : 0.1546850679696945 ***** 
-epoch : 485  ***** losss : 0.3169405989028746 ***** 
-epoch : 486  ***** losss : 0.24404194958560765 ***** 
-epoch : 487  ***** losss : 0.2459479536064464 ***** 
-epoch : 488  ***** losss : 0.17320888359745368 ***** 
-epoch : 489  ***** losss : 0.24099863894298323 ***** 
-epoch : 490  ***** losss : 0.1430053711810615 ***** 
-epoch : 491  ***** losss : 0.16038776016284828 ***** 
-epoch : 492  ***** losss : 0.18439860693979426 ***** 
-epoch : 493  ***** losss : 0.23887732773800963 ***** 
-epoch : 494  ***** losss : 0.18644372154631128 ***** 
-epoch : 495  ***** losss : 0.2742131325394439 ***** 
-epoch : 496  ***** losss : 0.13351689986666315 ***** 
-epoch : 497  ***** losss : 0.18717169900628505 ***** 
-epoch : 498  ***** losss : 0.1370385194204573 ***** 
-epoch : 499  ***** losss : 0.17124202001195954 ***** 
+epoch : 401  ***** losss : 0.6177481804716081 ***** 
+epoch : 402  ***** losss : 0.7115196627128171 ***** 
+epoch : 403  ***** losss : 0.4623383805387675 ***** 
+epoch : 404  ***** losss : 0.387925887716392 ***** 
+epoch : 405  ***** losss : 0.6250476844070363 ***** 
+epoch : 406  ***** losss : 0.40831808990787977 ***** 
+epoch : 407  ***** losss : 0.4197075332717759 ***** 
+epoch : 408  ***** losss : 0.49129811692034764 ***** 
+epoch : 409  ***** losss : 0.4952388379756485 ***** 
+epoch : 410  ***** losss : 0.8859787548594795 ***** 
+epoch : 411  ***** losss : 0.7921502465060257 ***** 
+epoch : 412  ***** losss : 0.6855925244999526 ***** 
+epoch : 413  ***** losss : 0.8020358496232802 ***** 
+epoch : 414  ***** losss : 0.6495400850064783 ***** 
+epoch : 415  ***** losss : 0.5397922962999928 ***** 
+epoch : 416  ***** losss : 0.4383175882744581 ***** 
+epoch : 417  ***** losss : 0.4495827152604761 ***** 
+epoch : 418  ***** losss : 0.4210056871290817 ***** 
+epoch : 419  ***** losss : 0.5678837457435293 ***** 
+epoch : 420  ***** losss : 0.5271387989332652 ***** 
+epoch : 421  ***** losss : 0.6213687471145022 ***** 
+epoch : 422  ***** losss : 0.4772137747773968 ***** 
+epoch : 423  ***** losss : 0.49963849022242357 ***** 
+epoch : 424  ***** losss : 0.594861217163384 ***** 
+epoch : 425  ***** losss : 0.6345744122700125 ***** 
+epoch : 426  ***** losss : 0.6083067264166857 ***** 
+epoch : 427  ***** losss : 0.5373559261388436 ***** 
+epoch : 428  ***** losss : 0.48661229657727745 ***** 
+epoch : 429  ***** losss : 0.5114631897499748 ***** 
+epoch : 430  ***** losss : 0.4578914439566688 ***** 
+epoch : 431  ***** losss : 0.27501662691747697 ***** 
+epoch : 432  ***** losss : 0.593851849925386 ***** 
+epoch : 433  ***** losss : 0.5157040318379131 ***** 
+epoch : 434  ***** losss : 0.6290283226580868 ***** 
+epoch : 435  ***** losss : 0.538403733434734 ***** 
+epoch : 436  ***** losss : 0.47903114895234467 ***** 
+epoch : 437  ***** losss : 0.3854397679091335 ***** 
+epoch : 438  ***** losss : 0.49268778972350447 ***** 
+epoch : 439  ***** losss : 0.33691844351164946 ***** 
+epoch : 440  ***** losss : 0.4603962505535719 ***** 
+epoch : 441  ***** losss : 0.3678962513999977 ***** 
+epoch : 442  ***** losss : 0.4749830567277513 ***** 
+epoch : 443  ***** losss : 0.637081171058071 ***** 
+epoch : 444  ***** losss : 0.4591123567397517 ***** 
+epoch : 445  ***** losss : 0.5178865152342951 ***** 
+epoch : 446  ***** losss : 0.5369789501128253 ***** 
+epoch : 447  ***** losss : 0.41223620293465046 ***** 
+epoch : 448  ***** losss : 0.3652729296927646 ***** 
+epoch : 449  ***** losss : 0.4954271633247913 ***** 
+epoch : 450  ***** losss : 0.35657585994596275 ***** 
+epoch : 451  ***** losss : 0.4077549732650425 ***** 
+epoch : 452  ***** losss : 0.3143103113172856 ***** 
+epoch : 453  ***** losss : 0.4439597359855725 ***** 
+epoch : 454  ***** losss : 0.5879177115370453 ***** 
+epoch : 455  ***** losss : 0.33891835241490753 ***** 
+epoch : 456  ***** losss : 0.35062667982428763 ***** 
+epoch : 457  ***** losss : 0.6868257981427632 ***** 
+epoch : 458  ***** losss : 0.7896507291852686 ***** 
+epoch : 459  ***** losss : 0.949657846232526 ***** 
+epoch : 460  ***** losss : 0.5433226738978192 ***** 
+epoch : 461  ***** losss : 0.5076220183378837 ***** 
+epoch : 462  ***** losss : 0.4791286305625704 ***** 
+epoch : 463  ***** losss : 0.48757995860637493 ***** 
+epoch : 464  ***** losss : 0.4032766473899301 ***** 
+epoch : 465  ***** losss : 0.5043732752562846 ***** 
+epoch : 466  ***** losss : 0.4810063134473239 ***** 
+epoch : 467  ***** losss : 0.40183918329699964 ***** 
+epoch : 468  ***** losss : 0.5749942690275702 ***** 
+epoch : 469  ***** losss : 0.39095239727720354 ***** 
+epoch : 470  ***** losss : 0.6279553674753515 ***** 
+epoch : 471  ***** losss : 0.5764653980227195 ***** 
+epoch : 472  ***** losss : 0.5183059716689513 ***** 
+epoch : 473  ***** losss : 0.5217933148437623 ***** 
+epoch : 474  ***** losss : 0.656321887337981 ***** 
+epoch : 475  ***** losss : 0.7338453624888643 ***** 
+epoch : 476  ***** losss : 0.695247765014301 ***** 
+epoch : 477  ***** losss : 0.812370734150818 ***** 
+epoch : 478  ***** losss : 0.5117500360547638 ***** 
+epoch : 479  ***** losss : 0.6935305107754175 ***** 
+epoch : 480  ***** losss : 0.6408105637183326 ***** 
+epoch : 481  ***** losss : 0.591924089882923 ***** 
+epoch : 482  ***** losss : 0.5889017439171198 ***** 
+epoch : 483  ***** losss : 0.4117536924034084 ***** 
+epoch : 484  ***** losss : 0.5467125344248416 ***** 
+epoch : 485  ***** losss : 0.3277185533680722 ***** 
+epoch : 486  ***** losss : 0.6621245464473873 ***** 
+epoch : 487  ***** losss : 0.4056491725356892 ***** 
+epoch : 488  ***** losss : 0.48494465753933014 ***** 
+epoch : 489  ***** losss : 0.4686168287539658 ***** 
+epoch : 490  ***** losss : 0.3815274949504328 ***** 
+epoch : 491  ***** losss : 0.3817795748281583 ***** 
+epoch : 492  ***** losss : 0.39677137029059395 ***** 
+epoch : 493  ***** losss : 0.2968875667876887 ***** 
+epoch : 494  ***** losss : 0.6260501132783247 ***** 
+epoch : 495  ***** losss : 0.4725780993156832 ***** 
+epoch : 496  ***** losss : 0.572357321728191 ***** 
+epoch : 497  ***** losss : 0.41454104504782663 ***** 
+epoch : 498  ***** losss : 0.5172099920333721 ***** 
+epoch : 499  ***** losss : 0.3760503480199304 ***** 
+epoch : 500  ***** losss : 0.4224260718463313 ***** 
+epoch : 500   saved at  weight/model_500.ckpt 
+epoch : 501  ***** losss : 0.32015100331460644 ***** 
+epoch : 502  ***** losss : 0.4916017527665133 ***** 
+epoch : 503  ***** losss : 0.43961908398048877 ***** 
+epoch : 504  ***** losss : 0.5562648939007886 ***** 
+epoch : 505  ***** losss : 0.2588127748496163 ***** 
+epoch : 506  ***** losss : 0.5018368645244209 ***** 
+epoch : 507  ***** losss : 0.7189689702872784 ***** 
+epoch : 508  ***** losss : 0.6669572880207397 ***** 
+epoch : 509  ***** losss : 0.5207169447626256 ***** 
+epoch : 510  ***** losss : 0.7185521648331701 ***** 
+epoch : 511  ***** losss : 0.6992301119425974 ***** 
+epoch : 512  ***** losss : 0.4269995890957148 ***** 
+epoch : 513  ***** losss : 0.4690530170537386 ***** 
+epoch : 514  ***** losss : 0.39674898686052984 ***** 
+epoch : 515  ***** losss : 0.3407948811428696 ***** 
+epoch : 516  ***** losss : 0.6773415287634634 ***** 
+epoch : 517  ***** losss : 0.37766078409185866 ***** 
+epoch : 518  ***** losss : 0.34353600569494347 ***** 
+epoch : 519  ***** losss : 0.31409748206459653 ***** 
+epoch : 520  ***** losss : 0.36073874946043816 ***** 
+epoch : 521  ***** losss : 0.4873768488384371 ***** 
+epoch : 522  ***** losss : 0.528007654768885 ***** 
+epoch : 523  ***** losss : 0.4529940379927666 ***** 
+epoch : 524  ***** losss : 0.6176835770406797 ***** 
+epoch : 525  ***** losss : 0.6305529768183078 ***** 
+epoch : 526  ***** losss : 0.3733909890420364 ***** 
+epoch : 527  ***** losss : 0.2896122468171143 ***** 
+epoch : 528  ***** losss : 0.32728792029308806 ***** 
+epoch : 529  ***** losss : 0.5741237040672331 ***** 
+epoch : 530  ***** losss : 0.466013823520143 ***** 
+epoch : 531  ***** losss : 0.3890818830066394 ***** 
+epoch : 532  ***** losss : 0.3876416556200297 ***** 
+epoch : 533  ***** losss : 0.3286079442426626 ***** 
+epoch : 534  ***** losss : 0.37095252768185105 ***** 
+epoch : 535  ***** losss : 0.4118982572016421 ***** 
+epoch : 536  ***** losss : 0.4726845775197148 ***** 
+epoch : 537  ***** losss : 0.3555192559474136 ***** 
+epoch : 538  ***** losss : 0.28365189122351353 ***** 
+epoch : 539  ***** losss : 0.4038629483020486 ***** 
+epoch : 540  ***** losss : 0.6770080745618543 ***** 
+epoch : 541  ***** losss : 0.42871993233347894 ***** 
+epoch : 542  ***** losss : 0.4688657642442422 ***** 
+epoch : 543  ***** losss : 0.7011329057443163 ***** 
+epoch : 544  ***** losss : 0.4632253611223973 ***** 
+epoch : 545  ***** losss : 0.43639339598655624 ***** 
+epoch : 546  ***** losss : 0.9739694674681232 ***** 
+epoch : 547  ***** losss : 0.6587799126045866 ***** 
+epoch : 548  ***** losss : 0.5812912720684835 ***** 
+epoch : 549  ***** losss : 0.5461151949926091 ***** 
+epoch : 550  ***** losss : 0.355178425482336 ***** 
+epoch : 551  ***** losss : 0.4619419181676676 ***** 
+epoch : 552  ***** losss : 0.6992721410329068 ***** 
+epoch : 553  ***** losss : 0.4758263865110166 ***** 
+epoch : 554  ***** losss : 0.4374856506010474 ***** 
+epoch : 555  ***** losss : 0.4984434169073211 ***** 
+epoch : 556  ***** losss : 0.5354356509924401 ***** 
+epoch : 557  ***** losss : 0.5948558013897127 ***** 
+epoch : 558  ***** losss : 0.4669156129289149 ***** 
+epoch : 559  ***** losss : 0.4740195345517577 ***** 
+epoch : 560  ***** losss : 0.5844833656201445 ***** 
+epoch : 561  ***** losss : 0.4134683028332802 ***** 
+epoch : 562  ***** losss : 0.4580631057640403 ***** 
+epoch : 563  ***** losss : 0.43577275305761987 ***** 
+epoch : 564  ***** losss : 0.5761085566659858 ***** 
+epoch : 565  ***** losss : 0.2698876347060377 ***** 
+epoch : 566  ***** losss : 0.5263612162004847 ***** 
+epoch : 567  ***** losss : 0.27591516063262134 ***** 
+epoch : 568  ***** losss : 0.3161511095822789 ***** 
+epoch : 569  ***** losss : 0.540057840407826 ***** 
+epoch : 570  ***** losss : 0.3742930222206269 ***** 
+epoch : 571  ***** losss : 0.383391007611408 ***** 
+epoch : 572  ***** losss : 0.529104896964327 ***** 
+epoch : 573  ***** losss : 0.4377552044984441 ***** 
+epoch : 574  ***** losss : 0.33294292281050275 ***** 
+epoch : 575  ***** losss : 0.4811781908940702 ***** 
+epoch : 576  ***** losss : 0.38345036383475417 ***** 
+epoch : 577  ***** losss : 0.46094568771707145 ***** 
+epoch : 578  ***** losss : 0.6030276649792938 ***** 
+epoch : 579  ***** losss : 0.410106781973397 ***** 
+epoch : 580  ***** losss : 0.38976492538094476 ***** 
+epoch : 581  ***** losss : 0.3792507248573145 ***** 
+epoch : 582  ***** losss : 0.5400288347481847 ***** 
+epoch : 583  ***** losss : 0.32195423780922283 ***** 
+epoch : 584  ***** losss : 0.4067424372055939 ***** 
+epoch : 585  ***** losss : 0.388778988850504 ***** 
+epoch : 586  ***** losss : 0.4171051161640662 ***** 
+epoch : 587  ***** losss : 0.47708877144646067 ***** 
+epoch : 588  ***** losss : 0.39957941092043825 ***** 
+epoch : 589  ***** losss : 0.6041586687871927 ***** 
+epoch : 590  ***** losss : 0.5891073842760584 ***** 
+epoch : 591  ***** losss : 0.39392678324600183 ***** 
+epoch : 592  ***** losss : 0.41195671592004146 ***** 
+epoch : 593  ***** losss : 0.3475401990198179 ***** 
+epoch : 594  ***** losss : 0.4941852250171621 ***** 
+epoch : 595  ***** losss : 0.5287445588483024 ***** 
+epoch : 596  ***** losss : 0.30665919363929817 ***** 
+epoch : 597  ***** losss : 0.24779195897758655 ***** 
+epoch : 598  ***** losss : 0.3130499169326626 ***** 
+epoch : 599  ***** losss : 0.3810208168583813 ***** 
+epoch : 600  ***** losss : 0.34593147286629744 ***** 
+epoch : 600   saved at  weight/model_600.ckpt 
+epoch : 601  ***** losss : 0.4343610626671457 ***** 
+epoch : 602  ***** losss : 0.4186291756963101 ***** 
+epoch : 603  ***** losss : 0.2356573700917579 ***** 
+epoch : 604  ***** losss : 0.4861248200310371 ***** 
+epoch : 605  ***** losss : 0.6978480253965245 ***** 
+epoch : 606  ***** losss : 0.5254042282958835 ***** 
+epoch : 607  ***** losss : 0.44258706387654456 ***** 
+epoch : 608  ***** losss : 0.5498873459443985 ***** 
+epoch : 609  ***** losss : 0.5033328407780573 ***** 
+epoch : 610  ***** losss : 0.4531807697705972 ***** 
+epoch : 611  ***** losss : 0.575357325047662 ***** 
+epoch : 612  ***** losss : 0.22240441886958706 ***** 
+epoch : 613  ***** losss : 0.2454571946710189 ***** 
+epoch : 614  ***** losss : 0.42989649695446985 ***** 
+epoch : 615  ***** losss : 0.4411854688812582 ***** 
+epoch : 616  ***** losss : 0.3519757098372338 ***** 
+epoch : 617  ***** losss : 0.31830462952012795 ***** 
+epoch : 618  ***** losss : 0.49085456804348837 ***** 
+epoch : 619  ***** losss : 0.42060454908022393 ***** 
+epoch : 620  ***** losss : 0.7035426201208566 ***** 
+epoch : 621  ***** losss : 0.4355048159477519 ***** 
+epoch : 622  ***** losss : 0.48375200819123165 ***** 
+epoch : 623  ***** losss : 0.3607850239831123 ***** 
+epoch : 624  ***** losss : 0.3664746463879851 ***** 
+epoch : 625  ***** losss : 0.6170956912828345 ***** 
+epoch : 626  ***** losss : 0.5179815926671836 ***** 
+epoch : 627  ***** losss : 0.6610716386185231 ***** 
+epoch : 628  ***** losss : 0.9071942478376513 ***** 
+epoch : 629  ***** losss : 0.4175390051573231 ***** 
+epoch : 630  ***** losss : 0.5109252016377468 ***** 
+epoch : 631  ***** losss : 0.5373168445551073 ***** 
+epoch : 632  ***** losss : 0.43673673402986424 ***** 
+epoch : 633  ***** losss : 0.286136751903598 ***** 
+epoch : 634  ***** losss : 0.38410088771655637 ***** 
+epoch : 635  ***** losss : 0.30299620281090256 ***** 
+epoch : 636  ***** losss : 0.34530877670806603 ***** 
+epoch : 637  ***** losss : 0.5121507554205209 ***** 
+epoch : 638  ***** losss : 0.23696416392365904 ***** 
+epoch : 639  ***** losss : 0.40873143811569435 ***** 
+epoch : 640  ***** losss : 0.3496524060567907 ***** 
+epoch : 641  ***** losss : 0.31120612021844707 ***** 
+epoch : 642  ***** losss : 0.37584329038010367 ***** 
+epoch : 643  ***** losss : 0.4485151048346552 ***** 
+epoch : 644  ***** losss : 0.5233959800186767 ***** 
+epoch : 645  ***** losss : 0.5414067909277946 ***** 
+epoch : 646  ***** losss : 0.46002993590582264 ***** 
+epoch : 647  ***** losss : 0.468186750103996 ***** 
+epoch : 648  ***** losss : 0.6873807573587101 ***** 
+epoch : 649  ***** losss : 0.5735586927130498 ***** 
+epoch : 650  ***** losss : 0.43677065572080664 ***** 
+epoch : 651  ***** losss : 0.5467473278904436 ***** 
+epoch : 652  ***** losss : 0.5289764121366716 ***** 
+epoch : 653  ***** losss : 0.5592144988850123 ***** 
+epoch : 654  ***** losss : 0.5250400027398427 ***** 
+epoch : 655  ***** losss : 0.49621261173001585 ***** 
+epoch : 656  ***** losss : 0.4416488339653597 ***** 
+epoch : 657  ***** losss : 0.6694045533124608 ***** 
+epoch : 658  ***** losss : 0.29076110246796816 ***** 
+epoch : 659  ***** losss : 0.49038381103966344 ***** 
+epoch : 660  ***** losss : 0.5153392507522767 ***** 
+epoch : 661  ***** losss : 0.27676653002757234 ***** 
+epoch : 662  ***** losss : 0.21475363910241185 ***** 
+epoch : 663  ***** losss : 0.3742784774218535 ***** 
+epoch : 664  ***** losss : 0.5564464268189795 ***** 
+epoch : 665  ***** losss : 0.2742535893772242 ***** 
+epoch : 666  ***** losss : 0.3841692334841582 ***** 
+epoch : 667  ***** losss : 0.3337555482771819 ***** 
+epoch : 668  ***** losss : 0.48145443826018663 ***** 
+epoch : 669  ***** losss : 0.45376069589201506 ***** 
+epoch : 670  ***** losss : 0.6744161141187988 ***** 
+epoch : 671  ***** losss : 0.8428013644904695 ***** 
+epoch : 672  ***** losss : 0.8319062875693817 ***** 
+epoch : 673  ***** losss : 0.5096573087448633 ***** 
+epoch : 674  ***** losss : 0.592236711760961 ***** 
+epoch : 675  ***** losss : 0.45609475155833934 ***** 
+epoch : 676  ***** losss : 0.49419937813490833 ***** 
+epoch : 677  ***** losss : 0.5520197687283144 ***** 
+epoch : 678  ***** losss : 0.28815082698565675 ***** 
+epoch : 679  ***** losss : 0.47159330573549596 ***** 
+epoch : 680  ***** losss : 0.43430628933606386 ***** 
+epoch : 681  ***** losss : 0.3956499744754751 ***** 
+epoch : 682  ***** losss : 0.30938734284586644 ***** 
+epoch : 683  ***** losss : 0.35035359937955945 ***** 
+epoch : 684  ***** losss : 0.3685117763584458 ***** 
+epoch : 685  ***** losss : 0.5289961581802345 ***** 
+epoch : 686  ***** losss : 0.46244725954750265 ***** 
+epoch : 687  ***** losss : 0.45248611935721783 ***** 
+epoch : 688  ***** losss : 0.36296077710017016 ***** 
+epoch : 689  ***** losss : 0.52578524209639 ***** 
+epoch : 690  ***** losss : 0.6776335964609643 ***** 
+epoch : 691  ***** losss : 0.717428922745512 ***** 
+epoch : 692  ***** losss : 0.41487752507373443 ***** 
+epoch : 693  ***** losss : 0.42725645733492 ***** 
+epoch : 694  ***** losss : 0.5585608694809707 ***** 
+epoch : 695  ***** losss : 0.6296266606259451 ***** 
+epoch : 696  ***** losss : 0.4994398942862972 ***** 
+epoch : 697  ***** losss : 0.6448109594275593 ***** 
+epoch : 698  ***** losss : 0.5553167384653079 ***** 
+epoch : 699  ***** losss : 0.46734024436864274 ***** 
+epoch : 700  ***** losss : 0.4730992156561342 ***** 
+epoch : 700   saved at  weight/model_700.ckpt 
+epoch : 701  ***** losss : 0.4629060211953515 ***** 
+epoch : 702  ***** losss : 0.5301090844066039 ***** 
+epoch : 703  ***** losss : 0.47127897317000134 ***** 
+epoch : 704  ***** losss : 0.4413476107158658 ***** 
+epoch : 705  ***** losss : 0.3694969721623238 ***** 
+epoch : 706  ***** losss : 0.4157583880269158 ***** 
+epoch : 707  ***** losss : 0.4292891239188066 ***** 
+epoch : 708  ***** losss : 0.3150120074046754 ***** 
+epoch : 709  ***** losss : 0.5105858555598388 ***** 
+epoch : 710  ***** losss : 0.3719865102627864 ***** 
+epoch : 711  ***** losss : 0.3824158520593528 ***** 
+epoch : 712  ***** losss : 0.30450378264822575 ***** 
+epoch : 713  ***** losss : 0.4524759803948655 ***** 
+epoch : 714  ***** losss : 0.512405954040787 ***** 
+epoch : 715  ***** losss : 0.2674837415690945 ***** 
+epoch : 716  ***** losss : 0.3321625342007337 ***** 
+epoch : 717  ***** losss : 0.4076813281678824 ***** 
+epoch : 718  ***** losss : 0.5409128741368932 ***** 
+epoch : 719  ***** losss : 0.22556559709622093 ***** 
+epoch : 720  ***** losss : 0.3822438113616613 ***** 
+epoch : 721  ***** losss : 0.42279779185969346 ***** 
+epoch : 722  ***** losss : 0.4403786941567205 ***** 
+epoch : 723  ***** losss : 0.31063329016160424 ***** 
+epoch : 724  ***** losss : 0.3234780097379826 ***** 
+epoch : 725  ***** losss : 0.31729147253713563 ***** 
+epoch : 726  ***** losss : 0.40430309980877155 ***** 
+epoch : 727  ***** losss : 0.4752052414598893 ***** 
+epoch : 728  ***** losss : 0.6197138808482805 ***** 
+epoch : 729  ***** losss : 0.42562172000396004 ***** 
+epoch : 730  ***** losss : 0.4475931889484741 ***** 
+epoch : 731  ***** losss : 0.3110397431816523 ***** 
+epoch : 732  ***** losss : 0.3794334627331182 ***** 
+epoch : 733  ***** losss : 0.2688714522901705 ***** 
+epoch : 734  ***** losss : 0.6495171990260928 ***** 
+epoch : 735  ***** losss : 0.4583327795108829 ***** 
+epoch : 736  ***** losss : 0.5364356162972825 ***** 
+epoch : 737  ***** losss : 0.3766894936653671 ***** 
+epoch : 738  ***** losss : 0.43640880771053503 ***** 
+epoch : 739  ***** losss : 0.558881116877501 ***** 
+epoch : 740  ***** losss : 0.21440753524939282 ***** 
+epoch : 741  ***** losss : 0.38099949505595987 ***** 
+epoch : 742  ***** losss : 0.5270967781522131 ***** 
+epoch : 743  ***** losss : 0.32554862697426756 ***** 
+epoch : 744  ***** losss : 0.400593125671719 ***** 
+epoch : 745  ***** losss : 0.22837155024917166 ***** 
+epoch : 746  ***** losss : 0.407205553628188 ***** 
+epoch : 747  ***** losss : 0.4718996929563275 ***** 
+epoch : 748  ***** losss : 0.2377501018341377 ***** 
+epoch : 749  ***** losss : 0.4615150891772828 ***** 
+epoch : 750  ***** losss : 0.5153698648778118 ***** 
+epoch : 751  ***** losss : 0.4169502534514322 ***** 
+epoch : 752  ***** losss : 0.2842928449390456 ***** 
+epoch : 753  ***** losss : 0.38400304689662335 ***** 
+epoch : 754  ***** losss : 0.533377642700998 ***** 
+epoch : 755  ***** losss : 0.5412599008599273 ***** 
+epoch : 756  ***** losss : 0.40994152706571185 ***** 
+epoch : 757  ***** losss : 0.5728011561582207 ***** 
+epoch : 758  ***** losss : 0.5046679723577654 ***** 
+epoch : 759  ***** losss : 0.34863785020326077 ***** 
+epoch : 760  ***** losss : 0.4825246974694437 ***** 
+epoch : 761  ***** losss : 0.4016282631687318 ***** 
+epoch : 762  ***** losss : 0.33733960436325106 ***** 
+epoch : 763  ***** losss : 0.2665839123792466 ***** 
+epoch : 764  ***** losss : 0.34511403427737264 ***** 
+epoch : 765  ***** losss : 0.42513914044536705 ***** 
+epoch : 766  ***** losss : 0.35814643454608586 ***** 
+epoch : 767  ***** losss : 0.28320657328590926 ***** 
+epoch : 768  ***** losss : 0.5093105707121026 ***** 
+epoch : 769  ***** losss : 0.18965096607815468 ***** 
+epoch : 770  ***** losss : 0.48905930320813695 ***** 
+epoch : 771  ***** losss : 0.45354112052831397 ***** 
+epoch : 772  ***** losss : 0.4403794936047234 ***** 
+epoch : 773  ***** losss : 0.42678141305532336 ***** 
+epoch : 774  ***** losss : 0.3589154011831397 ***** 
+epoch : 775  ***** losss : 0.4816944810219752 ***** 
+epoch : 776  ***** losss : 0.4381438711086503 ***** 
+epoch : 777  ***** losss : 0.5595865899495038 ***** 
+epoch : 778  ***** losss : 0.3549264259618212 ***** 
+epoch : 779  ***** losss : 0.3317207343126256 ***** 
+epoch : 780  ***** losss : 0.365601363497035 ***** 
+epoch : 781  ***** losss : 0.4059541030783578 ***** 
+epoch : 782  ***** losss : 0.45333417029991097 ***** 
+epoch : 783  ***** losss : 0.6091618894597559 ***** 
+epoch : 784  ***** losss : 0.4564038516360256 ***** 
+epoch : 785  ***** losss : 0.4911395392026634 ***** 
+epoch : 786  ***** losss : 0.4345993987060126 ***** 
+epoch : 787  ***** losss : 0.24999403183693403 ***** 
+epoch : 788  ***** losss : 0.373815875638968 ***** 
+epoch : 789  ***** losss : 0.3732669143183216 ***** 
+epoch : 790  ***** losss : 0.3619080539697279 ***** 
+epoch : 791  ***** losss : 0.39671980413800156 ***** 
+epoch : 792  ***** losss : 0.5948066157242096 ***** 
+epoch : 793  ***** losss : 0.4552135062608613 ***** 
+epoch : 794  ***** losss : 0.5660389971733366 ***** 
+epoch : 795  ***** losss : 0.4835621174674998 ***** 
+epoch : 796  ***** losss : 0.3900922839594614 ***** 
+epoch : 797  ***** losss : 0.5204725312439855 ***** 
+epoch : 798  ***** losss : 0.3660540430778383 ***** 
+epoch : 799  ***** losss : 0.678677215105381 ***** 
+epoch : 800  ***** losss : 0.602607122210884 ***** 
+epoch : 800   saved at  weight/model_800.ckpt 
+epoch : 801  ***** losss : 0.3852180884385916 ***** 
+epoch : 802  ***** losss : 0.4020637784584551 ***** 
+epoch : 803  ***** losss : 0.3262033036790797 ***** 
+epoch : 804  ***** losss : 0.3958330685126157 ***** 
+epoch : 805  ***** losss : 0.34360425369207803 ***** 
+epoch : 806  ***** losss : 0.33110769283098307 ***** 
+epoch : 807  ***** losss : 0.5249542060151384 ***** 
+epoch : 808  ***** losss : 0.5907630497908372 ***** 
+epoch : 809  ***** losss : 0.40669386841136657 ***** 
+epoch : 810  ***** losss : 0.5865135857761743 ***** 
+epoch : 811  ***** losss : 0.30990306757888675 ***** 
+epoch : 812  ***** losss : 0.5705728625252959 ***** 
+epoch : 813  ***** losss : 0.3710808013498763 ***** 
+epoch : 814  ***** losss : 0.5753564540628986 ***** 
+epoch : 815  ***** losss : 0.5078796655447917 ***** 
+epoch : 816  ***** losss : 0.5460610496959362 ***** 
+epoch : 817  ***** losss : 0.6057985750344415 ***** 
+epoch : 818  ***** losss : 0.5753709397735065 ***** 
+epoch : 819  ***** losss : 0.5896908081181209 ***** 
+epoch : 820  ***** losss : 0.40593495731570783 ***** 
+epoch : 821  ***** losss : 0.4963516763181133 ***** 
+epoch : 822  ***** losss : 0.5118231915085971 ***** 
+epoch : 823  ***** losss : 0.4148371456174331 ***** 
+epoch : 824  ***** losss : 0.47232403391649314 ***** 
+epoch : 825  ***** losss : 0.6146737847273016 ***** 
+epoch : 826  ***** losss : 0.6883472410283957 ***** 
+epoch : 827  ***** losss : 0.4331107687845588 ***** 
+epoch : 828  ***** losss : 0.3214987114052974 ***** 
+epoch : 829  ***** losss : 0.30710295834120416 ***** 
+epoch : 830  ***** losss : 0.4959986228523121 ***** 
+epoch : 831  ***** losss : 0.2198259523765529 ***** 
+epoch : 832  ***** losss : 0.5096626305331995 ***** 
+epoch : 833  ***** losss : 0.4606679299188272 ***** 
+epoch : 834  ***** losss : 0.6377198169438998 ***** 
+epoch : 835  ***** losss : 0.6150571432439449 ***** 
+epoch : 836  ***** losss : 0.39294053632806936 ***** 
+epoch : 837  ***** losss : 0.7219619855394228 ***** 
+epoch : 838  ***** losss : 0.3037637703785947 ***** 
+epoch : 839  ***** losss : 0.5467624635010679 ***** 
+epoch : 840  ***** losss : 0.3967030354281178 ***** 
+epoch : 841  ***** losss : 0.48724599435854543 ***** 
+epoch : 842  ***** losss : 0.3847832525764261 ***** 
+epoch : 843  ***** losss : 0.4351415580815683 ***** 
+epoch : 844  ***** losss : 0.3845534959355632 ***** 
+epoch : 845  ***** losss : 0.36372911864827984 ***** 
+epoch : 846  ***** losss : 0.4593654902247408 ***** 
+epoch : 847  ***** losss : 0.663401599823942 ***** 
+epoch : 848  ***** losss : 0.4284231990443459 ***** 
+epoch : 849  ***** losss : 0.806916341457736 ***** 
+epoch : 850  ***** losss : 0.6572773677735313 ***** 
+epoch : 851  ***** losss : 0.49405764100970373 ***** 
+epoch : 852  ***** losss : 0.5084594334089161 ***** 
+epoch : 853  ***** losss : 0.36988362364581917 ***** 
+epoch : 854  ***** losss : 0.39123346654787383 ***** 
+epoch : 855  ***** losss : 0.2684368978513021 ***** 
+epoch : 856  ***** losss : 0.4091286529609306 ***** 
+epoch : 857  ***** losss : 0.4835056387108807 ***** 
+epoch : 858  ***** losss : 0.297458181718639 ***** 
+epoch : 859  ***** losss : 0.43825607205468486 ***** 
+epoch : 860  ***** losss : 0.43086603622535335 ***** 
+epoch : 861  ***** losss : 0.2985797208665417 ***** 
+epoch : 862  ***** losss : 0.23819070053144742 ***** 
+epoch : 863  ***** losss : 0.6196083758350142 ***** 
+epoch : 864  ***** losss : 0.4217209720391111 ***** 
+epoch : 865  ***** losss : 0.5040570446806214 ***** 
+epoch : 866  ***** losss : 0.5061431374626864 ***** 
+epoch : 867  ***** losss : 0.4273988612839048 ***** 
+epoch : 868  ***** losss : 0.39924216111467103 ***** 
+epoch : 869  ***** losss : 0.36649671655197835 ***** 
+epoch : 870  ***** losss : 0.6581267794530845 ***** 
+epoch : 871  ***** losss : 0.3859895614223774 ***** 
+epoch : 872  ***** losss : 0.37985848823646506 ***** 
+epoch : 873  ***** losss : 0.38289433948402873 ***** 
+epoch : 874  ***** losss : 0.40214965681641957 ***** 
+epoch : 875  ***** losss : 0.3481410823775093 ***** 
+epoch : 876  ***** losss : 0.5573274561580988 ***** 
+epoch : 877  ***** losss : 0.445231137135778 ***** 
+epoch : 878  ***** losss : 0.5285460377612026 ***** 
+epoch : 879  ***** losss : 0.47101254820287863 ***** 
+epoch : 880  ***** losss : 0.5105760941721087 ***** 
+epoch : 881  ***** losss : 0.5708330055682609 ***** 
+epoch : 882  ***** losss : 0.5101983618892518 ***** 
+epoch : 883  ***** losss : 0.3906924967689065 ***** 
+epoch : 884  ***** losss : 0.40278553462553646 ***** 
+epoch : 885  ***** losss : 0.6704783770749145 ***** 
+epoch : 886  ***** losss : 0.6016272403267067 ***** 
+epoch : 887  ***** losss : 0.6675221331111061 ***** 
+epoch : 888  ***** losss : 0.6073987127283544 ***** 
+epoch : 889  ***** losss : 0.46613580830705814 ***** 
+epoch : 890  ***** losss : 0.27293482900222443 ***** 
+epoch : 891  ***** losss : 0.3209748584604881 ***** 
+epoch : 892  ***** losss : 0.6062005675669297 ***** 
+epoch : 893  ***** losss : 0.56176671024798 ***** 
+epoch : 894  ***** losss : 0.37889065912008846 ***** 
+epoch : 895  ***** losss : 0.5268741908407719 ***** 
+epoch : 896  ***** losss : 0.4171275607791358 ***** 
+epoch : 897  ***** losss : 0.42297010990631634 ***** 
+epoch : 898  ***** losss : 0.28794589854067 ***** 
+epoch : 899  ***** losss : 0.3457456753905035 ***** 
+epoch : 900  ***** losss : 0.4400325956120241 ***** 
+epoch : 900   saved at  weight/model_900.ckpt 
+epoch : 901  ***** losss : 0.5199843920125886 ***** 
+epoch : 902  ***** losss : 0.501473403928685 ***** 
+epoch : 903  ***** losss : 0.5024616524160592 ***** 
+epoch : 904  ***** losss : 0.7192524794809287 ***** 
+epoch : 905  ***** losss : 0.48205781713818396 ***** 
+epoch : 906  ***** losss : 0.623096520424383 ***** 
+epoch : 907  ***** losss : 0.5244579213456291 ***** 
+epoch : 908  ***** losss : 0.5236719108625039 ***** 
+epoch : 909  ***** losss : 0.5536856203549689 ***** 
+epoch : 910  ***** losss : 0.34811739079270865 ***** 
+epoch : 911  ***** losss : 0.31318885464526147 ***** 
+epoch : 912  ***** losss : 0.27718692455624705 ***** 
+epoch : 913  ***** losss : 0.35067966067183676 ***** 
+epoch : 914  ***** losss : 0.406154860525362 ***** 
+epoch : 915  ***** losss : 0.2999831737523664 ***** 
+epoch : 916  ***** losss : 0.2494347823133154 ***** 
+epoch : 917  ***** losss : 0.5062546288754675 ***** 
+epoch : 918  ***** losss : 0.3770077596432202 ***** 
+epoch : 919  ***** losss : 0.39416099535810645 ***** 
+epoch : 920  ***** losss : 0.3587504796703911 ***** 
+epoch : 921  ***** losss : 0.38220256510015815 ***** 
+epoch : 922  ***** losss : 0.39679608992128834 ***** 
+epoch : 923  ***** losss : 0.27388139594880556 ***** 
+epoch : 924  ***** losss : 0.33322437050058795 ***** 
+epoch : 925  ***** losss : 0.28008300454089863 ***** 
+epoch : 926  ***** losss : 0.3884637831790059 ***** 
+epoch : 927  ***** losss : 0.24288730863767682 ***** 
+epoch : 928  ***** losss : 0.4286213987844576 ***** 
+epoch : 929  ***** losss : 0.34691594382360336 ***** 
+epoch : 930  ***** losss : 0.2743477441997868 ***** 
+epoch : 931  ***** losss : 0.4263613333921512 ***** 
+epoch : 932  ***** losss : 0.4412174425794575 ***** 
+epoch : 933  ***** losss : 0.2949523792783566 ***** 
+epoch : 934  ***** losss : 0.4409650868367976 ***** 
+epoch : 935  ***** losss : 0.21882355174022905 ***** 
+epoch : 936  ***** losss : 0.2661585923197549 ***** 
+epoch : 937  ***** losss : 0.3889063315442627 ***** 
+epoch : 938  ***** losss : 0.3883656273271754 ***** 
+epoch : 939  ***** losss : 0.2625744151577294 ***** 
+epoch : 940  ***** losss : 0.3638236147129419 ***** 
+epoch : 941  ***** losss : 0.2973470393268087 ***** 
+epoch : 942  ***** losss : 0.37770766859335936 ***** 
+epoch : 943  ***** losss : 0.42649509712101974 ***** 
+epoch : 944  ***** losss : 0.4176080402158391 ***** 
+epoch : 945  ***** losss : 0.8185874034325025 ***** 
+epoch : 946  ***** losss : 0.726549798519045 ***** 
+epoch : 947  ***** losss : 0.4090507550519078 ***** 
+epoch : 948  ***** losss : 0.6139008723293955 ***** 
+epoch : 949  ***** losss : 0.5952486092232903 ***** 
+epoch : 950  ***** losss : 0.5166328646063221 ***** 
+epoch : 951  ***** losss : 0.35423815823696714 ***** 
+epoch : 952  ***** losss : 0.49081659046987625 ***** 
+epoch : 953  ***** losss : 0.4332707528530477 ***** 
+epoch : 954  ***** losss : 0.303990847210315 ***** 
+epoch : 955  ***** losss : 0.5618365191594421 ***** 
+epoch : 956  ***** losss : 0.39501071653450026 ***** 
+epoch : 957  ***** losss : 0.464547897088778 ***** 
+epoch : 958  ***** losss : 0.34848081397924346 ***** 
+epoch : 959  ***** losss : 0.5168404122864558 ***** 
+epoch : 960  ***** losss : 0.3272865149174322 ***** 
+epoch : 961  ***** losss : 0.29693927613996607 ***** 
+epoch : 962  ***** losss : 0.41328148244895146 ***** 
+epoch : 963  ***** losss : 0.4765784530136443 ***** 
+epoch : 964  ***** losss : 0.6253152037097607 ***** 
+epoch : 965  ***** losss : 0.606089140353788 ***** 
+epoch : 966  ***** losss : 0.6061310594137694 ***** 
+epoch : 967  ***** losss : 0.4925920860177939 ***** 
+epoch : 968  ***** losss : 0.5149018960171361 ***** 
+epoch : 969  ***** losss : 0.6356209470104659 ***** 
+epoch : 970  ***** losss : 0.525645053394328 ***** 
+epoch : 971  ***** losss : 0.2607285098580405 ***** 
+epoch : 972  ***** losss : 0.5724691866025751 ***** 
+epoch : 973  ***** losss : 0.3769153626085995 ***** 
+epoch : 974  ***** losss : 0.34991126795111427 ***** 
+epoch : 975  ***** losss : 0.41954656707073923 ***** 
+epoch : 976  ***** losss : 0.2842775766439303 ***** 
+epoch : 977  ***** losss : 0.38120818831421843 ***** 
+epoch : 978  ***** losss : 0.310662779368414 ***** 
+epoch : 979  ***** losss : 0.40940359504475055 ***** 
+epoch : 980  ***** losss : 0.5143057327936731 ***** 
+epoch : 981  ***** losss : 0.6475408058058747 ***** 
+epoch : 982  ***** losss : 1.0777440099273008 ***** 
+epoch : 983  ***** losss : 0.5511639411029137 ***** 
+epoch : 984  ***** losss : 0.45122385105514695 ***** 
+epoch : 985  ***** losss : 0.31789112900105465 ***** 
+epoch : 986  ***** losss : 0.3241610818539584 ***** 
+epoch : 987  ***** losss : 0.5294027223250737 ***** 
+epoch : 988  ***** losss : 0.5805950012410221 ***** 
+epoch : 989  ***** losss : 0.3388799277107921 ***** 
+epoch : 990  ***** losss : 0.3879722302427808 ***** 
+epoch : 991  ***** losss : 0.510169430753507 ***** 
+epoch : 992  ***** losss : 0.3886544311064313 ***** 
+epoch : 993  ***** losss : 0.41727318272796765 ***** 
+epoch : 994  ***** losss : 0.22698274714923627 ***** 
+epoch : 995  ***** losss : 0.4349241093685805 ***** 
+epoch : 996  ***** losss : 0.3410284575098217 ***** 
+epoch : 997  ***** losss : 0.2779099349321541 ***** 
+epoch : 998  ***** losss : 0.4598312876270825 ***** 
+epoch : 999  ***** losss : 0.3262055208583803 ***** 
+epoch : 1000  ***** losss : 0.32458653066800025 ***** 
+epoch : 1000   saved at  weight/model_1000.ckpt 
+epoch : 1001  ***** losss : 0.38149069855472817 ***** 
+epoch : 1002  ***** losss : 0.5205368470348617 ***** 
+epoch : 1003  ***** losss : 0.5753182954737213 ***** 
+epoch : 1004  ***** losss : 0.540618281951339 ***** 
+epoch : 1005  ***** losss : 0.40033401458197204 ***** 
+epoch : 1006  ***** losss : 0.36323313198209917 ***** 
+epoch : 1007  ***** losss : 0.4011500007971449 ***** 
+epoch : 1008  ***** losss : 0.3493190861991309 ***** 
+epoch : 1009  ***** losss : 0.340578775770382 ***** 
+epoch : 1010  ***** losss : 0.5837736014514121 ***** 
+epoch : 1011  ***** losss : 0.32444470807865855 ***** 
+epoch : 1012  ***** losss : 0.5109683264180376 ***** 
+epoch : 1013  ***** losss : 0.46225624930889353 ***** 
+epoch : 1014  ***** losss : 0.4126356594446179 ***** 
+epoch : 1015  ***** losss : 0.522877489977418 ***** 
+epoch : 1016  ***** losss : 0.7677420581110255 ***** 
+epoch : 1017  ***** losss : 0.5586985968847102 ***** 
+epoch : 1018  ***** losss : 0.44972562371231106 ***** 
+epoch : 1019  ***** losss : 0.5784757920259835 ***** 
+epoch : 1020  ***** losss : 0.4687958389428104 ***** 
+epoch : 1021  ***** losss : 0.5567015263234794 ***** 
+epoch : 1022  ***** losss : 0.5312862163663112 ***** 
+epoch : 1023  ***** losss : 0.37507806440260083 ***** 
+epoch : 1024  ***** losss : 0.43041426609477185 ***** 
+epoch : 1025  ***** losss : 0.38263840073946653 ***** 
+epoch : 1026  ***** losss : 0.42750245520282704 ***** 
+epoch : 1027  ***** losss : 0.34130082560913877 ***** 
+epoch : 1028  ***** losss : 0.5757615040402584 ***** 
+epoch : 1029  ***** losss : 0.3821969839117969 ***** 
+epoch : 1030  ***** losss : 0.2628768238768231 ***** 
+epoch : 1031  ***** losss : 0.4583067192381236 ***** 
+epoch : 1032  ***** losss : 0.370251111011612 ***** 
+epoch : 1033  ***** losss : 0.19080064322622547 ***** 
+epoch : 1034  ***** losss : 0.32295803751708263 ***** 
+epoch : 1035  ***** losss : 0.30430769332042473 ***** 
+epoch : 1036  ***** losss : 0.3417344944083993 ***** 
+epoch : 1037  ***** losss : 0.5578506645347261 ***** 
+epoch : 1038  ***** losss : 0.5353748134655802 ***** 
+epoch : 1039  ***** losss : 0.41158836455809933 ***** 
+epoch : 1040  ***** losss : 0.44376124660522365 ***** 
+epoch : 1041  ***** losss : 0.35773754482369213 ***** 
+epoch : 1042  ***** losss : 0.30360280339938583 ***** 
+epoch : 1043  ***** losss : 0.641384840693263 ***** 
+epoch : 1044  ***** losss : 0.6403038624534929 ***** 
+epoch : 1045  ***** losss : 0.5389342397438668 ***** 
+epoch : 1046  ***** losss : 0.4253627084074765 ***** 
+epoch : 1047  ***** losss : 0.4322739871710155 ***** 
+epoch : 1048  ***** losss : 0.6224150337405945 ***** 
+epoch : 1049  ***** losss : 0.4747203092745167 ***** 
+epoch : 1050  ***** losss : 0.41455820858129755 ***** 
+epoch : 1051  ***** losss : 0.3802757475427825 ***** 
+epoch : 1052  ***** losss : 0.32094682880975256 ***** 
+epoch : 1053  ***** losss : 0.24187152783479604 ***** 
+epoch : 1054  ***** losss : 0.6425324197090276 ***** 
+epoch : 1055  ***** losss : 0.2856812365772612 ***** 
+epoch : 1056  ***** losss : 0.23717373061634817 ***** 
+epoch : 1057  ***** losss : 0.27783879321435734 ***** 
+epoch : 1058  ***** losss : 0.4215068412271137 ***** 
+epoch : 1059  ***** losss : 0.6029915446865743 ***** 
+epoch : 1060  ***** losss : 0.33838582283760843 ***** 
+epoch : 1061  ***** losss : 0.35650031895443135 ***** 
+epoch : 1062  ***** losss : 0.48057970954323537 ***** 
+epoch : 1063  ***** losss : 0.446909972454705 ***** 
+epoch : 1064  ***** losss : 0.43951888103447345 ***** 
+epoch : 1065  ***** losss : 0.4496185104440542 ***** 
+epoch : 1066  ***** losss : 0.328032028008181 ***** 
+epoch : 1067  ***** losss : 0.4341336742620854 ***** 
+epoch : 1068  ***** losss : 0.3182385250170796 ***** 
+epoch : 1069  ***** losss : 0.4655463015170085 ***** 
+epoch : 1070  ***** losss : 0.2168973734443398 ***** 
+epoch : 1071  ***** losss : 0.3252276576729827 ***** 
+epoch : 1072  ***** losss : 0.35120704399406577 ***** 
+epoch : 1073  ***** losss : 0.30574336881193176 ***** 
+epoch : 1074  ***** losss : 0.3867815465644071 ***** 
+epoch : 1075  ***** losss : 0.7036312718762474 ***** 
+epoch : 1076  ***** losss : 0.46048669084893845 ***** 
+epoch : 1077  ***** losss : 0.3700905587872967 ***** 
+epoch : 1078  ***** losss : 0.4130440753218636 ***** 
+epoch : 1079  ***** losss : 0.3056451344094171 ***** 
+epoch : 1080  ***** losss : 0.5343206960403677 ***** 
+epoch : 1081  ***** losss : 0.2726107606401911 ***** 
+epoch : 1082  ***** losss : 0.3138280791105501 ***** 
+epoch : 1083  ***** losss : 0.4374151811347815 ***** 
+epoch : 1084  ***** losss : 0.15493950005313195 ***** 
+epoch : 1085  ***** losss : 0.2577632848309577 ***** 
+epoch : 1086  ***** losss : 0.40930155401792945 ***** 
+epoch : 1087  ***** losss : 0.35654058706080605 ***** 
+epoch : 1088  ***** losss : 0.38710451424253733 ***** 
+epoch : 1089  ***** losss : 0.48856713250972916 ***** 
+epoch : 1090  ***** losss : 0.45958091191096173 ***** 
+epoch : 1091  ***** losss : 0.4603946847637417 ***** 
+epoch : 1092  ***** losss : 0.39469147364638957 ***** 
+epoch : 1093  ***** losss : 0.3120258298005183 ***** 
+epoch : 1094  ***** losss : 0.44491023024323795 ***** 
+epoch : 1095  ***** losss : 0.6490987272632083 ***** 
+epoch : 1096  ***** losss : 0.4937642813945331 ***** 
+epoch : 1097  ***** losss : 0.41591849031283346 ***** 
+epoch : 1098  ***** losss : 0.5270532985525733 ***** 
+epoch : 1099  ***** losss : 0.4566754132544588 ***** 
+epoch : 1100  ***** losss : 0.43173960277772494 ***** 
+epoch : 1100   saved at  weight/model_1100.ckpt 
+epoch : 1101  ***** losss : 0.36684660830837856 ***** 
+epoch : 1102  ***** losss : 0.27186829371601107 ***** 
+epoch : 1103  ***** losss : 0.3090444771234786 ***** 
+epoch : 1104  ***** losss : 0.35288417310687237 ***** 
+epoch : 1105  ***** losss : 0.47329700457177637 ***** 
+epoch : 1106  ***** losss : 0.38187852778332854 ***** 
+epoch : 1107  ***** losss : 0.45845700824952473 ***** 
+epoch : 1108  ***** losss : 0.3748244321409402 ***** 
+epoch : 1109  ***** losss : 0.4029310537395645 ***** 
+epoch : 1110  ***** losss : 0.22458336381919253 ***** 
+epoch : 1111  ***** losss : 0.32915062446954835 ***** 
+epoch : 1112  ***** losss : 0.5945107422639921 ***** 
+epoch : 1113  ***** losss : 0.6140253443982147 ***** 
+epoch : 1114  ***** losss : 0.3287952608895921 ***** 
+epoch : 1115  ***** losss : 0.43923534000532527 ***** 
+epoch : 1116  ***** losss : 0.5188148925492442 ***** 
+epoch : 1117  ***** losss : 0.5419565221227458 ***** 
+epoch : 1118  ***** losss : 0.450666998416807 ***** 
+epoch : 1119  ***** losss : 0.3219374374943982 ***** 
+epoch : 1120  ***** losss : 0.5019387965500073 ***** 
+epoch : 1121  ***** losss : 0.37700391851672066 ***** 
+epoch : 1122  ***** losss : 0.4378226456877883 ***** 
+epoch : 1123  ***** losss : 0.5079195990345795 ***** 
+epoch : 1124  ***** losss : 0.5693764146376452 ***** 
+epoch : 1125  ***** losss : 1.2767133714778538 ***** 
+epoch : 1126  ***** losss : 1.1421917248571845 ***** 
+epoch : 1127  ***** losss : 0.4411925886656718 ***** 
+epoch : 1128  ***** losss : 0.7461375052744188 ***** 
+epoch : 1129  ***** losss : 0.6190445566339804 ***** 
+epoch : 1130  ***** losss : 0.57260451176262 ***** 
+epoch : 1131  ***** losss : 0.5996732748199065 ***** 
+epoch : 1132  ***** losss : 0.5718720786044287 ***** 
+epoch : 1133  ***** losss : 0.5875601533198278 ***** 
+epoch : 1134  ***** losss : 0.5649913631018535 ***** 
+epoch : 1135  ***** losss : 0.45199971057490984 ***** 
+epoch : 1136  ***** losss : 0.43150273289575125 ***** 
+epoch : 1137  ***** losss : 0.4273554894632525 ***** 
+epoch : 1138  ***** losss : 0.48617895341681105 ***** 
+epoch : 1139  ***** losss : 0.26655340492459345 ***** 
+epoch : 1140  ***** losss : 0.287707281582982 ***** 
+epoch : 1141  ***** losss : 0.37076330654713274 ***** 
+epoch : 1142  ***** losss : 0.6493333084644064 ***** 
+epoch : 1143  ***** losss : 0.5131731502169714 ***** 
+epoch : 1144  ***** losss : 0.6982999352940169 ***** 
+epoch : 1145  ***** losss : 0.4355811288710356 ***** 
+epoch : 1146  ***** losss : 0.6408800467506808 ***** 
+epoch : 1147  ***** losss : 0.5364463323920745 ***** 
+epoch : 1148  ***** losss : 0.302970787208551 ***** 
+epoch : 1149  ***** losss : 0.29427485892279037 ***** 
+epoch : 1150  ***** losss : 0.5089666197495717 ***** 
+epoch : 1151  ***** losss : 0.6498866722522507 ***** 
+epoch : 1152  ***** losss : 0.41730838773855794 ***** 
+epoch : 1153  ***** losss : 0.4961861207208358 ***** 
+epoch : 1154  ***** losss : 0.43010768032763735 ***** 
+epoch : 1155  ***** losss : 0.391946526860238 ***** 
+epoch : 1156  ***** losss : 0.255358355866548 ***** 
+epoch : 1157  ***** losss : 0.38296999666289366 ***** 
+epoch : 1158  ***** losss : 0.4004472931229657 ***** 
+epoch : 1159  ***** losss : 0.3548729511046531 ***** 
+epoch : 1160  ***** losss : 0.7492062354276641 ***** 
+epoch : 1161  ***** losss : 0.5137762360009219 ***** 
+epoch : 1162  ***** losss : 0.5423857450923606 ***** 
+epoch : 1163  ***** losss : 0.4611508535572284 ***** 
+epoch : 1164  ***** losss : 0.7483342496511796 ***** 
+epoch : 1165  ***** losss : 0.4695167536842746 ***** 
+epoch : 1166  ***** losss : 0.5539147787778802 ***** 
+epoch : 1167  ***** losss : 0.34072567829315403 ***** 
+epoch : 1168  ***** losss : 0.35281540762093755 ***** 
+epoch : 1169  ***** losss : 0.3395654926555949 ***** 
+epoch : 1170  ***** losss : 0.3958603788584014 ***** 
+epoch : 1171  ***** losss : 0.5843434935156324 ***** 
+epoch : 1172  ***** losss : 0.4226341469622348 ***** 
+epoch : 1173  ***** losss : 0.4440358189813196 ***** 
+epoch : 1174  ***** losss : 0.4766839550259192 ***** 
+epoch : 1175  ***** losss : 0.29766034851309087 ***** 
+epoch : 1176  ***** losss : 0.328316303866103 ***** 
+epoch : 1177  ***** losss : 0.4087331786990944 ***** 
+epoch : 1178  ***** losss : 0.5594846155284756 ***** 
+epoch : 1179  ***** losss : 0.36158330457669763 ***** 
+epoch : 1180  ***** losss : 0.3436235679495212 ***** 
+epoch : 1181  ***** losss : 0.28637851738665177 ***** 
+epoch : 1182  ***** losss : 0.4257716428464704 ***** 
+epoch : 1183  ***** losss : 0.39892846989755526 ***** 
+epoch : 1184  ***** losss : 0.47348470126382836 ***** 
+epoch : 1185  ***** losss : 0.39704200266425005 ***** 
+epoch : 1186  ***** losss : 0.3743118655204398 ***** 
+epoch : 1187  ***** losss : 0.20694728124664152 ***** 
+epoch : 1188  ***** losss : 0.4079440368473115 ***** 
+epoch : 1189  ***** losss : 0.5683170939338424 ***** 

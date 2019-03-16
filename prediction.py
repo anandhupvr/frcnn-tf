@@ -1,122 +1,125 @@
+from matplotlib import pyplot as plt
+import numpy as np 
 import tensorflow as tf
-from PIL import Image
-from models.net import network
 import sys
-# from loader.DataLoader import load
+from loader.DataLoader import load
+from models.net import network
+import lib.loss as losses
+from config.parameters import Config
 import lib.utils as utils
 
-import numpy as np
-from config.parameters import Config
-
-
-
-tf.reset_default_graph()
-
+import lib.ls as lss
 
 
 C = Config()
-
-bbox_threshold = 0.53
-
-
-
-# load = load(dataset_path)
-
-
-# data = load.get_data()
-# data_gen = load.get_anchor_gt(data, C, get_img_output_length, mode='test')
-
-
-img = Image.open('human.jpg')
-
-# im = tf.placeholder(dtype=tf.float32, shape=[1, None, None, 3])
-new_graph = tf.Graph()
-
-class_mapping = {1:'human', 0:'bg'}
-
-with tf.Session(graph=new_graph) as sess:
-	# X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
-	tf.global_variables_initializer().run()
-	saver = tf.train.import_meta_graph('weight/model_400.ckpt.meta')
-	checkpoint = tf.train.latest_checkpoint('weight')
-
-	saver.restore(sess, checkpoint)
-	print ("model restored")
-	import pdb; pdb.set_trace()
-	img = np.expand_dims(img.resize([224, 224]), axis=0)
-
-	image_tensor = tf.get_default_graph().get_tensor_by_name('input_image:0')
-	rpn_reg_out = tf.get_default_graph().get_tensor_by_name('rpn_out_regre:0')
-	rpn_cls_out = tf.get_default_graph().get_tensor_by_name('rpn_out_regre:0')
-
-	base_layer = tf.get_default_graph().get_tensor_by_name('conv5_3/Relu:0')
-	out_cls = tf.get_default_graph().get_tensor_by_name('class_prediction:0')
-	out_box = tf.get_default_graph().get_tensor_by_name('box_prediction:0')
-	roi = tf.get_default_graph().get_tensor_by_name('Placeholder:0')
-
-	#box_out = tf.get_default_graph().get_tensor_by_name('dense_regress_2/Reshape_1:0')
-	#cls_out = tf.get_default_graph().get_tensor_by_name('dense_class_2/Softmax:0')
+def get_img_output_length(width, height):
+    return (int(width/16),int(height/16))
 
 
 
-	P_rpn = sess.run([rpn_cls_out, rpn_reg_out, base_layer], feed_dict={image_tensor:img})
+roi_input = tf.placeholder(tf.float32, shape=[1, None, 4])
+
+num_rois = 4
 
 
-	R = utils.rpn_to_roi(P_rpn[0], P_rpn[1], C, 'tf', overlap_thresh=0.7)
-
-	R[:, 2] -= R[:, 0]
-	R[:, 3] -= R[:, 1]
-
-	bboxes = {}
-	probs = {}
-
-	for jk in range(R.shape[0]//C.num_rois + 1):
-		ROIs = np.expand_dims(R[C.num_rois*jk:C.num_rois*(jk+1), :], axis=0)
-		if ROIs.shape[1] == 0:
-			break
-		if jk == R.shape[0]//C.num_rois:
-			curr_shape = ROIs.shape
-			target_shape = (curr_shape[0], C.num_rois, curr_shape[2])
-			ROIs_padded = np.zeros(target_shape).astype(ROIs.dtype)
-			ROIs_padded[:, :curr_shape[1], :] = ROIs
-			ROIs_padded[0, curr_shape[1]:, :] = ROIs[0, 0, :]
-			ROIs = ROIs_padded
-		P_cls, P_regr = sess.run([cls_out, box_out], feed_dict={image_tensor:img, roi:ROIs})
-		P_cls = np.expand_dims(P_cls, axis=0)
-		import pdb; pdb.set_trace()
-		for ii in range(P_cls.shape[1]):
-
-			if np.max(P_cls[0, ii, :]) < bbox_threshold or np.argmax(P_cls[0, ii, :]) == (P_cls.shape[2] - 1):
-				continue
-
-			cls_name = class_mapping[np.argmax(P_cls[0, ii, :])]
-
-			if cls_name not in bboxes:
-				bboxes[cls_name] = []
-				probs[cls_name] = []
-
-			(x, y, w, h) = ROIs[0, ii, :]
-			cls_num = np.argmax(P_cls[0, ii, :])
-			try:
-				(tx, ty, tw, th) = P_regr[0, ii, 4*cls_num:4*(cls_num+1)]
-				tx /= C.classifier_regr_std[0]
-				ty /= C.classifier_regr_std[1]
-				tw /= C.classifier_regr_std[2]
-				th /= C.classifier_regr_std[3]
-				x, y, w, h = utils.apply_regr(x, y, w, h, tx, ty, tw, th)
-			except:
-				pass
-			bboxes[cls_name].append([C.rpn_stride*x, C.rpn_stride*y, C.rpn_stride*(x+w), C.rpn_stride*(y+h)])
-			probs[cls_name].append(np.max(P_cls[0, ii, :]))
+num_epo = 500
+dataset_path = sys.argv[1]
+load = load(dataset_path)
 
 
+data = load.get_data()
+num_anchors = 9
+data_gen = load.get_anchor_gt(data, C, get_img_output_length, mode='train')
 
-		print ("kdk")
-		print ("kdkkkkkk")
-# dense_class_2/Softmax:0
-# dense_regress_2/Reshape_1:0
 
-	print ("hellow ")
-	print ("hdh")
+net = network()
+initializer = tf.random_normal_initializer(mean=0.0, stddev=0.01)
+initializer_bbox = tf.random_normal_initializer(mean=0.0, stddev=0.001)
+# feature = net.build_network()
+# rpn_cls_prob, rpn_bbox_pred, rpn_cls_score, feature = net.build_network()
+rpn_out = net.build_network()
+x, cls_plc, box_plc = net.getPlaceholders()
 
-     
+lsr = lss.rpn_loss_cls_org(9)
+lgr = lss.rpn_loss_regr_org(9)
+# rg = lss.rpn_loss_regr(9)
+los_c = lsr(cls_plc, rpn_out[0])
+los_b = lgr(box_plc, rpn_out[1])
+rpn_loss = los_c + los_b
+# rpn_loss = losses.rpn()
+class_mapping = {'raccoon':0, 'bg':1}
+
+classifier = net.classifier(rpn_out[2], roi_input, num_rois, nb_classes=len(class_mapping), trainable=True)
+
+lab_cls = tf.placeholder(tf.float32, shape=[1, None, 1], name='label_class')
+lab_reg = tf.placeholder(tf.float32, shape=[1, None, 4], name='label_regression')
+clf = lss.class_loss_regr(1)
+clf_cls = lss.class_loss_cls(lab_cls, classifier[0])
+clf_reg = clf(lab_reg, classifier[1])
+clf_loss = clf_cls + clf_reg
+total_loss = rpn_loss + clf_loss
+# classification = net.build_predictions(rpn_out[2], roi_input, initializer, initializer_bbox)
+tf.summary.scalar("loss", total_loss)
+train_step = tf.train.AdamOptimizer(1e-4).minimize(total_loss)
+# train__step_cls = tf.train.AdamOptimizer(1e-4).minimize(clf_loss)
+
+saver = tf.train.Saver()
+
+
+with tf.Session() as sess:
+    train_writer = tf.summary.FileWriter( 'logs/', sess.graph)
+    merged = tf.summary.merge_all()
+
+    sess.run(tf.global_variables_initializer())
+    for i in range(num_epo):
+        # import pdb; pdb.set_trace()
+        los = 0
+        for _ in range(256):
+            X, Y, image_data, debug_img, debug_num_pos = next(data_gen)
+            # sess.run(train_step_rpn, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
+            P_rpn = sess.run(rpn_out, feed_dict={x:X, cls_plc:Y[0], box_plc:Y[1]})
+
+            R = utils.rpn_to_roi(P_rpn[0], P_rpn[1], C, 'tf', use_regr=True, overlap_thresh=0.7, max_boxes=300)
+            X2, Y1, Y2, IouS = utils.calc_iou(R, image_data, C, class_mapping)
+
+            neg_samples = np.where(Y1[0, :, -1] == 1)
+            pos_samples = np.where(Y1[0, :, -1] == 0)
+
+            if len(neg_samples) > 0:
+                neg_samples = neg_samples[0]
+            else:
+                neg_samples = []
+            if len(pos_samples) > 0:
+                pos_samples = pos_samples[0]
+            else:
+                pos_samples = []
+
+            if num_rois > 1:
+                if len(pos_samples) < num_rois//2:
+                    selected_pos_samples = pos_samples.tolist()
+                else:
+                    selected_pos_samples = np.random.choice(pos_samples, num_rois//2, replace=False).tolist()
+                try:
+                    selected_neg_samples = np.random.choice(neg_samples, num_rois - len(selected_pos_samples), replace=False).tolist()
+                except:
+                    selected_neg_samples = np.random.choice(neg_samples, num_rois - len(selected_pos_samples), replace=True).tolist()
+
+                sel_samples = selected_pos_samples + selected_neg_samples
+            else:
+                # in the extreme case where num_rois = 1, we pick a random pos or neg sample
+                selected_pos_samples = pos_samples.tolist()
+                selected_neg_samples = neg_samples.tolist()
+                if np.random.randint(0, 2):
+                    sel_samples = random.choice(neg_samples)
+                else:
+                    sel_samples = random.choice(pos_samples)
+            summary = sess.run([merged, train_step], feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :1], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
+            ls_val = sess.run(total_loss, feed_dict={rpn_out[2]:P_rpn[2], roi_input:X2[:, sel_samples, :], lab_cls:Y1[:, sel_samples, :1], lab_reg:Y2[:, sel_samples, :], x:X, cls_plc:Y[0], box_plc:Y[1]})
+            loss_ = ls_val + los
+            los = loss_
+        train_writer.add_summary(summary[0], i)
+        print ("epoch : %s  ***** losss : %s ***** "%(i, loss_/256))
+
+        if i%100 == 0:
+            save_path = saver.save(sess, 'weight/'+"model_{}.ckpt".format(i))
+            print ("epoch : %s   saved at  %s "%(i, save_path))
